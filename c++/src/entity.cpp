@@ -43,6 +43,10 @@ uint16_t Entity::getType(){
     return this->type;
 }
 
+Velocity2D Entity::getVelocities(){
+    return this->velocities;
+}
+
 std::shared_ptr<LinkedList> Entity::getTrajetctory() const{
     return this->trajectory;
 }
@@ -74,11 +78,25 @@ void Entity::emptyBoundingRect(){
     this->setBoundingRect(Rect());
 }
 
+
 uint16_t Entity::findClosestEntityIndex(std::vector<Entity>& entityVector){
 
-    uint maxDistanceSquared = 300; //TODO MAKE A SOMEHOW CALCULATED ONE
+    // uint maxDistanceSquared = 500; //TODO MAKE A SOMEHOW CALCULATED ONE
     uint distanceSquared = UINT32_MAX;
     uint16_t idx = entityVector.size(); 
+    const int W = this->getBoundingRect().width; //TODO MAKE A SOMEHOW CALCULATED ONE
+    const int H = this->getBoundingRect().height; //TODO MAKE A SOMEHOW CALCULATED ONE
+    Rect& currentRect = this->getBoundingRect();
+
+    Rect possibleLocations = Rect(currentRect.tl() + Point(-W, -H), cv::Size2i(2*W, 2*H));
+
+    if (this->velocities.x != 0 && this->velocities.y != 0){
+        const int N = 2;
+        const int M = 0.5;
+        Point A = Point(currentRect.x + N * this->velocities.x, currentRect.y - N * this->velocities.y);
+        Point B = Point(currentRect.x - M * this->velocities.x, currentRect.y + M * this->velocities.y);
+        possibleLocations = Rect(A, B);
+    }
 
     for (uint16_t i = 0, size = entityVector.size(); i < size; i++){
         Entity& checkedEntity = entityVector[i];
@@ -86,7 +104,7 @@ uint16_t Entity::findClosestEntityIndex(std::vector<Entity>& entityVector){
         if (this->getType() == checkedEntity.getType()) { 
             uint currentDistanceSquared = this->squareDistanceTo(checkedEntity);
             cout << currentDistanceSquared << "\n";
-            if (currentDistanceSquared < distanceSquared && currentDistanceSquared <= maxDistanceSquared){
+            if (currentDistanceSquared < distanceSquared && possibleLocations.contains(checkedEntity.getBoundingRect().tl())){
                 idx = i;
                 distanceSquared = currentDistanceSquared;
             }
@@ -95,18 +113,20 @@ uint16_t Entity::findClosestEntityIndex(std::vector<Entity>& entityVector){
     return idx;
 }
 
-void Entity::clacVelocities(int numOfFrames){
+Velocity2D Entity::clacVelocities(int numOfFrames){
     //units are pixels per frame   
     if (this->trajectory->length >= numOfFrames){
         const Rect& startRect = this->trajectory->getItem(numOfFrames - 1).rect;
         const Rect& endRect = this->trajectory->getItem(0).rect;
-        this->velocities.y = ((endRect.x - startRect.x) / numOfFrames);
-        this->velocities.x = ((endRect.y - startRect.y) / numOfFrames);
+        int velX = ((endRect.x - startRect.x) / numOfFrames);
+        int velY = ((endRect.y - startRect.y) / numOfFrames);
+        return Velocity2D(velX, velY);
     } 
+    return Velocity2D();
 }
 
-void Entity::clacVelocities(){
-    this->clacVelocities(3); //TODO make this number with logic
+void Entity::clacAndSetVelocities(int numOfFrames){
+    this->velocities = this->clacVelocities(numOfFrames); //TODO make this number with logic
 }
 
 Rect Entity::predictNextBoundingRect(){
