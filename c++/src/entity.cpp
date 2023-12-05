@@ -9,8 +9,7 @@ Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect)
 Entity::Entity(const Entity& e) 
     : id(e.getId()), type(e.getType()){
     this->setBoundingRect(e.getBoundingRect());
-    // this->trajectory = e.getTrajetctory();
-    this->trajectory = std::make_shared<LinkedList>(e.getBoundingRect(), Velocity2D(0, 0));
+    this->trajectory = e.getTrajetctory();
 }
 
 Entity::Entity() 
@@ -77,7 +76,7 @@ void Entity::emptyBoundingRect(){
 
 uint16_t Entity::findClosestEntityIndex(std::vector<Entity>& entityVector){
 
-    uint maxDistanceSquared = 300*300; //TODO MAKE A SOMEHOW CALCULATED ONE
+    uint maxDistanceSquared = 300; //TODO MAKE A SOMEHOW CALCULATED ONE
     uint distanceSquared = UINT32_MAX;
     uint16_t idx = entityVector.size(); 
 
@@ -86,7 +85,7 @@ uint16_t Entity::findClosestEntityIndex(std::vector<Entity>& entityVector){
 
         if (this->getType() == checkedEntity.getType()) { 
             uint currentDistanceSquared = this->squareDistanceTo(checkedEntity);
-
+            cout << currentDistanceSquared << "\n";
             if (currentDistanceSquared < distanceSquared && currentDistanceSquared <= maxDistanceSquared){
                 idx = i;
                 distanceSquared = currentDistanceSquared;
