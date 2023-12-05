@@ -8,7 +8,6 @@ that help communicate with the cpp program
 
 import numpy as np
 import ctypes
-import os
 
 lib = ctypes.CDLL('./libTracker.so')
 
