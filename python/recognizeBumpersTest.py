@@ -5,16 +5,19 @@ from time import time, sleep
 from tracker import Tracker
 
 #TEST CODE DONT TAKE SERIOUSLY
+
+
 print("loading")
-cap = cv2.VideoCapture('test_videos/dcmp.mp4')
-modelBumpers = YOLO('bumper_weights/v4/best (3).pt')
-modelBumpers.to('cuda')
+cap = cv2.VideoCapture('dcmp.mp4')
+modelBumpers = YOLO('bumperWeights.pt')
+# modelBumpers.to('cuda')
+
 
 success, frame = cap.read()
 
 def prepFrame(frame):
     # frame = cv2.resize(frame, (640, 640))
-    frame = frame[250 : 650]
+    frame = frame[150 : 550]
     # frame = cv2.resize(frame, (1280, 500))
     return frame
 
@@ -27,7 +30,7 @@ def YoloToPointsAndTypes(YOLO_result):
 if success:
     
     frame = prepFrame(frame)
-    resultsB = modelBumpers.predict(frame, verbose=False)
+    resultsB = modelBumpers(frame, verbose=False)
     print("[INFO]: Creating Tracker")
     tracker = Tracker(resultsB[0], frame, True) 
     print("[INFO]: Tracker Created")
