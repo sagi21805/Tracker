@@ -44,7 +44,9 @@ class Tracker{
 
         void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* img);
 
-        void makePredictions();
+        void calcVelocities(int numOfFrames);
+
+        void makePredictions(int numOfFrames);
 
         cv::Scalar chooseColor(Entity& e);
 

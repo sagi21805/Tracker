@@ -60,22 +60,31 @@ cv::Scalar Tracker::chooseColor(Entity& e){
 	return color;
 }
 
-void Tracker::makePredictions(){
+void Tracker::calcVelocities(int numOfFrames){
+	for (Entity& e : this->entities){
+		e.clacAndSetVelocities(numOfFrames);
+	}
+}
+
+void Tracker::makePredictions(int numOfFrames){
+	this->calcVelocities(numOfFrames);
 	this->currentPrediction = std::vector<Entity>(this->entities);
 	for (Entity& e : this->currentPrediction){
-		e.clacVelocities();
-		e.setBoundingRect(e.predictNextBoundingRect());
+		e.setBoundingRect(e.getBoundingRect());
 	}
 	
 }
 
 void Tracker::distanceTrack(){
 
+	this->makePredictions(3);
 	uint16_t size = MIN(this->entities.size(), this->currentRecognition.size());
 	for (uint16_t i = 0; i < size; i++){
 		Entity& checkedEntity = this->entities[i];
+
 		uint16_t closetEntityIndex = checkedEntity.findClosestEntityIndex(this->currentRecognition);
 		Entity& closetEntity = this->currentRecognition[closetEntityIndex];
+
 		checkedEntity.setBoundingRect(closetEntity.getBoundingRect());
 		currentRecognition.erase(currentRecognition.begin() + closetEntityIndex);		
 	}
@@ -111,20 +120,15 @@ void Tracker::drawPredictions(){
 //TODO imporve all function performence!.
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* img){
 	
-	this->makePredictions();
-
 	this->setTrackPoints(points, types, size);
-
 	this->setImg(img);
-
 	this->addToTrajectory();
-
 	this->distanceTrack();
 
 	if (this->visualize){
 
-		this->drawEntities();
 		this->drawPredictions();
+		this->drawEntities();
 		cv::imshow("frame", this->img);
 		cv::waitKey(1);
 	}

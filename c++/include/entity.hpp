@@ -53,9 +53,9 @@ class Entity{
 
         void emptyBoundingRect();
 
-        void clacVelocities(int numOfFrames);
+        Velocity2D clacVelocities(int numOfFrames);
 
-        void clacVelocities();
+        void clacAndSetVelocities(int numOfFrames);
 
         Rect predictNextBoundingRect();
         
