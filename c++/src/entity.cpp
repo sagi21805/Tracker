@@ -9,7 +9,8 @@ Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect)
 Entity::Entity(const Entity& e) 
     : id(e.getId()), type(e.getType()){
     this->setBoundingRect(e.getBoundingRect());
-    this->trajectory = std::make_shared<LinkedList>(boundingRect, Velocity2D(0, 0));
+    // this->trajectory = e.getTrajetctory();
+    this->trajectory = std::make_shared<LinkedList>(e.getBoundingRect(), Velocity2D(0, 0));
 }
 
 Entity::Entity() 

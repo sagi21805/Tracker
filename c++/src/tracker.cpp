@@ -38,9 +38,12 @@ void Tracker::addToTrajectory(){
 	for (Entity& entity : this->entities){
 		entity.addToTrajectory();
 		cout << entity.getTrajetctory()->length << " ";
+		if (entity.getTrajetctory()->length == 1){
+			std::cin.get();
+		}
 	}
 	cout << "\n";
-}
+}	
 
 cv::Scalar Tracker::chooseColor(Entity& e){
 	cv::Scalar color;
@@ -78,7 +81,9 @@ void Tracker::distanceTrack(){
 	}
 
 	//at the end of the above loop current recognitions needs to be empty. if it doesnt, this loop is done to add to entities.
-	for (uint16_t i = 0, size = this->currentRecognition.size(); i < size; i++){
+	uint16_t entitiesLeft = this->currentRecognition.size();
+	this->entities.reserve(this->entities.size() + entitiesLeft);
+	for (uint16_t i = 0; i < entitiesLeft; i++){
 		this->entities.emplace_back(this->currentRecognition[i]);
 	}
 	
