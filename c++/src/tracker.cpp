@@ -1,15 +1,15 @@
 #include "tracker.hpp"
 
-Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* img, uint16_t rows, uint16_t cols, bool visualize) 
+Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols, bool visualize) 
 	: visualize(visualize), rows(rows), cols(cols){
 	setTrackPoints(points, types, size); // sets this current recognition
-	setImg(img);
+	setFrame(frame);
 	this->entities = vector<Entity>(this->currentRecognition);
 	this->addToTrajectory();
 }
 
-void Tracker::setImg(uint8_t* img){
-	this->img = cv::Mat(this->rows, this->cols, CV_8UC3, img);	
+void Tracker::setFrame(uint8_t* frame){
+	this->frame = cv::Mat(this->rows, this->cols, CV_8UC3, frame);	
 }
 
 std::vector<Entity> Tracker::rectsToEntites(std::vector<Rect> rects, uint16_t* classes){
@@ -60,28 +60,13 @@ cv::Scalar Tracker::chooseColor(Entity& e){
 	return color;
 }
 
-void Tracker::calcVelocities(int numOfFrames){
-	for (Entity& e : this->entities){
-		e.clacAndSetVelocities(numOfFrames);
-	}
-}
-
-void Tracker::makePredictions(int numOfFrames){
-	this->calcVelocities(numOfFrames);
-	this->currentPrediction = std::vector<Entity>(this->entities);
-	for (Entity& e : this->currentPrediction){
-		e.setBoundingRect(e.getBoundingRect());
-	}
-	
-}
-
 void Tracker::distanceTrack(){
 
-	this->makePredictions(3);
 	uint16_t size = MIN(this->entities.size(), this->currentRecognition.size());
 	for (uint16_t i = 0; i < size; i++){
-		Entity& checkedEntity = this->entities[i];
-
+		Entity& checkedEntity = this->entities[i];	
+		Rect c = checkedEntity.possibleLocations();
+		c.drawRect(this->frame, CV_RGB(255, 255, 255));
 		uint16_t closetEntityIndex = checkedEntity.findClosestEntityIndex(this->currentRecognition);
 		Entity& closetEntity = this->currentRecognition[closetEntityIndex];
 
@@ -104,24 +89,24 @@ void Tracker::drawEntities(){
 	for (uint16_t i = 0, size = this->entities.size(); i < size; i++){
 		Entity& drawnEntity = this->entities[i];
 		cv::Scalar color = this->chooseColor(drawnEntity);
-		drawnEntity.draw(this->img, color);
+		drawnEntity.draw(this->frame, color);
 	}
 }
 
 void Tracker::drawPredictions(){
 	for (uint16_t i = 0, size = this->currentPrediction.size(); i < size; i++){
 		Entity& drawnEntity = this->currentPrediction[i];
-		drawnEntity.draw(this->img, CV_RGB(255, 255, 255));
+		drawnEntity.draw(this->frame, CV_RGB(255, 255, 255));
 	}
 }
 
 
 //TODO using a lot of shared pointers - performence heavy.
 //TODO imporve all function performence!.
-void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* img){
+void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
 	
 	this->setTrackPoints(points, types, size);
-	this->setImg(img);
+	this->setFrame(frame);
 	this->addToTrajectory();
 	this->distanceTrack();
 
@@ -129,7 +114,7 @@ void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* i
 
 		this->drawPredictions();
 		this->drawEntities();
-		cv::imshow("frame", this->img);
+		cv::imshow("frame", this->frame);
 		cv::waitKey(1);
 	}
 	this->currentRecognition.clear();

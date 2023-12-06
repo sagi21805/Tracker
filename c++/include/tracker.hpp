@@ -1,5 +1,5 @@
 #ifndef __TRACKER__HPP
-#define __TRACKER_HPP
+#define __TRACKER__HPP
 
 #include "entity.hpp"
 #include <string>
@@ -17,36 +17,28 @@ class Tracker{
         const bool visualize;
         const uint16_t rows;
         const uint16_t cols;
-        cv::Mat img;
+        cv::Mat frame;
         vector<Entity> entities;
         vector<Entity> currentRecognition;
         vector<Entity> currentPrediction;
 
-        Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* img, uint16_t rows, uint16_t cols, bool visualize);
+        Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols, bool visualize);
 
         void setTrackPoints(uint16_t* points, uint16_t* types, uint16_t size);
 
-        void setImg(uint8_t* img);
+        void setFrame(uint8_t* frame);
 
         void drawEntities();
 
         void drawPredictions();
         
-        uint* findSimilarRectes();
-
         vector<Entity> rectsToEntites(vector<Rect> rects, uint16_t* pointsWithClass);
-
-        void stablePoints();
 
         void distanceTrack();
 
         void addToTrajectory();
 
-        void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* img);
-
-        void calcVelocities(int numOfFrames);
-
-        void makePredictions(int numOfFrames);
+        void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
 
         cv::Scalar chooseColor(Entity& e);
 
