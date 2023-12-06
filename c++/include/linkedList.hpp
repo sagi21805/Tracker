@@ -1,11 +1,12 @@
 #ifndef __LINKED_LIST_HPP
 #define __LINKED_LIST_HPP
 
-#include "rectExtention.hpp"
+#include "opencvExtention.hpp"
 #include <memory>
 
 typedef struct Node Node;
-typedef cv::Point2i Velocity2D;
+typedef cv::Point2f Velocity2D;
+
 struct Node{
     
     const Rect rect;
