@@ -78,32 +78,42 @@ void Entity::emptyBoundingRect(){
     this->setBoundingRect(Rect());
 }
 
+Rect Entity::possibleLocations(){
+    this->clacVelocities(3);
+    Rect& currentRect = this->getBoundingRect();
+    const int W = currentRect.width;
+    const int H = currentRect.height; 
+    const float K = 0.2; //TODO MAKE A SOMEHOW CALCULATED
+    const float J = 0.5; //TODO MAKE A SOMEHOW CALCULATED
+    Rect possibleLocations = Rect(currentRect.tl() - Point(K * W,  K * H), cv::Size2i(J * W, J * H));
+    cout << "tl corrner: " << currentRect.tl() << "\n";
+    if (this->velocities.x != 0 || this->velocities.y != 0){
+        cout << "JOINED\n";
+        const int N = 2; //TODO MAKE A SOMEHOW CALCULATED
+        const int M = 0.5; //TODO MAKE A SOMEHOW CALCULATED
+        Point A = currentRect.tl() + N * this->velocities;
+        Point B = currentRect.tl() - M * this->velocities;
+        cout << "A: " << A << "\n";
+        cout << "B: " << B << "\n";
+        possibleLocations = Rect(A, B);
+    }
+
+    return possibleLocations;
+}
 
 uint16_t Entity::findClosestEntityIndex(std::vector<Entity>& entityVector){
 
     // uint maxDistanceSquared = 500; //TODO MAKE A SOMEHOW CALCULATED ONE
     uint distanceSquared = UINT32_MAX;
     uint16_t idx = entityVector.size(); 
-    const int W = this->getBoundingRect().width; //TODO MAKE A SOMEHOW CALCULATED ONE
-    const int H = this->getBoundingRect().height; //TODO MAKE A SOMEHOW CALCULATED ONE
-    Rect& currentRect = this->getBoundingRect();
 
-    Rect possibleLocations = Rect(currentRect.tl() + Point(-W, -H), cv::Size2i(2*W, 2*H));
-
-    if (this->velocities.x != 0 && this->velocities.y != 0){
-        const int N = 2;
-        const int M = 0.5;
-        Point A = Point(currentRect.x + N * this->velocities.x, currentRect.y - N * this->velocities.y);
-        Point B = Point(currentRect.x - M * this->velocities.x, currentRect.y + M * this->velocities.y);
-        possibleLocations = Rect(A, B);
-    }
+    Rect possibleLocations = this->possibleLocations();
 
     for (uint16_t i = 0, size = entityVector.size(); i < size; i++){
         Entity& checkedEntity = entityVector[i];
 
         if (this->getType() == checkedEntity.getType()) { 
             uint currentDistanceSquared = this->squareDistanceTo(checkedEntity);
-            cout << currentDistanceSquared << "\n";
             if (currentDistanceSquared < distanceSquared && possibleLocations.contains(checkedEntity.getBoundingRect().tl())){
                 idx = i;
                 distanceSquared = currentDistanceSquared;
@@ -113,21 +123,18 @@ uint16_t Entity::findClosestEntityIndex(std::vector<Entity>& entityVector){
     return idx;
 }
 
-Velocity2D Entity::clacVelocities(int numOfFrames){
+void Entity::clacVelocities(int numOfFrames){
     //units are pixels per frame   
     if (this->trajectory->length >= numOfFrames){
         const Rect& startRect = this->trajectory->getItem(numOfFrames - 1).rect;
         const Rect& endRect = this->trajectory->getItem(0).rect;
-        int velX = ((endRect.x - startRect.x) / numOfFrames);
-        int velY = ((endRect.y - startRect.y) / numOfFrames);
-        return Velocity2D(velX, velY);
+        float velX = ((endRect.x - startRect.x) / numOfFrames);
+        float velY = ((endRect.y - startRect.y) / numOfFrames);
+        this->velocities = Velocity2D(velX, velY);
     } 
-    return Velocity2D();
+    
 }
 
-void Entity::clacAndSetVelocities(int numOfFrames){
-    this->velocities = this->clacVelocities(numOfFrames); //TODO make this number with logic
-}
 
 Rect Entity::predictNextBoundingRect(){
     Rect prediction = this->boundingRect;
@@ -137,7 +144,7 @@ Rect Entity::predictNextBoundingRect(){
 }
 
 void Entity::draw(cv::Mat& frame, cv::Scalar color){
-		cv::rectangle(frame, this->boundingRect, color, 2);
+		this->getBoundingRect().drawRect(frame, color);
 		cv::putText(frame, std::to_string(this->id), this->boundingRect.tl(), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(255, 255, 0), 2);
 }
 
