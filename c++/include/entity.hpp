@@ -25,8 +25,6 @@ class Entity{
         
         void setBoundingRect(Rect newBoundingRect);
 
-        void setVelocity();
-
         Rect& getBoundingRect();
 
         uint16_t getId();
@@ -53,11 +51,11 @@ class Entity{
 
         void emptyBoundingRect();
 
-        Velocity2D clacVelocities(int numOfFrames);
-
-        void clacAndSetVelocities(int numOfFrames);
+        void clacVelocities(int numOfFrames);
 
         Rect predictNextBoundingRect();
+
+        Rect possibleLocations();
         
         void draw(cv::Mat& frame, cv::Scalar color);
 };
