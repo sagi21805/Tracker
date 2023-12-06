@@ -1,4 +1,4 @@
-#include "rectExtention.hpp"
+#include "opencvExtention.hpp"
 
 using std::cout;
 
@@ -8,6 +8,10 @@ uint Rect::squareDistanceTo(Rect& r){
 
 bool Rect::isCloseTo(Rect& r, double distance){
 	return this->squareDistanceTo(r) <  distance;
+}
+
+void Rect::drawRect(cv::Mat& frame, cv::Scalar color){
+    cv::rectangle(frame, *this, color, 2);
 }
 
 // bool Rect::isIntersectingTo(Rect& rect){
@@ -48,6 +52,14 @@ std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size){
 	return rects;  
 
 }
+
+Point operator - (const Point& A, const cv::Point2f& B) {
+    return Point(A.x - B.x, A.y - B.y);
+}
+
+Point operator + (const Point& A, const cv::Point2f& B){
+    return Point(A.x + B.x, A.y + B.y);
+}   
 
 std::ostream& operator<<(std::ostream& os, Rect& rect){
     // Printing all the elements
