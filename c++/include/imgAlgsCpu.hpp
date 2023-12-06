@@ -1,5 +1,5 @@
-#ifndef __IMG_ALGS_CPP__
-#define __IMG_ALGS_CPP__
+#ifndef __frame_ALGS_CPP__
+#define __frame_ALGS_CPP__
 
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
