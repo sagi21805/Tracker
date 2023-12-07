@@ -37,12 +37,7 @@ void Tracker::setTrackPoints(uint16_t *points, uint16_t* types, uint16_t size){
 void Tracker::addToTrajectory(){
 	for (Entity& entity : this->entities){
 		entity.addToTrajectory();
-		cout << entity.getTrajetctory()->length << " ";
-		if (entity.getTrajetctory()->length == 1){
-			std::cin.get();
-		}
 	}
-	cout << "\n";
 }	
 
 cv::Scalar Tracker::chooseColor(Entity& e){
@@ -107,8 +102,8 @@ void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* f
 	
 	this->setTrackPoints(points, types, size);
 	this->setFrame(frame);
-	this->addToTrajectory();
 	this->distanceTrack();
+	this->addToTrajectory();
 
 	if (this->visualize){
 
