@@ -81,22 +81,27 @@ void Entity::emptyBoundingRect(){
 Rect Entity::possibleLocations(){
     this->clacVelocities(3);
     Rect& currentRect = this->getBoundingRect();
-    const int W = currentRect.width;
-    const int H = currentRect.height; 
-    const float K = 0.2; //TODO MAKE A SOMEHOW CALCULATED
-    const float J = 0.5; //TODO MAKE A SOMEHOW CALCULATED
+    const int& W = currentRect.width;
+    const int& H = currentRect.height;
+    const float K = 0.15; //TODO MAKE SOMEHOW CALCULATED
+    const float J = 0.35; //TODO MAKE SOMEHOW CALCULATED
+    // const float N = 5; //TODO MAKE SOMEHOW CALCULATED
+    // const float M = 5; //TODO MAKE SOMEHOW CALCULATED
     Rect possibleLocations = Rect(currentRect.tl() - Point(K * W,  K * H), cv::Size2i(J * W, J * H));
-    cout << "tl corrner: " << currentRect.tl() << "\n";
-    if (this->velocities.x != 0 || this->velocities.y != 0){
-        cout << "JOINED\n";
-        const int N = 2; //TODO MAKE A SOMEHOW CALCULATED
-        const int M = 0.5; //TODO MAKE A SOMEHOW CALCULATED
-        Point A = currentRect.tl() + N * this->velocities;
-        Point B = currentRect.tl() - M * this->velocities;
-        cout << "A: " << A << "\n";
-        cout << "B: " << B << "\n";
-        possibleLocations = Rect(A, B);
-    }
+
+    // if (this->velocities.x != 0 || this->velocities.y != 0){
+    //     cout << this->id << "\n";
+    //     uint16_t x = currentRect.tl().x + N * this->velocities.x;
+    //     uint16_t y = currentRect.tl().y + N * this->velocities.y;
+    //     Point A = Point(x, y);
+    //     x = currentRect.tl().x - M * this->velocities.x;
+    //     y = currentRect.tl().y - M * this->velocities.y;
+    //     Point B = Point(x, y);
+    //     cout << "tl: " << currentRect.tl() << " A: " << A << " B: " << B << " vel: " << this->velocities << "\n";
+    //     possibleLocations = Rect(A, B);
+    // }
+
+
 
     return possibleLocations;
 }
@@ -128,8 +133,9 @@ void Entity::clacVelocities(int numOfFrames){
     if (this->trajectory->length >= numOfFrames){
         const Rect& startRect = this->trajectory->getItem(numOfFrames - 1).rect;
         const Rect& endRect = this->trajectory->getItem(0).rect;
-        float velX = ((endRect.x - startRect.x) / numOfFrames);
-        float velY = ((endRect.y - startRect.y) / numOfFrames);
+        cout << "endX: " << endRect.x << " startX: " << startRect.x << "\n";
+        int velX = (endRect.x - startRect.x) / numOfFrames;
+        int velY = (endRect.y - startRect.y) / numOfFrames;
         this->velocities = Velocity2D(velX, velY);
     } 
     
