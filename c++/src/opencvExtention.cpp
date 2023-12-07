@@ -41,7 +41,6 @@ std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size){
 	
 	std::vector<Rect> rects;
     rects.reserve(size);
-    cout << "size: " << size << "\n";
 	for (uint16_t i = 0; i < size; i++){
         uint16_t* currentPoint = points + i*POINT_SIZE;
         Point A = Point(currentPoint[0], currentPoint[1]);
@@ -53,12 +52,12 @@ std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size){
 
 }
 
-Point operator - (const Point& A, const cv::Point2f& B) {
-    return Point(A.x - B.x, A.y - B.y);
+Point operator - (const Point& a, const cv::Point2f& b) {
+    return Point(cv::saturate_cast<uint16_t>(a.x - b.x), cv::saturate_cast<uint16_t>(a.y - b.y));
 }
 
-Point operator + (const Point& A, const cv::Point2f& B){
-    return Point(A.x + B.x, A.y + B.y);
+Point operator + (const Point& a, const cv::Point2f& b){
+    return Point(cv::saturate_cast<uint16_t>(a.x + b.x), cv::saturate_cast<uint16_t>(a.y + b.y));
 }   
 
 std::ostream& operator<<(std::ostream& os, Rect& rect){

@@ -18,9 +18,9 @@ class Rect : public cv::Rect_<uint16_t>{
     // bool isIntersectingTo(Rect& r);
 };
 
-Point operator + (const Point& A, const cv::Point2f& B);
+Point operator + (const Point& a, const cv::Point2f& b);
 
-Point operator - (const Point& A, const cv::Point2f& B);
+Point operator - (const Point& a, const cv::Point2f& b);
 
 std::ostream& operator<<(std::ostream& os, Rect& r);
 
