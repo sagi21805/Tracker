@@ -17,7 +17,7 @@ success, frame = cap.read()
 
 def prepFrame(frame):
     # frame = cv2.resize(frame, (640, 640))
-    frame = frame[150 : 550]
+    frame = frame[180 : 480]
     # frame = cv2.resize(frame, (1280, 500))
     return frame
 
@@ -44,8 +44,8 @@ while cap.isOpened():
         frame = prepFrame(frame)
         t = time()
         resultsB = modelBumpers(frame, verbose=False)
-        print(time() - t)
-        print("CALLED PYTHON --------------------------")
+        # print(time() - t)
+        # print("CALLED PYTHON --------------------------")
         t = time()
         tracker.track(resultsB[0], frame)
         
