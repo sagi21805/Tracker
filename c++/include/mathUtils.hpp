@@ -10,4 +10,8 @@ typedef cv::Point_<uint16_t> Point;
 
 uint squareDistance(Point A, Point B);
 
+template <typename T> int signum(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 #endif
