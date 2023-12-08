@@ -8,10 +8,12 @@
 using std::vector;
 typedef cv::Point_<uint16_t> Point;
 
+/**
+ * @file mathUtils.cpp
+ * @brief Calculates the Squared Distance between two Points.
+ * @returns Return the Squared distance between the two points.
+ * @author Sagi Or
+*/
 uint squareDistance(Point A, Point B);
-
-template <typename T> int signum(T val) {
-    return (T(0) < val) - (val < T(0));
-}
 
 #endif
