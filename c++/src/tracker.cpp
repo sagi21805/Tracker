@@ -23,13 +23,6 @@ std::vector<Entity> Tracker::rectsToEntites(std::vector<Rect> rects, uint16_t* c
 	return recognition;
 }
 
-/*
-Sets the current Rectes of the tracker
--
-Args: 
- - `pointsWithClass (uint[])` -> xywh points with classes [x, y, w, h, c].
- - `size (uint)` -> How many points are in the array (Size of the array / size of a point).
-*/
 void Tracker::setTrackPoints(uint16_t *points, uint16_t* types, uint16_t size){
 	this->currentRecognition = rectsToEntites(pointsToRects(points, size), types); //sets the currentStableStack inside stablePoints.
 }
@@ -56,13 +49,13 @@ cv::Scalar Tracker::chooseColor(Entity& e){
 }
 
 void Tracker::distanceTrack(){
-
+	uint8_t numOfFrames = 3;
 	uint16_t size = MIN(this->entities.size(), this->currentRecognition.size());
 	for (uint16_t i = 0; i < size; i++){
 		Entity& checkedEntity = this->entities[i];	
-		Rect c = checkedEntity.possibleLocations();
+		Rect c = checkedEntity.predictPossibleLocations(numOfFrames);
 		c.drawRect(this->frame, CV_RGB(255, 255, 255));
-		uint16_t closetEntityIndex = checkedEntity.findClosestEntityIndex(this->currentRecognition);
+		uint16_t closetEntityIndex = checkedEntity.matchEntity(this->currentRecognition, numOfFrames);
 		Entity& closetEntity = this->currentRecognition[closetEntityIndex];
 
 		checkedEntity.setBoundingRect(closetEntity.getBoundingRect());

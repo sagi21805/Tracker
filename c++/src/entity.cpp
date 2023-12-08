@@ -95,8 +95,7 @@ Velocity2D Entity::calcVelocity(uint8_t numOfFrames){
 }
 
 void Entity::addToTrajectory(){
-    std::shared_ptr<Node> newNode = std::make_shared<Node>(this->boundingRect, this->velocity);
-    this->trajectory->prepend(newNode);
+    this->trajectory->prepend(Node(this->boundingRect, this->velocity));
 }
 
 void Entity::emptyBoundingRect(){
