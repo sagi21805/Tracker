@@ -52,14 +52,6 @@ std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size){
 
 }
 
-Point operator - (const Point& a, const cv::Point2f& b) {
-    return Point(cv::saturate_cast<uint16_t>(a.x - b.x), cv::saturate_cast<uint16_t>(a.y - b.y));
-}
-
-Point operator + (const Point& a, const cv::Point2f& b){
-    return Point(cv::saturate_cast<uint16_t>(a.x + b.x), cv::saturate_cast<uint16_t>(a.y + b.y));
-}   
-
 std::ostream& operator<<(std::ostream& os, Rect& rect){
     // Printing all the elements
     os << "[" << rect.x << " " << rect.y << " " << rect.width << " " << rect.height << "]";
