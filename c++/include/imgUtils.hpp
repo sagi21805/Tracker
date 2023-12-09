@@ -1,5 +1,5 @@
-#ifndef __frame_ALGS_CPP__
-#define __frame_ALGS_CPP__
+#ifndef _ImgUtils
+#define _ImgUtils
 
 #include "opencvExtention.hpp"
 

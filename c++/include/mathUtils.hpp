@@ -1,5 +1,5 @@
-#ifndef __MATH_UTILS__HPP_
-#define __MATH_UTILS__HPP_
+#ifndef _MathUtils
+#define _MathUtils
 
 #include <cmath>
 #include <opencv4/opencv2/opencv.hpp>

@@ -1,5 +1,5 @@
-#ifndef VECTOR_FUNCS__HPP
-#define VECTOR_FUNCS__HPP
+#ifndef _VectorFuncs
+#define _VectorFuncs
 
 #include <iostream>
 #include <vector>

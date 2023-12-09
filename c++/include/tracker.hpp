@@ -1,5 +1,5 @@
-#ifndef __TRACKER__HPP
-#define __TRACKER__HPP
+#ifndef _Tracker
+#define _Tracker
 
 //TODO consider add a Struct for a Track which contains points, types and size.
 

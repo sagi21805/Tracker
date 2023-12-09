@@ -1,5 +1,5 @@
-#ifndef __BOUNDING_BOX_HPP
-#define __BOUNDING_BOX_HPP
+#ifndef _OpencvExtention
+#define _OpenCvExtension
 
 #include "mathUtils.hpp"
 #include "vectorFuncs.hpp"
