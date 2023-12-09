@@ -2,50 +2,33 @@
 
 Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols, bool visualize) 
 	: visualize(visualize), rows(rows), cols(cols){
-	setTrackPoints(points, types, size); // sets this current recognition
+	setCurrentTrack(points, types, size); // sets this current recognition
 	setFrame(frame);
 	this->entities = vector<Entity>(this->currentRecognition);
 	this->addToTrajectory();
+}
+
+void Tracker::setCurrentTrack(uint16_t *points, uint16_t* types, uint16_t size){
+	this->currentRecognition = rectsToEntites(pointsToRects(points, size), types); //sets the currentStableStack inside stablePoints.
 }
 
 void Tracker::setFrame(uint8_t* frame){
 	this->frame = cv::Mat(this->rows, this->cols, CV_8UC3, frame);	
 }
 
-std::vector<Entity> Tracker::rectsToEntites(std::vector<Rect> rects, uint16_t* classes){
-	std::vector<Entity> recognition;
-    recognition.reserve(rects.size());
-
-	for (uint16_t i = 0, size = rects.size(); i < size; i++){
-        recognition.emplace_back(i, classes[i], rects[i]);
+void Tracker::drawEntities(){
+	for (uint16_t i = 0, size = this->entities.size(); i < size; i++){
+		Entity& drawnEntity = this->entities[i];
+		cv::Scalar color = this->chooseColor(drawnEntity);
+		drawnEntity.draw(this->frame, color);
 	}
-
-	return recognition;
 }
 
-void Tracker::setTrackPoints(uint16_t *points, uint16_t* types, uint16_t size){
-	this->currentRecognition = rectsToEntites(pointsToRects(points, size), types); //sets the currentStableStack inside stablePoints.
-}
-
-void Tracker::addToTrajectory(){
-	for (Entity& entity : this->entities){
-		entity.addToTrajectory();
+void Tracker::drawPredictions(){
+	for (uint16_t i = 0, size = this->currentPrediction.size(); i < size; i++){
+		Entity& drawnEntity = this->currentPrediction[i];
+		drawnEntity.draw(this->frame, CV_RGB(255, 255, 255));
 	}
-}	
-
-cv::Scalar Tracker::chooseColor(Entity& e){
-	cv::Scalar color;
-	switch (e.getType()){
-			case RedRobot:
-				color = CV_RGB(255, 0, 0);
-				break;
-			case BlueRobot:
-				color = CV_RGB(0, 0, 255);
-				break;
-			default:
-				color = CV_RGB(0, 0, 0);
-		}
-	return color;
 }
 
 void Tracker::distanceTrack(){
@@ -72,28 +55,43 @@ void Tracker::distanceTrack(){
 
 }
 
-
-void Tracker::drawEntities(){
-	for (uint16_t i = 0, size = this->entities.size(); i < size; i++){
-		Entity& drawnEntity = this->entities[i];
-		cv::Scalar color = this->chooseColor(drawnEntity);
-		drawnEntity.draw(this->frame, color);
+void Tracker::addToTrajectory(){
+	for (Entity& entity : this->entities){
+		entity.addToTrajectory();
 	}
+}	
+
+cv::Scalar Tracker::chooseColor(Entity& e){
+	cv::Scalar color;
+	switch (e.getType()){
+			case RedRobot:
+				color = CV_RGB(255, 0, 0);
+				break;
+			case BlueRobot:
+				color = CV_RGB(0, 0, 255);
+				break;
+			default:
+				color = CV_RGB(0, 0, 0);
+		}
+	return color;
 }
 
-void Tracker::drawPredictions(){
-	for (uint16_t i = 0, size = this->currentPrediction.size(); i < size; i++){
-		Entity& drawnEntity = this->currentPrediction[i];
-		drawnEntity.draw(this->frame, CV_RGB(255, 255, 255));
-	}
-}
+std::vector<Entity> Tracker::rectsToEntites(std::vector<Rect> rects, uint16_t* classes){
+	std::vector<Entity> recognition;
+    recognition.reserve(rects.size());
 
+	for (uint16_t i = 0, size = rects.size(); i < size; i++){
+        recognition.emplace_back(i, classes[i], rects[i]);
+	}
+
+	return recognition;
+}
 
 //TODO using a lot of shared pointers - performence heavy.
 //TODO imporve all function performence!.
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
 	
-	this->setTrackPoints(points, types, size);
+	this->setCurrentTrack(points, types, size);
 	this->setFrame(frame);
 	this->distanceTrack();
 	this->addToTrajectory();
