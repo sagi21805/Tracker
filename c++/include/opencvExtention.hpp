@@ -1,5 +1,5 @@
-#ifndef _OpencvExtention
-#define _OpenCvExtension
+#ifndef _OpencvExtention_
+#define _OpenCvExtension_
 
 #include "mathUtils.hpp"
 #include "vectorFuncs.hpp"
@@ -69,7 +69,7 @@ std::ostream& operator<<(std::ostream& os, Rect& r);
  * @author Sagi Or
 */
 template<typename Ty1_, typename Ty2_> Ty1_ addPoints(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
-    return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty_1>(a.y + b.y));
+    return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty1_>(a.y + b.y));
 }
 
 /**
@@ -93,7 +93,7 @@ template<typename Ty1_, typename Ty2_> Ty1_ operator+(const cv::Point_<Ty1_>& a,
  * @author Sagi Or
 */
 template<typename Ty1_, typename Ty2_> Ty1_ substractPoints(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
-    return Point(cv::saturate_cast<Ty1_>(a.x - b.x), cv::saturate_cast<Ty_1>(a.y - b.y));
+    return Point(cv::saturate_cast<Ty1_>(a.x - b.x), cv::saturate_cast<Ty1_>(a.y - b.y));
 }
 
 /**
@@ -105,7 +105,7 @@ template<typename Ty1_, typename Ty2_> Ty1_ substractPoints(const cv::Point_<Ty1
  * @author Sagi Or
 */
 template<typename Ty1_, typename Ty2_> Ty1_ operator-(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
-    return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty_1>(a.y + b.y));
+    return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty1_>(a.y + b.y));
 }
 
 /**

@@ -1,10 +1,8 @@
-#ifndef _Tracker
-#define _Tracker
-
-//TODO consider add a Struct for a Track which contains points, types and size.
+#ifndef _Tracker_
+#define _Tracker_
 
 #include "entity.hpp"
-
+//TODO consider add a Struct for a Track which contains points, types and size.
 
 /**
  * @file tracker.hpp

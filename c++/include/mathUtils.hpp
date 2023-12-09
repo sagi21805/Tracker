@@ -1,5 +1,5 @@
-#ifndef _MathUtils
-#define _MathUtils
+#ifndef _MathUtils_
+#define _MathUtils_
 
 #include <cmath>
 #include <opencv4/opencv2/opencv.hpp>

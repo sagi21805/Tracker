@@ -42,7 +42,7 @@ void Tracker::distanceTrack(){
 		Entity& closetEntity = this->currentRecognition[closetEntityIndex];
 
 		checkedEntity.setBoundingRect(closetEntity.getBoundingRect());
-		currentRecognition.erase(currentRecognition.begin() + closetEntityIndex);		
+		currentRecognition.erase(currentRecognition.begin() + closetEntityIndex);	
 	}
 
 	//at the end of the above loop current recognitions needs to be empty. if it doesnt, this loop is done to add to entities.

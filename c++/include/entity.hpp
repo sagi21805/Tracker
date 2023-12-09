@@ -1,5 +1,5 @@
-#ifndef _Entity
-#define _Entity
+#ifndef _Entity_
+#define _Entity_
 
 #include "linkedList.hpp"
 #include <limits>

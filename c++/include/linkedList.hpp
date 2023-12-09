@@ -1,5 +1,5 @@
-#ifndef _LinkedList
-#define _LinkedList
+#ifndef _LinkedList_
+#define _LinkedList_
 
 #include "opencvExtention.hpp"
 #include <memory>

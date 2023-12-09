@@ -1,5 +1,5 @@
-#ifndef _ImgUtils
-#define _ImgUtils
+#ifndef _ImgUtils_
+#define _ImgUtils_
 
 #include "opencvExtention.hpp"
 

@@ -1,5 +1,5 @@
-#ifndef _VectorFuncs
-#define _VectorFuncs
+#ifndef _VectorFuncs_
+#define _VectorFuncs_
 
 #include <iostream>
 #include <vector>
@@ -15,9 +15,9 @@ using std::vector;
  * @param __i The index to remove from.
  * @author Sagi Or
 */
-template<typename T> void removeAtIndex(vector<T> &__Vect, uint16_t __i){    
+template<typename T> void removeAtIndex(vector<T> &__vect, uint16_t __i){    
     //TODO add exception on size.
-    vect.erase(vect.begin() + index);
+    __vect.erase(__vect.begin() + __i);
 }
 
 /**
@@ -26,9 +26,9 @@ template<typename T> void removeAtIndex(vector<T> &__Vect, uint16_t __i){
  * @param __vect The vector to print.
  * @author Sagi Or
 */
-template <typename T> std::ostream& operator<<(std::ostream& os, const std::vector<T>& __Vect){
+template <typename T> std::ostream& operator<<(std::ostream& os, const std::vector<T>& __vect){
     os << "[";
-    for (auto element : vector) {
+    for (T element : __vect) {
         os << element << " ";   
     }
     os << "\b]";
