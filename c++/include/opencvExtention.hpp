@@ -52,7 +52,7 @@ class Rect : public cv::Rect_<uint16_t>{
 };
 
 /**
- * @file opencvExtention.hpp
+ * @file opencvExtention.cpp
  * @brief Define the << operator to easly print Rects.
  * @param r Prints the rect [x, y, w, h] and its area.
  * @returns A Point of the First type that represents the difference in the Points.
@@ -111,11 +111,11 @@ template<typename Ty1_, typename Ty2_> Ty1_ operator-(const cv::Point_<Ty1_>& a,
 /**
  * @file opencvExtention.hpp
  * @brief Turns a stream of points of boundingBoxes from yolo into a vector of Rects.
- * @param pointsWithClass array of points in order of [x1, y1, x2, y2, type, x1 ....].
+ * @param points array of points in order of [x1, y1, x2, y2, type, x1 ....].
  * @param size How many points are in the array.
  * @returns A vector of Rects contains all the points as Rect object.
  * @author Sagi Or
 */
-std::vector<Rect> pointsToRects(uint16_t *pointsWithClass, uint16_t size);
+std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size);
 
 #endif 
