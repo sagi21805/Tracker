@@ -68,7 +68,7 @@ std::ostream& operator<<(std::ostream& os, Rect& r);
  * @returns A Point of the First type that represents the sum of the Points.
  * @author Sagi Or
 */
-template<typename Ty1_, typename Ty2_> Ty1_ addPoints(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
+template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> addPoints(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
     return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty1_>(a.y + b.y));
 }
 
@@ -80,7 +80,7 @@ template<typename Ty1_, typename Ty2_> Ty1_ addPoints(const cv::Point_<Ty1_>& a,
  * @returns A Point of the First type that represents the sum of the Points.
  * @author Sagi Or
 */
-template<typename Ty1_, typename Ty2_> Ty1_ operator+(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
+template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> operator+(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
     return addPoints(a, b);
 }
 
@@ -92,7 +92,7 @@ template<typename Ty1_, typename Ty2_> Ty1_ operator+(const cv::Point_<Ty1_>& a,
  * @returns A Point of the First type that represents the difference in the Points.
  * @author Sagi Or
 */
-template<typename Ty1_, typename Ty2_> Ty1_ substractPoints(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
+template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> substractPoints(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
     return Point(cv::saturate_cast<Ty1_>(a.x - b.x), cv::saturate_cast<Ty1_>(a.y - b.y));
 }
 
@@ -104,7 +104,7 @@ template<typename Ty1_, typename Ty2_> Ty1_ substractPoints(const cv::Point_<Ty1
  * @returns A Point of the First type that represents the difference in the Points.
  * @author Sagi Or
 */
-template<typename Ty1_, typename Ty2_> Ty1_ operator-(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
+template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> operator-(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
     return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty1_>(a.y + b.y));
 }
 
