@@ -1,0 +1,7 @@
+{
+    "pointSize" : 4,
+    "visualize" : true,
+    "waitKey" : 1,
+    "predictionDefualtOffsetCoefficient" : 0.35,
+    "predictionDefualtSizeCoefficient" : 0.15
+}
