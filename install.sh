@@ -12,3 +12,10 @@ cmake -B build
 cd build 
 make -j5 
 sudo make install
+cd ~
+git clone https://github.com/nlohmann/json.git
+cd json
+cmake -B build
+cd build
+make -j5
+sudo make install
