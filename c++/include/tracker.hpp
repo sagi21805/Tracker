@@ -2,6 +2,7 @@
 #define _Tracker_
 
 #include "entity.hpp"
+#include "config.hpp"
 //TODO consider add a Struct for a Track which contains points, types and size.
 
 /**
@@ -26,7 +27,6 @@ enum Types{
 class Tracker{
     
     public:
-        const bool visualize; //if to visualize the output
         const uint16_t rows; //The number of rows in the given Img (assumes The same for each input).
         const uint16_t cols; //The number of columns in the given Img (assumes The same for each input).
         cv::Mat frame; //The current frame that is being tracked.
@@ -46,10 +46,9 @@ class Tracker{
          * @param frame The current frame that the recognition is on.
          * @param rows The num of rows in the frame.
          * @param cols The num of cols in the frame.
-         * @param visualize if to visualize the results (slower).
          * @author Sagi Or
         */
-        Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols, bool visualize);
+        Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols);
 
 
 /////////////////////////////////////////////////////// Set Functions ///////////////////////////////////////////////////////////////////////////////////////

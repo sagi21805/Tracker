@@ -1,7 +1,8 @@
 #include "tracker.hpp"
 
-Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols, bool visualize) 
-	: visualize(visualize), rows(rows), cols(cols){
+Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
+	: rows(rows), cols(cols){
+	config("config.json");
 	setCurrentTrack(points, types, size); // sets this current recognition
 	setFrame(frame);
 	this->entities = vector<Entity>(this->currentRecognition);
@@ -90,18 +91,17 @@ std::vector<Entity> Tracker::rectsToEntites(std::vector<Rect> rects, uint16_t* c
 //TODO using a lot of shared pointers - performence heavy.
 //TODO imporve all function performence!.
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
-	
 	this->setCurrentTrack(points, types, size);
 	this->setFrame(frame);
 	this->distanceTrack();
 	this->addToTrajectory();
 
-	if (this->visualize){
+	if (_visualize){
 
 		this->drawPredictions();
 		this->drawEntities();
 		cv::imshow("frame", this->frame);
-		cv::waitKey(1);
+		cv::waitKey(_waitKey);
 	}
 	this->currentRecognition.clear();
 	this->currentPrediction.clear();

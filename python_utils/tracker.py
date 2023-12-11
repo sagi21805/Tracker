@@ -18,14 +18,14 @@ class Tracker():
     @staticmethod
     def setFuncs():
         
-        cpp.lib._Tracker.argtypes = [cpp.uint16_array, cpp.uint16_array, cpp.uint16, cpp.uint8_array, cpp.uint16, cpp.uint16, cpp.bool]
+        cpp.lib._Tracker.argtypes = [cpp.uint16_array, cpp.uint16_array, cpp.uint16, cpp.uint8_array, cpp.uint16, cpp.uint16]
         cpp.lib._Tracker.restype = cpp.object
         
         cpp.lib._track.argtypes = [cpp.object, cpp.uint16_array, cpp.uint16_array, cpp.uint16, cpp.uint8_array]
         
         
         
-    def __init__(self, YOLO_result, coloredframe: np.ndarray, visualize = False) -> None:
+    def __init__(self, YOLO_result, coloredframe: np.ndarray) -> None:
         """Creates a Tracker object
         """
         
@@ -33,7 +33,7 @@ class Tracker():
         
         points, types, size = Tracker.YoloToPointsAndTypes(YOLO_result)
 
-        self.obj = cpp.lib._Tracker(points, types, cpp.c_uint16(size), Tracker.frameToArray(coloredframe), cpp.c_uint16(coloredframe.shape[0]), cpp.c_uint16(coloredframe.shape[1]), cpp.c_bool(visualize))
+        self.obj = cpp.lib._Tracker(points, types, cpp.c_uint16(size), Tracker.frameToArray(coloredframe), cpp.c_uint16(coloredframe.shape[0]), cpp.c_uint16(coloredframe.shape[1]))
     
     def track(self, YOLO_result, coloredframe: np.ndarray):
         points, types, size = Tracker.YoloToPointsAndTypes(YOLO_result)

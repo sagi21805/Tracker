@@ -32,7 +32,7 @@ if success:
     frame = prepFrame(frame)
     resultsB = modelBumpers(frame, verbose=False)
     print("[INFO]: Creating Tracker")
-    tracker = Tracker(resultsB[0], frame, True) 
+    tracker = Tracker(resultsB[0], frame) 
     print("[INFO]: Tracker Created")
     
 while cap.isOpened():
