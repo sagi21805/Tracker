@@ -4,9 +4,6 @@
 #include "mathUtils.hpp"
 #include "vectorFuncs.hpp"
 
-#define POINT_SIZE  (4)
-#define POINTCLASS_SIZE (5)
-
 /**
  * @file opencvExtention.hpp
  * @brief This is an extension to the Rect opencv class which allows more functionallity.

@@ -2,7 +2,6 @@
 #define _Tracker_
 
 #include "entity.hpp"
-#include "config.hpp"
 //TODO consider add a Struct for a Track which contains points, types and size.
 
 /**

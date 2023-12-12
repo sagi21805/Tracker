@@ -33,13 +33,12 @@ void Tracker::drawPredictions(){
 }
 
 void Tracker::distanceTrack(){
-	uint8_t numOfFrames = 3;
 	uint16_t size = MIN(this->entities.size(), this->currentRecognition.size());
 	for (uint16_t i = 0; i < size; i++){
 		Entity& checkedEntity = this->entities[i];	
-		Rect c = checkedEntity.predictPossibleLocations(numOfFrames);
+		Rect c = checkedEntity.predictPossibleLocations(_numOfFrames);
 		c.drawRect(this->frame, CV_RGB(255, 255, 255));
-		uint16_t closetEntityIndex = checkedEntity.matchEntity(this->currentRecognition, numOfFrames);
+		uint16_t closetEntityIndex = checkedEntity.matchEntity(this->currentRecognition, _numOfFrames);
 		Entity& closetEntity = this->currentRecognition[closetEntityIndex];
 
 		checkedEntity.setBoundingRect(closetEntity.getBoundingRect());
@@ -52,8 +51,6 @@ void Tracker::distanceTrack(){
 	for (uint16_t i = 0; i < entitiesLeft; i++){
 		this->entities.emplace_back(this->currentRecognition[i]);
 	}
-	
-
 }
 
 void Tracker::addToTrajectory(){
