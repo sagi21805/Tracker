@@ -1,3 +1,8 @@
+# About
+
+Hi everyone!
+This is a side project of mine that ment to br an easy to use Tracker using a custom SORT like algorithem.
+
 
 # Installation
 
