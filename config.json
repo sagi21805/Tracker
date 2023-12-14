@@ -2,6 +2,12 @@
     "pointSize" : 4,
     "visualize" : true,
     "waitKey" : 1,
-    "predictionDefualtOffsetCoefficient" : 0.35,
-    "predictionDefualtSizeCoefficient" : 0.15
+    "numOfFrames" : 3,
+    "predictionOffsetCoefficient" : 0.15,
+    "predictionSizeCoefficient" : 0.35,
+    "convolutionThresh" : 0.25,
+    "colors" : {
+        "blueRobot" : [0, 0, 255],
+        "redRobot" : [255, 0, 0]
+    }
 }
