@@ -2,7 +2,7 @@
 
 ////////////////////////////////// constructors //////////////////////////////////////////////////
 
-Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect) 
+Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect, Mat& frameInside)
     : id(id), type(type){
     this->setBoundingRect(boundingRect);
     this->trajectory = std::make_shared<LinkedList>(boundingRect, Velocity2D(0, 0));
@@ -94,6 +94,11 @@ Velocity2D Entity::calcVelocity(uint8_t numOfFrames){
     return Velocity2D();
 }
 
+vector<Point> Entity::calcContour(Mat& frameInside){
+    Mat entityInFrame = frameInside(this->boundingRect);
+    
+} //TODO make this function.
+
 void Entity::addToTrajectory(){
     this->trajectory->prepend(Node(this->boundingRect, this->velocity));
 }
@@ -107,10 +112,10 @@ uint Entity::squareDistanceTo(Entity& e){
 }
 
 Rect Entity::predictNextBoundingRect(uint8_t numOfFrames){
-    this->calcVelocity(numOfFrames);
+    Velocity2D vel = this->calcVelocity(numOfFrames);
     Rect prediction = this->boundingRect;
-    prediction.x += this->velocity.x;
-    prediction.y += this->velocity.y;
+    prediction.x += vel.x;
+    prediction.y += vel.y;
     return prediction;
 }
 
@@ -119,12 +124,9 @@ Rect Entity::predictPossibleLocations(uint8_t numOfFrames){
     Rect& currentRect = this->getBoundingRect();
     const int& W = currentRect.width;
     const int& H = currentRect.height;
-    const float K = 0.15; //TODO MAKE SOMEHOW CALCULATED
-    const float J = 0.35; //TODO MAKE SOMEHOW CALCULATED
-    // const float N = 5; //TODO MAKE SOMEHOW CALCULATED
-    // const float M = 5; //TODO MAKE SOMEHOW CALCULATED
+    const float& K = _predictionOffsetCoefficient; 
+    const float& J = _predictionSizeCoefficient;
     Rect possibleLocations = Rect(currentRect.tl() - Point(K * W,  K * H), cv::Size2i(J * W, J * H));
-
     // if (this->velocity.x != 0 || this->velocity.y != 0){
     //     cout << this->id << "\n";
     //     uint16_t x = currentRect.tl().x + N * this->velocity.x;
@@ -152,7 +154,8 @@ uint16_t Entity::matchEntity(std::vector<Entity>& entityVector, uint8_t numOfFra
 
         if (this->getType() == checkedEntity.getType()) { 
             uint currentDistanceSquared = this->squareDistanceTo(checkedEntity);
-            if (currentDistanceSquared < distanceSquared && possibleLocations.contains(checkedEntity.getBoundingRect().tl())){
+            if (currentDistanceSquared < distanceSquared && 
+                possibleLocations.contains(checkedEntity.getBoundingRect().tl())){
                 idx = i;
                 distanceSquared = currentDistanceSquared;
             }

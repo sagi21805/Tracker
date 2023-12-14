@@ -1,6 +1,8 @@
 #ifndef _Entity_
 #define _Entity_
 
+//TODO write ducomentation with chat gpt.
+
 #include "linkedList.hpp"
 #include <limits>
 #include "vectorFuncs.hpp"
@@ -26,6 +28,7 @@ class Entity{
         Velocity2D velocity; //The Velocity (x, y) of the Entity in pixels per frame
         Rect boundingRect; //The bounding rectangle of the Entity in pixels
         std::shared_ptr<LinkedList> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
+        //countour
 
     public:
         
@@ -39,7 +42,7 @@ class Entity{
          * @param BoundingRect The boundingRect of the Entity.
          * @author Sagi Or
         */
-        Entity(uint16_t id, uint16_t type, Rect boundingRect);
+        Entity(uint16_t id, uint16_t type, Rect boundingRect, Mat& frameInside);
 
         /**
          * @file entity.cpp
@@ -186,6 +189,8 @@ class Entity{
         */
         Velocity2D calcVelocity(uint8_t numOfFrames);
 
+        vector<Point> calcContour(Mat& frameInside);
+
         /**
          * @file entity.cpp
          * @brief Addes the current BoundingRect and Velocity to the Trajectory.
@@ -218,12 +223,24 @@ class Entity{
         Rect predictNextBoundingRect(uint8_t numOfFrame);
 
         /**
-         * @file entity.cpp
-         * @brief Returns the index in an entityVector of the matching Entity based on predictions, distance and more! 
-         * @param numOfFrames The number of past frames data to predict on.
-         * @returns Rect of the Predicted possible locations of the TopLeft Corner of the Entity.
-         * @author Sagi Or
-        */
+         * @brief Predicts possible future locations for the entity based on its current trajectory and velocity.
+         * @param numOfFrames The number of frames into the future for which to predict possible locations.
+         * @return A rectangular region representing the possible locations of the entity.
+         *
+         * This function calculates the possible locations of the entity in the future based on its current trajectory
+         * and velocity. It considers the bounding rectangle of the entity and applies an offset and size coefficient
+         * to create a region that represents the potential locations the entity topLeft corner of the boundingBox might occupy. 
+         * The coefficients K and J control the offset and size of the region, respectively.
+         *
+         * The calculation takes into account the width (W) and height (H) of the current bounding rectangle. The region
+         * is computed as a rectangle with its top-left corner shifted by an offset (K * W, K * H) and a size of (J * W, J * H).
+         *
+         * Note: The commented-out code block provides an alternative method for adjusting the predicted locations based on
+         * the entity's velocity. Depending on the use case, you may choose to uncomment and modify that part of the code.
+         *
+         * @see Entity::calcVelocity(uint8_t numOfFrames) for calculating the entity's velocity.
+         * @see _predictionOffsetCoefficient and _predictionSizeCoefficient for controlling the prediction parameters.
+         */
         Rect predictPossibleLocations(uint8_t numOfFrames);
         
         /**
