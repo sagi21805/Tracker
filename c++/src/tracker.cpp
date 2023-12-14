@@ -3,14 +3,14 @@
 Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
 	: rows(rows), cols(cols){
 	config("config.json");
-	setCurrentTrack(points, types, size); // sets this current recognition
-	setFrame(frame);
+	this->setCurrentTrack(points, types, size, frame); // sets this current recognition
 	this->entities = vector<Entity>(this->currentRecognition);
 	this->addToTrajectory();
 }
 
-void Tracker::setCurrentTrack(uint16_t *points, uint16_t* types, uint16_t size){
-	this->currentRecognition = rectsToEntites(pointsToRects(points, size), types); //sets the currentStableStack inside stablePoints.
+void Tracker::setCurrentTrack(uint16_t *points, uint16_t* types, uint16_t size, uint8_t* frame){
+	this->setFrame(frame);
+	this->generateEntites(pointsToRects(points, size), types);
 }
 
 void Tracker::setFrame(uint8_t* frame){
@@ -63,10 +63,10 @@ cv::Scalar Tracker::chooseColor(Entity& e){
 	cv::Scalar color;
 	switch (e.getType()){
 			case RedRobot:
-				color = CV_RGB(255, 0, 0);
+				color = _colors[RedRobot];
 				break;
 			case BlueRobot:
-				color = CV_RGB(0, 0, 255);
+				color = _colors[BlueRobot];
 				break;
 			default:
 				color = CV_RGB(0, 0, 0);
@@ -74,22 +74,20 @@ cv::Scalar Tracker::chooseColor(Entity& e){
 	return color;
 }
 
-std::vector<Entity> Tracker::rectsToEntites(std::vector<Rect> rects, uint16_t* classes){
-	std::vector<Entity> recognition;
-    recognition.reserve(rects.size());
-
+void Tracker::generateEntites(vector<Rect> rects, uint16_t* types){;
+    this->currentRecognition.reserve(rects.size());
+	
 	for (uint16_t i = 0, size = rects.size(); i < size; i++){
-        recognition.emplace_back(i, classes[i], rects[i]);
+
+        this->currentRecognition.emplace_back(i, types[i], rects[i], this->frame);
 	}
 
-	return recognition;
 }
 
 //TODO using a lot of shared pointers - performence heavy.
 //TODO imporve all function performence!.
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
-	this->setCurrentTrack(points, types, size);
-	this->setFrame(frame);
+	this->setCurrentTrack(points, types, size, frame);
 	this->distanceTrack();
 	this->addToTrajectory();
 

@@ -2,6 +2,7 @@
 #define _Tracker_
 
 #include "entity.hpp"
+#include "imgUtils.hpp"
 //TODO consider add a Struct for a Track which contains points, types and size.
 
 /**
@@ -54,13 +55,14 @@ class Tracker{
 
         /**
          * @file tracker.cpp
-         * @brief Sets the Tracker current track to the given points.
+         * @brief Sets the Tracker current track to the given points and frame.
          * @param points The array of points of the Rectangles that are recognized by Yolo.
          * @param types The array of types of the Rectangles that are recognized by Yolo.
          * @param size The size of the types array (how many points are in the first array).
+         * @param frame 
          * @author Sagi Or
         */
-        void setCurrentTrack(uint16_t* points, uint16_t* types, uint16_t size);
+        void setCurrentTrack(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
 
         /**
          * @file tracker.cpp
@@ -116,7 +118,7 @@ class Tracker{
          * @param types The types corresponding to the rect vector.
          * @author Sagi Or
         */
-        vector<Entity> rectsToEntites(vector<Rect> rects, uint16_t* types);
+        void generateEntites(vector<Rect> rects, uint16_t* types);
         
         /**
          * @file tracker.cpp
