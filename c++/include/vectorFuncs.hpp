@@ -15,7 +15,7 @@ using std::vector;
  * @param __i The index to remove from.
  * @author Sagi Or
 */
-template<typename T> void removeAtIndex(vector<T> &__vect, uint16_t __i){    
+template<typename T> void removeAtIndex(vector<T> &__vect, size_t __i){    
     //TODO add exception on size.
     __vect.erase(__vect.begin() + __i);
 }
