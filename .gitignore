@@ -2,4 +2,4 @@ build
 *.so
 __pycache__
 .vscode
-test.*
+*.mp4
