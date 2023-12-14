@@ -8,7 +8,7 @@ from python_utils.tracker import Tracker
 
 
 print("loading")
-cap = cv2.VideoCapture('dcmp.mp4')
+cap = cv2.VideoCapture('/home/sagi21805/dcmp4.mp4')
 modelBumpers = YOLO('bumperWeights.pt')
 # modelBumpers.to('cuda')
 
