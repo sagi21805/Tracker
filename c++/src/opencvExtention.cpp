@@ -37,7 +37,7 @@ void Rect::drawRect(cv::Mat& frame, cv::Scalar color){
 // }
 
 //TODO this function gets her values from python - validity check in python is VERY IMPORTANT! 
-std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size){
+vector<Rect> pointsToRects(uint16_t *points, uint16_t size){
 	
 	std::vector<Rect> rects;
     rects.reserve(size);

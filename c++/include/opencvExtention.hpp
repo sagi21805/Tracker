@@ -1,8 +1,9 @@
 #ifndef _OpencvExtention_
-#define _OpenCvExtension_
+#define _OpencvExtention_
 
 #include "mathUtils.hpp"
-#include "vectorFuncs.hpp"
+
+using cv::Mat;
 
 /**
  * @file opencvExtention.hpp
@@ -47,6 +48,16 @@ class Rect : public cv::Rect_<uint16_t>{
     void drawRect(cv::Mat& frame, cv::Scalar color);
     // bool isIntersectingTo(Rect& r);
 };
+
+/**
+ * @file opencvExtention.hpp
+ * @brief Turns a stream of points of boundingBoxes from yolo into a vector of Rects.
+ * @param points array of points in order of [x1, y1, x2, y2, type, x1 ....].
+ * @param size How many points are in the array.
+ * @returns A vector of Rects contains all the points as Rect object.
+ * @author Sagi Or
+*/
+std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size);
 
 /**
  * @file opencvExtention.cpp
@@ -105,14 +116,5 @@ template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> operator-(const cv::Poin
     return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty1_>(a.y + b.y));
 }
 
-/**
- * @file opencvExtention.hpp
- * @brief Turns a stream of points of boundingBoxes from yolo into a vector of Rects.
- * @param points array of points in order of [x1, y1, x2, y2, type, x1 ....].
- * @param size How many points are in the array.
- * @returns A vector of Rects contains all the points as Rect object.
- * @author Sagi Or
-*/
-std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size);
 
 #endif 
