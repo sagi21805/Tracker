@@ -23,4 +23,8 @@ Mat filterRed(Mat& frame);
 */
 Mat filterBlue(Mat& frame);
 
+Mat fillterColor(Mat& frame, cv::Scalar lowerB, cv::Scalar upperB);
+
+Mat convolutionThreshold(Mat& grayImg, uint8_t blockSize, float threshold);
+
 #endif
