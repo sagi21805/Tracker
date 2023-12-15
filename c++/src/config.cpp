@@ -1,15 +1,33 @@
 #include "config.hpp"
 // Define global variables
-//TODO add type cheking on all of the config data. important!!!!
 
-uint8_t _pointSize;  
-bool _visualize;
-uint16_t _waitKey;
-uint8_t _numOfFrames;
-float _predictionOffsetCoefficient;
-float _predictionSizeCoefficient;
-vector<cv::Scalar> _colors;
-float _convolutionThresh;
+namespace core{
+    uint8_t _pointSize;  
+} 
+
+namespace visualization{
+    bool _toVisualize;
+    uint16_t _waitKey;
+    vector<cv::Scalar> _colors;
+}
+
+namespace predictions{
+    uint8_t _numOfFrames;
+    float _offsetCoefficient;
+    float _sizeCoefficient;
+}
+
+namespace imgProcessing{
+    float _convolutionThresh;
+}
+
+namespace kmeans{
+    uint8_t _k;
+    float _epsilon;
+    uint8_t _maxIterPerAttempt;
+    uint8_t _maxAttempts;
+}
+//TODO add type cheking on all of the config data. important!!!!
 //the initialization function
 void config(const std::string& filename){
     // Open the JSON file
@@ -25,18 +43,27 @@ void config(const std::string& filename){
     // Parse the JSON content
     input_file >> config;
 
-     //REGULAR DATA
+    //CORE DATA
+    core::_pointSize = config["pointSize"];
+    //Visualization
+    predictions::_offsetCoefficient = config["predictions"]["offsetCoefficient"];
+    predictions::_sizeCoefficient = config["predictions"]["sizeCoefficient"];
+    predictions::_numOfFrames = config["predictions"]["numOfFrames"];
 
-    _pointSize = config["pointSize"];
-    _visualize = config["visualize"];
-    _waitKey = config["waitKey"];
-    _predictionOffsetCoefficient = config["predictionOffsetCoefficient"];
-    _predictionSizeCoefficient = config["predictionSizeCoefficient"];
-    _numOfFrames = config["numOfFrames"];
-    _convolutionThresh = config["convolutionThresh"];
-    //NESTED DATA;
+    //Predcitions
+    visualization::_toVisualize = config["visualization"]["toVisualize"];
+    visualization::_waitKey = config["visualization"]["waitKey"];
+    visualization::_colors = readNestedData<cv::Scalar>(config["visualization"]["colors"]);
+    //ImgProcessing
+    imgProcessing::_convolutionThresh = config["imgProcessing"]["convolutionThresh"];
 
-    _colors = readNestedData<cv::Scalar>(config["colors"]);
+    //Kmeans
+    kmeans::_k = config["kmeans"]["k"];
+    kmeans::_epsilon = config["kmeans"]["epsilon"];
+    kmeans::_maxIterPerAttempt = config["kmeans"]["maxIterPerAttempt"];
+    kmeans::_maxAttempts = config["kmeans"]["maxAttemps"];
+
+    cout << "[INFO]: Done initializing variables\n";
 
     input_file.close();
 }

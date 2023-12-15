@@ -11,14 +11,34 @@
 using json = nlohmann::json;
 
 // Declare global variables
-extern uint8_t _pointSize;  
-extern bool _visualize;
-extern uint16_t _waitKey;
-extern uint8_t _numOfFrames;
-extern float _predictionOffsetCoefficient;
-extern float _predictionSizeCoefficient;
-extern vector<cv::Scalar> _colors;
-extern float _convolutionThresh;
+namespace core{
+    extern uint8_t  _pointSize;  
+} 
+
+namespace visualization{
+    extern bool _toVisualize;
+    extern uint16_t _waitKey;
+    extern vector<cv::Scalar> _colors;
+}
+
+namespace predictions{
+    extern uint8_t _numOfFrames;
+    extern float _offsetCoefficient;
+    extern float _sizeCoefficient;
+}
+
+namespace imgProcessing{
+    extern float _convolutionThresh;
+}
+
+namespace kmeans{
+    extern uint8_t _k;
+    extern float _epsilon;
+    extern uint8_t _maxIterPerAttempt;
+    extern uint8_t _maxAttempts;
+}
+ 
+
 // Function to initialize global variables from JSON
 void config(const std::string& filename);
 
@@ -26,7 +46,6 @@ void config(const std::string& filename);
 template<typename T> vector<T> readNestedData(json nestedData){
 
     vector<T> outVector;
-    cout << "size: " << nestedData.size() << "\n";
     outVector.reserve(nestedData.size());
 
     // add type checking on the value.

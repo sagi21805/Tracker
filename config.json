@@ -1,13 +1,29 @@
 {
     "pointSize" : 4,
-    "visualize" : true,
-    "waitKey" : 1,
-    "numOfFrames" : 3,
-    "predictionOffsetCoefficient" : 0.15,
-    "predictionSizeCoefficient" : 0.35,
-    "convolutionThresh" : 0.25,
-    "colors" : {
-        "blueRobot" : [0, 0, 255],
-        "redRobot" : [255, 0, 0]
+
+    "predictions" : {
+        "offsetCoefficient" : 0.15,
+        "sizeCoefficient" : 0.35,
+        "numOfFrames" : 3
+    },
+
+    "visualization" : {
+        "toVisualize" : true,
+        "waitKey" : 1,
+        "colors" : {
+            "blueRobot" : [0, 0, 255],
+            "redRobot" : [255, 0, 0]
+        }
+    }, 
+    
+    "imgProcessing" : {
+        "convolutionThresh" : 0.25
+    },
+
+    "kmeans" : {
+        "k" : 3,
+        "epsilon" : 0.2,
+        "maxIterPerAttempt" : 100,
+        "maxAttemps" : 10 
     }
 }
