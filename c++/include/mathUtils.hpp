@@ -17,4 +17,5 @@ typedef cv::Point_<uint16_t> Point;
 */
 uint squareDistance(Point A, Point B);
 
+uint16_t findMostOccurrence(const cv::Mat& labels, uint8_t k);
 #endif
