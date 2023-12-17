@@ -61,12 +61,10 @@ Mat getImageChannel(const Mat& image, uint8_t channelNum){
 //TODO understand this algorithem.
 uint8_t getDominantHueValue(Mat& image){
     cv::cvtColor(image, image, cv::COLOR_BGR2HSV);
+    cv::blur(image, image, {3 , 3});
     Mat hue = getImageChannel(image, 0); // the Hue channel
     hue = hue.reshape(1, hue.total());
-    // Convert to float32 for k-means
     hue.convertTo(hue, CV_32F);
-
-    // Define criteria and apply kmeans()
     cv::TermCriteria criteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, kmeans::_maxIterPerAttempt, kmeans::_epsilon);
     cv::Mat labels, centers;
     cv::kmeans(hue, kmeans::_k, labels, criteria, kmeans::_maxAttempts, cv::KMEANS_PP_CENTERS, centers);
@@ -74,7 +72,7 @@ uint8_t getDominantHueValue(Mat& image){
     // Convert back to 8-bit values
     centers.convertTo(centers, CV_8U);
 
-    return centers.at<uint8_t>(findMostOccurrence(centers, kmeans::_k));
+    return centers.at<uint8_t>(findMostOccurrence(labels, kmeans::_k));
 }
 
 cv::Mat filterImageByColorRange(const cv::Mat& inputImage, const uint8_t dominantHue, int blockSize, double c){
@@ -99,5 +97,9 @@ cv::Mat filterImageByColorRange(const cv::Mat& inputImage, const uint8_t dominan
     cv::bitwise_and(inputImage, inputImage, filteredImage, adaptiveThresholdMask);
 
     return filteredImage;
+}
+
+void test(Mat& entityInFrame, vector<Mat> channels){
+    cv::merge(channels, entityInFrame);
 }
 //TODO make alg that cuts only the field from the video

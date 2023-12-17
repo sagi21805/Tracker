@@ -27,4 +27,9 @@ Mat fillterColor(Mat& frame, cv::Scalar lowerB, cv::Scalar upperB);
 
 Mat convolutionThreshold(Mat& grayImg, uint8_t blockSize, float threshold);
 
+uint8_t getDominantHueValue(Mat& image);
+
+cv::Mat filterImageByColorRange(const cv::Mat& inputImage, const uint8_t dominantHue, int blockSize, double c);
+
+void test(Mat& mat, vector<Mat> channels);
 #endif
