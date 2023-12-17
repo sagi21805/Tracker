@@ -5,7 +5,7 @@
 #include <memory>
 
 typedef struct Node Node;
-typedef cv::Point2f Velocity2D;
+typedef cv::Point_<uint16_t> Velocity2D;
 
 /**
  * @file linkedList.hpp
