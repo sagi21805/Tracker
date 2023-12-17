@@ -6,9 +6,8 @@
 #include "linkedList.hpp"
 #include <limits>
 #include "vectorFuncs.hpp"
-
+#include "imgUtils.hpp"
 //////////////////////////////////////////// Entity //////////////////////////////////////////////////////
-
 /**
  * @file entity.hpp
  * @brief The Entity class.
@@ -239,7 +238,6 @@ class Entity{
          * the entity's velocity. Depending on the use case, you may choose to uncomment and modify that part of the code.
          *
          * @see Entity::calcVelocity(uint8_t numOfFrames) for calculating the entity's velocity.
-         * @see _predictionOffsetCoefficient and _predictionSizeCoefficient for controlling the prediction parameters.
          */
         Rect predictPossibleLocations(uint8_t numOfFrames);
         
