@@ -36,9 +36,9 @@ void Tracker::distanceTrack(){
 	uint16_t size = MIN(this->entities.size(), this->currentRecognition.size());
 	for (uint16_t i = 0; i < size; i++){
 		Entity& checkedEntity = this->entities[i];	
-		Rect c = checkedEntity.predictPossibleLocations(_numOfFrames);
+		Rect c = checkedEntity.predictPossibleLocations(predictions::_numOfFrames);
 		c.drawRect(this->frame, CV_RGB(255, 255, 255));
-		uint16_t closetEntityIndex = checkedEntity.matchEntity(this->currentRecognition, _numOfFrames);
+		uint16_t closetEntityIndex = checkedEntity.matchEntity(this->currentRecognition, predictions::_numOfFrames);
 		Entity& closetEntity = this->currentRecognition[closetEntityIndex];
 
 		checkedEntity.setBoundingRect(closetEntity.getBoundingRect());
@@ -63,10 +63,10 @@ cv::Scalar Tracker::chooseColor(Entity& e){
 	cv::Scalar color;
 	switch (e.getType()){
 			case RedRobot:
-				color = _colors[RedRobot];
+				color = visualization::_colors[RedRobot];
 				break;
 			case BlueRobot:
-				color = _colors[BlueRobot];
+				color = visualization::_colors[BlueRobot];
 				break;
 			default:
 				color = CV_RGB(0, 0, 0);
@@ -89,14 +89,13 @@ void Tracker::generateEntites(vector<Rect> rects, uint16_t* types){;
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
 	this->setCurrentTrack(points, types, size, frame);
 	this->distanceTrack();
-	this->addToTrajectory();
 
-	if (_visualize){
+	if (visualization::_toVisualize){
 
 		this->drawPredictions();
 		this->drawEntities();
 		cv::imshow("frame", this->frame);
-		cv::waitKey(_waitKey);
+		cv::waitKey(visualization::_waitKey);
 	}
 	this->currentRecognition.clear();
 	this->currentPrediction.clear();

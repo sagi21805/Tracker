@@ -42,7 +42,7 @@ vector<Rect> pointsToRects(uint16_t *points, uint16_t size){
 	std::vector<Rect> rects;
     rects.reserve(size);
 	for (uint16_t i = 0; i < size; i++){
-        uint16_t* currentPoint = points + i*_pointSize;
+        uint16_t* currentPoint = points + i*core::_pointSize;
         Point A = Point(currentPoint[0], currentPoint[1]);
         Point B = Point(currentPoint[2], currentPoint[3]);
         rects.emplace_back(A, B);
