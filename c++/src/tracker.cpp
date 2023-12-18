@@ -36,9 +36,9 @@ void Tracker::distanceTrack(){
 	uint16_t size = MIN(this->entities.size(), this->currentRecognition.size());
 	for (uint16_t i = 0; i < size; i++){
 		Entity& checkedEntity = this->entities[i];	
-		Rect c = checkedEntity.predictPossibleLocations(predictions::_numOfFrames);
+		Rect c = checkedEntity.predictPossibleLocations();
 		c.drawRect(this->frame, CV_RGB(255, 255, 255));
-		uint16_t closetEntityIndex = checkedEntity.matchEntity(this->currentRecognition, predictions::_numOfFrames);
+		uint16_t closetEntityIndex = checkedEntity.matchEntity(this->currentRecognition);
 		Entity& closetEntity = this->currentRecognition[closetEntityIndex];
 
 		checkedEntity.setBoundingRect(closetEntity.getBoundingRect());
@@ -79,7 +79,8 @@ void Tracker::generateEntites(vector<Rect> rects, uint16_t* types){;
 	
 	for (uint16_t i = 0, size = rects.size(); i < size; i++){
 
-        this->currentRecognition.emplace_back(i, types[i], rects[i], this->frame);
+        this->currentRecognition.emplace_back(core::_startingId, types[i], rects[i], this->frame);
+		core::_startingId++;
 	}
 
 }
