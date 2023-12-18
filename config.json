@@ -1,5 +1,6 @@
 {
     "pointSize" : 4,
+    "startingId" : 0,
 
     "predictions" : {
         "offsetCoefficient" : 0.15,

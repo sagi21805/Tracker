@@ -13,6 +13,7 @@ using json = nlohmann::json;
 // Declare global variables
 namespace core{
     extern uint8_t  _pointSize;  
+    extern uint16_t _startingId;
 } 
 
 namespace visualization{
