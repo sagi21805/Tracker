@@ -1,7 +1,7 @@
 #ifndef _ImgUtils_
 #define _ImgUtils_
 
-#include "opencvExtention.hpp"
+#include "rect.hpp"
 
 using cv::Mat;
 

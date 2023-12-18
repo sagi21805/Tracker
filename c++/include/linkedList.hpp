@@ -1,7 +1,7 @@
 #ifndef _LinkedList_
 #define _LinkedList_
 
-#include "opencvExtention.hpp"
+#include "rect.hpp"
 #include <memory>
 
 typedef struct Node Node;
