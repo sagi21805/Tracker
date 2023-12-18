@@ -168,14 +168,6 @@ class Entity{
         */
         void setBoundingRect(Rect newBoundingRect);
 
-        /**
-         * @file entity.cpp
-         * @brief Sets the Velocity of the Entity to a given Velocity.
-         * @param velocity The new velocity to set.
-         * @author Sagi Or
-        */
-        void setVelocity(Velocity2D velocity);
-
 
 ///////////////////////////////////////// Util Functions //////////////////////////////////////////////////
         
@@ -186,9 +178,9 @@ class Entity{
          * @returns The calculated Velocity.
          * @author Sagi Or
         */
-        Velocity2D calcVelocity(uint8_t numOfFrames);
+        void calcAndSetVelocity();
 
-        vector<Point> calcContour(Mat& frameInside);
+        // vector<Point> calcContour(Mat& frameInside);
 
         /**
          * @file entity.cpp
@@ -213,15 +205,6 @@ class Entity{
         uint squareDistanceTo(Entity &e);
         
         /**
-         * @file entity.cpp
-         * @brief Predicts the next BoundingRect based on the past frames velocity.
-         * @param numOfFrames The number of past frames to avrage velocity on.
-         * @returns The predicted Rect.
-         * @author Sagi Or
-        */
-        Rect predictNextBoundingRect(uint8_t numOfFrame);
-
-        /**
          * @brief Predicts possible future locations for the entity based on its current trajectory and velocity.
          * @param numOfFrames The number of frames into the future for which to predict possible locations.
          * @return A rectangular region representing the possible locations of the entity.
@@ -239,8 +222,9 @@ class Entity{
          *
          * @see Entity::calcVelocity(uint8_t numOfFrames) for calculating the entity's velocity.
          */
-        Rect predictPossibleLocations(uint8_t numOfFrames);
+        Rect predictPossibleLocations();
         
+        Rect predictNextBoundingRect();
         /**
          * @file entity.cpp
          * @brief match Entity on an entity vector based on predictions, distance and more! 
@@ -249,7 +233,7 @@ class Entity{
          * @returns The index of the matching Entity on the vector.
          * @author Sagi Or
         */
-        uint16_t matchEntity(std::vector<Entity> &entityVector, uint8_t numOfFrames);
+        uint16_t matchEntity(std::vector<Entity> &entityVector);
         
         /**
          * @file entity.cpp
