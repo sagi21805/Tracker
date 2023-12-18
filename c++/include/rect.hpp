@@ -68,53 +68,6 @@ std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size);
 */
 std::ostream& operator<<(std::ostream& os, Rect& r);
 
-/**
- * @file opencvExtention.hpp
- * @brief Define method to easly add Points.
- * @param a The Point to add to.
- * @param b The Point that is being added.
- * @returns A Point of the First type that represents the sum of the Points.
- * @author Sagi Or
-*/
-template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> addPoints(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
-    return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty1_>(a.y + b.y));
-}
-
-/**
- * @file opencvExtention.hpp
- * @brief Define the Plus operator to do the method addPoints.
- * @param a The Point to add to.
- * @param b The Point that is being added.
- * @returns A Point of the First type that represents the sum of the Points.
- * @author Sagi Or
-*/
-template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> operator+(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
-    return addPoints(a, b);
-}
-
-/**
- * @file opencvExtention.hpp
- * @brief Define method to easly subtrackt Points.
- * @param a The Point to substract from.
- * @param b The Points the is being substracted.
- * @returns A Point of the First type that represents the difference in the Points.
- * @author Sagi Or
-*/
-template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> substractPoints(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
-    return Point(cv::saturate_cast<Ty1_>(a.x - b.x), cv::saturate_cast<Ty1_>(a.y - b.y));
-}
-
-/**
- * @file opencvExtention.hpp
- * @brief Define method operator to easly subtract Points.
- * @param a The Point to substract from.
- * @param b The Points the is being substracted.
- * @returns A Point of the First type that represents the difference in the Points.
- * @author Sagi Or
-*/
-template<typename Ty1_, typename Ty2_> cv::Point_<Ty1_> operator-(const cv::Point_<Ty1_>& a, const cv::Point_<Ty2_>& b){
-    return Point(cv::saturate_cast<Ty1_>(a.x + b.x), cv::saturate_cast<Ty1_>(a.y + b.y));
-}
 
 
 #endif 
