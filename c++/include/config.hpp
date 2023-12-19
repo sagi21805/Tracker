@@ -14,6 +14,7 @@ using json = nlohmann::json;
 namespace core{
     extern uint8_t  _pointSize;  
     extern uint16_t _startingId;
+    extern uint8_t _velocityDeadBand;
 } 
 
 namespace visualization{

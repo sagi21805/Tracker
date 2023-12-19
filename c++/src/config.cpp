@@ -3,6 +3,8 @@
 
 namespace core{
     uint8_t _pointSize;  
+    uint16_t _startingId;
+    uint8_t _velocityDeadBand ;
 } 
 
 namespace visualization{
@@ -46,6 +48,7 @@ void config(const std::string& filename){
     //CORE DATA
     core::_pointSize = config["pointSize"];
     core::_startingId = config["startingId"];
+    core::_velocityDeadBand = config["velocityDeadBand"];
     //Visualization
     predictions::_offsetCoefficient = config["predictions"]["offsetCoefficient"];
     predictions::_sizeCoefficient = config["predictions"]["sizeCoefficient"];

@@ -1,6 +1,7 @@
 {
     "pointSize" : 4,
     "startingId" : 0,
+    "velocityDeadBand" : 2,
 
     "predictions" : {
         "offsetCoefficient" : 0.15,

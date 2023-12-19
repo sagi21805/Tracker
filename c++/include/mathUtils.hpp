@@ -18,4 +18,9 @@ typedef cv::Point_<uint16_t> Point;
 uint squareDistance(Point A, Point B);
 
 uint16_t findMostOccurrence(const cv::Mat& labels, uint8_t k);
+
+template <typename T>
+T applyDeadband(T value, uint8_t deadBand) {
+    return (std::abs(value) < deadBand) ? T(0) : value;
+}
 #endif
