@@ -4,8 +4,8 @@
     "velocityDeadBand" : 2,
 
     "predictions" : {
-        "offsetCoefficient" : 0.15,
-        "sizeCoefficient" : 0.35,
+        "offsetCoefficient" : 0.3,
+        "sizeCoefficient" : 0.7,
         "numOfFrames" : 3
     },
 
