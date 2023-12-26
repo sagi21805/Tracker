@@ -11,4 +11,4 @@ echo "[INFO]: Finished building running python!"
 
 cd ..
 
-python3 main.py 
+sudo python3.11 main.py 
