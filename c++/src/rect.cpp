@@ -2,7 +2,7 @@
 
 using std::cout;
 
-uint Rect::squareDistanceTo(Rect& r){
+uint Rect::squareDistanceTo(const Rect& r){
     return squareDistance(this->tl(), r.tl());
 }
 
