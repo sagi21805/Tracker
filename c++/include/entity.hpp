@@ -7,6 +7,7 @@
 #include <limits>
 #include "vectorFuncs.hpp"
 #include "imgUtils.hpp"
+#include "recognition.hpp"
 //////////////////////////////////////////// Entity //////////////////////////////////////////////////////
 /**
  * @file entity.hpp
@@ -41,7 +42,7 @@ class Entity{
          * @param BoundingRect The boundingRect of the Entity.
          * @author Sagi Or
         */
-        Entity(uint16_t id, uint16_t type, Rect boundingRect, Mat& frameInside);
+        Entity(uint16_t id, uint16_t type, Rect boundingRect);
 
         /**
          * @file entity.cpp
@@ -202,8 +203,9 @@ class Entity{
          * @returns The Squared distance between the Entities.
          * @author Sagi Or
         */
-        uint squareDistanceTo(Entity &e);
+        uint squareDistanceTo(const Entity &e);
         
+        uint squareDistanceTo(const Rect& r);
         /**
          * @brief Predicts possible future locations for the entity based on its current trajectory and velocity.
          * @param numOfFrames The number of frames into the future for which to predict possible locations.
@@ -225,15 +227,7 @@ class Entity{
         Rect predictPossibleLocations();
         
         Rect predictNextBoundingRect();
-        /**
-         * @file entity.cpp
-         * @brief match Entity on an entity vector based on predictions, distance and more! 
-         * @param entityVector The vector to match Entities from.
-         * @param numOfFrames The number of frames to avrage velocity on.
-         * @returns The index of the matching Entity on the vector.
-         * @author Sagi Or
-        */
-        uint16_t matchEntity(std::vector<Entity> &entityVector);
+        
         
         /**
          * @file entity.cpp
@@ -244,6 +238,10 @@ class Entity{
         */
         void draw(cv::Mat& frame, cv::Scalar color);
 };
+
+Entity generateEntity(Rect r, uint16_t type);
+
+void matchEntity(std::vector<Entity> &currentEntities, Recognition& currentRecognition, Mat& f);
 
 /**
  * @file entity.cpp
