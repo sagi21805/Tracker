@@ -2,7 +2,7 @@
 
 ////////////////////////////////// constructors //////////////////////////////////////////////////
 
-Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect, Mat& frameInside)
+Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect)
     : id(id), type(type){
     this->setBoundingRect(boundingRect);
     this->trajectory = std::make_shared<LinkedList>(boundingRect, Velocity2D(0, 0));
