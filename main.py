@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from time import time, sleep
 from python_utils.tracker import Tracker
-
+import keyboard
 #TEST CODE DONT TAKE SERIOUSLY
 
 
@@ -11,7 +11,7 @@ print("loading")
 cap = cv2.VideoCapture('/home/sagi21805/dcmp4.mp4')
 modelBumpers = YOLO('bumperWeights.pt')
 # modelBumpers.to('cuda')
-
+running = True
 
 success, frame = cap.read()
 
@@ -34,31 +34,21 @@ if success:
     print("[INFO]: Creating Tracker")
     tracker = Tracker(resultsB[0], frame) 
     print("[INFO]: Tracker Created")
-    
-while cap.isOpened():
-    success, frame = cap.read()
-    
-    
-    
-    if success:
-        frame = prepFrame(frame)
-        t = time()
-        resultsB = modelBumpers(frame, verbose=False)
-        # print(time() - t)
-        # print("CALLED PYTHON --------------------------")
-        t = time()
-        tracker.track(resultsB[0], frame)
-        
-        # points, types, size = YoloToPointsAndTypes(resultsB[0])
-        
-        # for i in range(len(types)):
-        #     color = (255, 0, 0)
-        #     if types[i] == 1:
-        #         color = (0, 0, 255)
-                
-        #     frame = cv2.rectangle(frame, points[i][:2], points[i][2:], color, 2)
 
-        # cv2.imshow("python", frame)
-        # cv2.waitKey(1)
+def toggle_running():
+    global running
+    running = not running
+
+keyboard.add_hotkey('space', toggle_running)
+
+while cap.isOpened():
+    if running:
+        success, frame = cap.read()
+        
+        if success:
+            frame = prepFrame(frame)
+            resultsB = modelBumpers(frame, verbose=False)
+            tracker.track(resultsB[0], frame)
             
-        print(time() - t)
+
+    
