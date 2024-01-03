@@ -15,8 +15,12 @@ using std::vector;
  * @param __i The index to remove from.
  * @author Sagi Or
 */
-template<typename T> void removeAtIndex(vector<T> &__vect, size_t __i){    
+template<typename T> void removeAtIndex(vector<T> &__vect, size_t __i){  
     //TODO add exception on size.
+    if (__i >= __vect.size() || __i < 0) { 
+    throw std::invalid_argument("index must be in range 0 < index < vector.size()\nYour Vector Size: "\
+                                 + std::to_string(__vect.size()) + "\nindex: " + std::to_string(__i)); 
+    }
     __vect.erase(__vect.begin() + __i);
 }
 
