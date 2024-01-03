@@ -3,7 +3,6 @@
 
 #include "entity.hpp"
 #include "imgUtils.hpp"
-//TODO consider add a Struct for a Track which contains points, types and size.
 
 /**
  * @file tracker.hpp
