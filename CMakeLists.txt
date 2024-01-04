@@ -1,5 +1,5 @@
-set(CMAKE_C_COMPILER "/usr/bin/gcc-11")
-set(CMAKE_CXX_COMPILER "/usr/bin/g++-11")
+set(CMAKE_C_COMPILER "/usr/bin/gcc-13")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-13")
 
 cmake_minimum_required(VERSION 3.15) 
 PROJECT ( Tracker )
