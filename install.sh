@@ -4,9 +4,10 @@ wd=$(pwd)
 cd ~    
 sudo apt update -y && sudo apt upgrade -y
 sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test 
-sudo apt install -y gcc-11 g++-11 cmake make git libgtk2.0-dev
-sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 50
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 50  
+sudo apt install -y gcc-13 g++-13
+sudo apt install -y cmake make git libgtk2.0-dev
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 60
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 60  
 sudo apt install -y pkg-config ffmpeg libavformat-dev libavcodec-dev libswscale-dev
 git clone https://github.com/opencv/opencv.git
 cd opencv

@@ -7,7 +7,7 @@ PROJECT ( Tracker )
 find_package(OpenCV REQUIRED )
 find_package(nlohmann_json REQUIRED)
 
-set(CMAKE_CXX_FLAGS "-Wall -std=c++20 -O3 -save-temps")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++23 -O3 -save-temps")
 
 
 # message(${OpenCV_INCLUDE_DIRS})
