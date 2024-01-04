@@ -1,22 +1,6 @@
-import python_utils.cpp_utils as cpp
+from ultralytics import YOLO
 import numpy as np
-
-class Tracker():        
-        
-    def __init__(self, YOLO_result, coloredframe: np.ndarray) -> None:
-        """
-        Creates a Tracker object
-        -
-        """
-        setFuncs()
-        
-        points, types, size = YoloToPointsAndTypes(YOLO_result)
-
-        self.obj = cpp.lib._Tracker(points, types, cpp.c_uint16(size), frameToArray(coloredframe), cpp.c_uint16(coloredframe.shape[0]), cpp.c_uint16(coloredframe.shape[1]))
-    
-    def track(self, YOLO_result, coloredframe: np.ndarray):
-        points, types, size = YoloToPointsAndTypes(YOLO_result)
-        cpp.lib._track(self.obj, points, types, cpp.c_uint16(size), frameToArray(coloredframe))
+import cv2
     
 def YoloToPointsAndTypes(YOLO_result):
     boxes = YOLO_result.boxes.cpu().numpy()      
@@ -27,11 +11,20 @@ def YoloToPointsAndTypes(YOLO_result):
 def frameToArray(coloredframe: np.ndarray):
     return np.array(coloredframe.flatten(), dtype=np.uint8)
 
-def setFuncs():
-    cpp.lib._Tracker.argtypes = [cpp.uint16_array, cpp.uint16_array, cpp.uint16, cpp.uint8_array, cpp.uint16, cpp.uint16]
-    cpp.lib._Tracker.restype = cpp.object
-    cpp.lib._track.argtypes = [cpp.object, cpp.uint16_array, cpp.uint16_array, cpp.uint16, cpp.uint8_array]
-        
+def predict(model: YOLO, cap: cv2.VideoCapture):
+    # TODO understand when there are mulitpule results and how to handle them. (len(result) > 1)
+    success, frame = cap.read()
+    if success:    
+        frame = prepFrame(frame)
+        result = model(frame, verbose=False)
+    else: 
+        raise ValueError("Frame can not be opened")
+    
+    return result[0], frame
+
+def prepFrame(frame):
+    # TODO make more sofisticated to ask for the field codrs in a window.
+    return frame[180 : 480]   
     
     
         
