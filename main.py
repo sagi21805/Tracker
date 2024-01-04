@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 from time import time, sleep
-from python_utils.tracker import Tracker
+from python_utils.tracker_utils import Tracker
 from pynput import keyboard
 import threading
 #TEST CODE DONT TAKE SERIOUSLY
@@ -16,6 +16,7 @@ is_running = True
 success, frame = cap.read()
 
 def prepFrame(frame):
+    # TODO make more sofisticated to ask for the field codrs in a window.
     return frame[180 : 480]
 
 def YoloToPointsAndTypes(YOLO_result):
