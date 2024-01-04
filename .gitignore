@@ -1,5 +1,4 @@
 build
-*.so
 __pycache__
 .vscode
 *.mp4
