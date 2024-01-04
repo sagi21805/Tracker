@@ -1,47 +1,16 @@
-from ultralytics import YOLO
-import cv2
-import numpy as np
-from time import time, sleep
-from python_utils.tracker_utils import Tracker
+from python_utils.Tracker import Tracker
 from pynput import keyboard
 import threading
 #TEST CODE DONT TAKE SERIOUSLY
 
 
-print("loading")
-cap = cv2.VideoCapture('/home/sagi21805/dcmp4.mp4')
-modelBumpers = YOLO('bumperWeights.pt')
-print("done loading")
+tracker = Tracker("bumperWeights.pt", "/home/sagi21805/dcmp4.mp4")
 is_running = True
-success, frame = cap.read()
-
-def prepFrame(frame):
-    # TODO make more sofisticated to ask for the field codrs in a window.
-    return frame[180 : 480]
-
-def YoloToPointsAndTypes(YOLO_result):
-        boxes = YOLO_result.boxes.cpu().numpy()      
-        points = np.array(boxes.xyxy, dtype=np.uint16)
-        types = np.array(boxes.cls, dtype=np.uint16)
-        return (points, types, len(types))
-
-if success:    
-    frame = prepFrame(frame)
-    resultsB = modelBumpers(frame, verbose=False)
-    print("[INFO]: Creating Tracker")
-    tracker = Tracker(resultsB[0], frame) 
-    print("[INFO]: Tracker Created")
-
-
 
 def background_code():
-    while cap.isOpened():
+    while True:
         if is_running:
-            success, frame = cap.read()
-            if success: 
-                frame = prepFrame(frame)
-                resultsB = modelBumpers(frame, verbose=False)
-                tracker.track(resultsB[0], frame)
+            tracker.track()
             
 
 # Function to be called when a key is pressed
