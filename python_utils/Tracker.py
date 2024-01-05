@@ -25,9 +25,14 @@ class Tracker():
         self.cap = cv2.VideoCapture(video)
         print("[INFO]: Done Loading Video")
         
+        success, frame = self.cap.read()
+        if success:
+            on_startup(frame)
+        else: 
+            raise ValueError("Frame can not be opened")
+        
         result, frame = predict(self.model, self.cap)
         Tracker.setFuncs()
-        
         points, types, size = YoloToPointsAndTypes(result)
         self.Tracker = cpp.lib._Tracker(points, types, cpp.c_uint16(size), frameToArray(frame), cpp.c_uint16(frame.shape[0]), cpp.c_uint16(frame.shape[1]))
     

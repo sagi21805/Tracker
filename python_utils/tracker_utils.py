@@ -1,7 +1,11 @@
 from ultralytics import YOLO
 import numpy as np
 import cv2
-    
+
+Ymin = 0
+Ymax = 0
+Y_coordinates = []
+
 def YoloToPointsAndTypes(YOLO_result):
     boxes = YOLO_result.boxes.cpu().numpy()      
     points = np.array(boxes.xyxy.flatten(), dtype=np.uint16)
@@ -22,9 +26,27 @@ def predict(model: YOLO, cap: cv2.VideoCapture):
     
     return result[0], frame
 
+def on_startup(frame):
+    global Ymin, Ymax, Y_coordinates
+    cv2.imshow('Select Y Coordinates To Cut The Screen', frame)
+    cv2.setMouseCallback('Select Y Coordinates To Cut The Screen',get_coordinates)
+    captured_clicks = 2
+    while len(Y_coordinates) < captured_clicks:
+        cv2.waitKey(1)
+    cv2.destroyAllWindows()
+    Ymin = min(Y_coordinates)
+    Ymax = max(Y_coordinates)
+
+def get_coordinates(event, x, y, flags, param):
+    global Y_coordinates
+    if event == cv2.EVENT_LBUTTONDOWN:
+        Y_coordinates.append(y)
+        print(f"Left button clicked at ({x}, {y})")
+
+
 def prepFrame(frame):
-    # TODO make more sofisticated to ask for the field codrs in a window.
-    return frame[180 : 480]   
+    global Ymin, Ymax
+    return frame[Ymin: Ymax]   
     
     
         
