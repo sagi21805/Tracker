@@ -8,6 +8,10 @@ Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* fram
 	this->addToTrajectory();
 }
 
+Tracker::~Tracker(){
+	cv::destroyAllWindows();
+}
+
 void Tracker::setCurrentTrack(uint16_t *points, uint16_t* types, uint16_t size, uint8_t* frame){
 	this->setFrame(frame);
 	this->currentRecognition = Recognition(pointsToRects(points, size), types);
