@@ -7,7 +7,7 @@ import threading
 tracker = Tracker("bumperWeights.pt", "/home/sagi21805/dcmp4.mp4")
 is_running = True
 
-def background_code():
+def main_code():
     while True:
         if is_running:
             tracker.track()
@@ -24,10 +24,10 @@ def on_press(key):
         pass
 
 # Start the background thread
-background_thread = threading.Thread(target=background_code)
-background_thread.start()
+listener = keyboard.Listener(on_press=on_press)
 
-# Set up the listener for key presses
-with keyboard.Listener(on_press=on_press) as listener:
-    listener.join() 
+listener_thread = threading.Thread(target=listener.start)
 
+if __name__ == "__main__":
+    listener_thread.start()
+    main_code()
