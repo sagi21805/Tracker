@@ -25,6 +25,6 @@ sudo make install
 
 cd ~
 sudo apt install python3.11-venv -y
-python3.11 -m venv Tracker
-source ~/Tracker/bin/activate
+python3.11 -m venv Tracker-Venv
+source ~/Tracker-Venv/bin/activate
 sudo pip install -r $wd/requirements.txt
