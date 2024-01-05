@@ -12,19 +12,6 @@ void Entity::calcAndSetVelocity(){
     }
 }
 
-// vector<Point> Entity::calcContour(Mat& frameInside){
-    
-//     vector<Point> contours;
-//     Rect cutRect = Rect(this->boundingRect.tl(), this->boundingRect.size() - cv::Size_<uint16_t>(5, 5));
-//     Mat entityInFrame = frameInside(cutRect);
-//     uint8_t hue = getDominantHueValue(entityInFrame);
-//     Mat c = fillterColor(entityInFrame, cv::Scalar(hue-30, 0, 0), cv::Scalar(hue+30, 255, 255));
-//     std::vector<cv::Mat> channels = {c, c, c};
-//     test(entityInFrame, channels);
-
-//     return contours;
-// } //TODO make this function.
-
 Rect Entity::predictNextBoundingRect(){
     Rect prediction = this->boundingRect;
     prediction.x += this->velocity.x;
