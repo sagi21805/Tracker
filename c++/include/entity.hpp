@@ -241,8 +241,6 @@ class Entity{
 
 Entity generateEntity(Rect r, uint16_t type);
 
-void matchEntity(std::vector<Entity> &currentEntities, Recognition& currentRecognition, Mat& f);
-
 /**
  * @file entity.cpp
  * @brief Defines the operator << to print an Entity

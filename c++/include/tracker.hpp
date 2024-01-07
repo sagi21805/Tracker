@@ -130,6 +130,8 @@ class Tracker{
          * @author Sagi Or
         */
         void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
+
+        void matchEntity(std::vector<Entity> &currentEntities, Recognition& currentRecognition, Mat& f);
         
 
 };  

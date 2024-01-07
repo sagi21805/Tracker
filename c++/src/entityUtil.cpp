@@ -48,52 +48,6 @@ Entity generateEntity(Rect r, uint16_t type){
 	return Entity(core::_startingId, type, r);
 }
 
-void matchEntity(vector<Entity>& currentEntities, Recognition& currentRecognition, Mat& frame){
-    
-    for (Rect& r : currentRecognition.rects){
-        r.drawRect(frame, CV_RGB(0, 0, 0));
-    }
-
-    for (uint16_t j = 0, size = MIN(currentEntities.size(), currentRecognition.size); j < size; j++){
-        Entity& currentEntity = currentEntities[j];
-        uint distanceSquared = UINT32_MAX;
-        currentEntity.calcAndSetVelocity();
-        cout << "vel: " << currentEntity.getVelocity() << "\n";
-        Rect possibleLocations = currentEntity.predictPossibleLocations();
-        possibleLocations.drawRect(frame, CV_RGB(255, 255, 255));
-    
-        uint16_t matchingEntityIndex = NULL;
-
-        for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
-            const Rect& checkedRect = currentRecognition.rects[i];
-            
-            const uint16_t& checkedType = currentRecognition.types[i];
-            if (currentEntity.getType() == checkedType) { 
-                uint currentDistanceSquared = currentEntity.squareDistanceTo(checkedRect);
-                if (currentDistanceSquared < distanceSquared && 
-                    possibleLocations.contains(checkedRect.tl())){
-                    matchingEntityIndex = i;
-                    distanceSquared = currentDistanceSquared;
-                }
-            }       
-        }
-
-        if (matchingEntityIndex != NULL){
-            currentEntity.setBoundingRect(currentRecognition.rects[matchingEntityIndex]);
-            currentRecognition.remove(matchingEntityIndex);
-        }
-        else {
-            currentEntity.setBoundingRect(currentEntity.predictNextBoundingRect());
-        }
-    }
-
-    // if (currentRecognition.size > 0){
-    //     for (uint16_t i = 0; i < currentRecognition.size; i++){
-    //         currentEntities.emplace_back(generateEntity(currentRecognition.rects[i], currentRecognition.types[i]));
-    //     }
-    //     currentRecognition.clear();
-    // }
-}
 
 void Entity::draw(cv::Mat& frame, cv::Scalar color){
 		this->getBoundingRect().drawRect(frame, color);

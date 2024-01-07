@@ -36,9 +36,9 @@ cv::Scalar_<uint8_t> getRgbArray(const json& array, const std::string& key) {
             else { std::runtime_error("Invalid RGB array format in key \"" + key + "\". Values are too big."); }
         }
         return cv::Scalar_<uint8_t>(
-            array[0],
+            array[2],
             array[1],
-           array[2]
+           array[0]
         );
     } else {
         throw std::runtime_error("Invalid RGB array format in key \"" + key + "\". The Array is too long.");
