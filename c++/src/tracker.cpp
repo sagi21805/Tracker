@@ -67,24 +67,16 @@ void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentR
         Entity& currentEntity = currentEntities[j];
         uint distanceSquared = UINT32_MAX;
         currentEntity.calcAndSetVelocity();
-        // cout << "vel: " << currentEntity.getVelocity() << "\n";
         Rect possibleLocations = currentEntity.predictPossibleLocations();
         possibleLocations.drawRect(frame, CV_RGB(255, 255, 255));
     
-        uint16_t matchingEntityIndex = NULL;
-
+        uint16_t matchingEntityIndex = UINT16_MAX;
         for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
             const Rect& checkedRect = currentRecognition.rects[i];
             const uint16_t& checkedType = currentRecognition.types[i];
-			if (currentEntity.getId() == 1){
-				cout << "type: " << (currentEntity.getType() == checkedType) << "\n";
-			}
+
             if (currentEntity.getType() == checkedType) { 
                 uint currentDistanceSquared = currentEntity.squareDistanceTo(checkedRect);
-				if (currentEntity.getId() == 1){
-				cout << "currentDistanceSquared < distanceSquared: " << (currentDistanceSquared < distanceSquared) << "\n";
-				cout << "possibleLocations.contains(checkedRect.tl()): " << (possibleLocations.contains(checkedRect.tl())) << "\n";
-				}	
                 if (currentDistanceSquared < distanceSquared && 
                     possibleLocations.contains(checkedRect.tl())){
                     matchingEntityIndex = i;
@@ -94,9 +86,7 @@ void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentR
 
             
         }
-		cout << "\n\n\n";      
-
-        if (matchingEntityIndex != NULL){
+        if (matchingEntityIndex < UINT16_MAX){
             currentEntity.setBoundingRect(currentRecognition.rects[matchingEntityIndex]);
             currentRecognition.remove(matchingEntityIndex);
         }
