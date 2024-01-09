@@ -3,5 +3,6 @@ __pycache__
 .vscode
 *.so
 *.mp4
+!TestVideo.mp4
 test.*
 yolov8n.pt
