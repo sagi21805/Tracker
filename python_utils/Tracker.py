@@ -2,6 +2,7 @@ import python_utils.cpp_utils as cpp
 from ultralytics import YOLO
 import cv2
 from python_utils.tracker_utils import *
+from time import time
 
 class Tracker():        
     
@@ -36,7 +37,13 @@ class Tracker():
         points, types, size = YoloToPointsAndTypes(result)
         self.Tracker = cpp.lib._Tracker(points, types, cpp.c_uint16(size), frameToArray(frame), cpp.c_uint16(frame.shape[0]), cpp.c_uint16(frame.shape[1]))
     
-    def track(self):
+    def track(self, show_time = False):
+        model_time = time()
         result, frame = predict(self.model, self.cap)
+        model_time = time() - model_time
         points, types, size = YoloToPointsAndTypes(result)
+        track_time = time()
         cpp.lib._track(self.Tracker, points, types, cpp.c_uint16(size), frameToArray(frame))
+        track_time = time() - track_time
+        if show_time:
+            print(f"Model Time: {model_time}, Tracking Time: {track_time}")
