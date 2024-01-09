@@ -31,7 +31,6 @@ class Tracker{
         cv::Mat frame; //The current frame that is being tracked.
         vector<Entity> entities; //All the Entities that the Tracker keeps track on.
         Recognition currentRecognition; //The Entities from The current recognition.
-        vector<Entity> currentPrediction; //The Entities from the current prediction
 
 
 /////////////////////////////////////////////////////// Constructors ///////////////////////////////////////////////////////////////////////////////////////
@@ -84,20 +83,6 @@ class Tracker{
 
         /**
          * @file tracker.cpp
-         * @brief Draws the Entities Vector on the current frame.
-         * @author Sagi Or
-        */
-        void drawPredictions();
-
-        /**
-         * @file tracker.cpp
-         * @brief Performs tracking by distance by predicting the position of the objects and thier Trajectory.
-         * @author Sagi Or
-        */
-        void distanceTrack();
-
-        /**
-         * @file tracker.cpp
          * @brief For all the entities in the entity vector adds Thier parameters to thier trajectory.
          * @author Sagi Or
         */
@@ -118,7 +103,7 @@ class Tracker{
          * @param types The types corresponding to the rect vector.
          * @author Sagi Or
         */
-        vector<Entity> generateEntites(Recognition currentRecognition);
+        void generateEntites(Recognition currentRecognition);
         
         /**
          * @file tracker.cpp

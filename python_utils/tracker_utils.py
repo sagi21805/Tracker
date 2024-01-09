@@ -16,7 +16,6 @@ def frameToArray(coloredframe: np.ndarray):
     return np.array(coloredframe.flatten(), dtype=np.uint8)
 
 def predict(model: YOLO, cap: cv2.VideoCapture):
-    # TODO understand when there are mulitpule results and how to handle them. (len(result) > 1)
     success, frame = cap.read()
     if success:    
         frame = prepFrame(frame)

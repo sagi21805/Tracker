@@ -58,7 +58,6 @@ vector<cv::Scalar_<uint8_t>> getRgbVector(const json& j, const std::string& key)
     }
     return rgbVector;
 }
-//TODO imporve type checking, not done well at all.
 void config(const std::string& filename) {
     std::ifstream input_file(filename);
     if (!input_file.is_open()) {

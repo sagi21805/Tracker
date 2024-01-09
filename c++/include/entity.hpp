@@ -1,8 +1,6 @@
 #ifndef _Entity_
 #define _Entity_
 
-//TODO write ducomentation with chat gpt.
-
 #include "linkedList.hpp"
 #include <limits>
 #include "vectorFuncs.hpp"

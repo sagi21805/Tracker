@@ -47,12 +47,5 @@ void config(const std::string& filename);
 vector<cv::Scalar_<uint8_t>> getRgbVector(const json& j, const std::string& key);
 
 cv::Scalar_<uint8_t> getRgbArray(const json& array, const std::string& key);
-// template <typename T>
-// T checkType(const T& value, std::string key) {
-//     if (std::is_same_v<T, decltype(value)>) {
-//         return value;
-//     } else {
-//         throw std::runtime_error("Type mismatch in \"" + key + "\".");
-//     }
-// }
+
 #endif

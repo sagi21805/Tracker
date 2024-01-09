@@ -33,13 +33,7 @@ Rect Entity::predictPossibleLocations(){
     const int& H = currentRect.height;
     const float& K = predictions::_offsetCoefficient; 
     const float& J = predictions::_sizeCoefficient;
-    // const float M = 3;
     Rect possibleLocations = Rect(currentRect.tl() - Point(K * W,  K * H), cv::Size2i(J * W, J * H));
-    // if (this->velocity.x != 0 || this->velocity.y != 0){
-    //     Point A = Point(currentRect.tl().x + M * this->velocity.x, currentRect.tl().y + M * this->velocity.y);
-    //     Point B = Point(currentRect.tl().x - M * this->velocity.x, currentRect.tl().y - M * this->velocity.y);
-    //     possibleLocations = Rect(A, B);
-    // }
     return possibleLocations;
 }
 
@@ -50,7 +44,7 @@ Entity generateEntity(Rect r, uint16_t type){
 
 
 void Entity::draw(cv::Mat& frame, cv::Scalar color){
-		this->getBoundingRect().drawRect(frame, color);
+		this->getBoundingRect().draw(frame, color);
 		cv::putText(frame, std::to_string(this->id), this->boundingRect.tl(), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(255, 255, 0), 2);
 }
 

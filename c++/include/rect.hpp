@@ -45,7 +45,7 @@ class Rect : public cv::Rect_<uint16_t>{
      * @returns True if in distance False if not.
      * @author Sagi Or
     */
-    void drawRect(cv::Mat& frame, cv::Scalar color);
+    void draw(cv::Mat& frame, cv::Scalar color);
     // bool isIntersectingTo(Rect& r);
 };
 
