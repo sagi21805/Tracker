@@ -4,7 +4,7 @@ Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* fram
 	: rows(rows), cols(cols){
 	config("config.json");
 	this->setCurrentTrack(points, types, size, frame); // sets this current recognition
-	this->entities = vector<Entity>(this->generateEntites(this->currentRecognition));
+	this->generateEntites(this->currentRecognition);
 	this->addToTrajectory();
 }
 
@@ -29,16 +29,11 @@ void Tracker::drawEntities(){
 	}
 }
 
-void Tracker::drawPredictions(){
-	for (uint16_t i = 0, size = this->currentPrediction.size(); i < size; i++){
-		Entity& drawnEntity = this->currentPrediction[i];
-		drawnEntity.draw(this->frame, CV_RGB(255, 255, 255));
-	}
-}
-
 void Tracker::addToTrajectory(){
+	cout << "Trajectory Length: ";
 	for (Entity& entity : this->entities){
 		entity.addToTrajectory();
+		cout << entity.getTrajectory().lock()->length << " ";
 	}
 }	
 
@@ -59,17 +54,13 @@ cv::Scalar Tracker::chooseColor(Entity& e){
 
 void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentRecognition, Mat& frame){
     
-    for (Rect& r : currentRecognition.rects){
-        r.drawRect(frame, CV_RGB(0, 0, 0));
-    }
 
     for (uint16_t j = 0, size = MIN(currentEntities.size(), currentRecognition.size); j < size; j++){
         Entity& currentEntity = currentEntities[j];
         uint distanceSquared = UINT32_MAX;
         currentEntity.calcAndSetVelocity();
         Rect possibleLocations = currentEntity.predictPossibleLocations();
-        possibleLocations.drawRect(frame, CV_RGB(255, 255, 255));
-    
+        possibleLocations.draw(frame, CV_RGB(255, 255, 255));
         uint16_t matchingEntityIndex = UINT16_MAX;
         for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
             const Rect& checkedRect = currentRecognition.rects[i];
@@ -94,41 +85,29 @@ void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentR
             currentEntity.setBoundingRect(currentEntity.predictNextBoundingRect());
         }
     }
-
-    // if (currentRecognition.size > 0){
-    //     for (uint16_t i = 0; i < currentRecognition.size; i++){
-    //         currentEntities.emplace_back(generateEntity(currentRecognition.rects[i], currentRecognition.types[i]));
-    //     }
-    //     currentRecognition.clear();
-    // }
 }
 
-vector<Entity> Tracker::generateEntites(Recognition currentRecognition){;
-    vector<Entity> generatedEntities;
-	generatedEntities.reserve(currentRecognition.size);
+void Tracker::generateEntites(Recognition currentRecognition){
+
+	this->entities.reserve(currentRecognition.size);
 	
 	for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
-        generatedEntities.emplace_back(generateEntity(currentRecognition.rects[i], currentRecognition.types[i]));
+        this->entities.emplace_back(generateEntity(currentRecognition.rects[i], currentRecognition.types[i]));
 	}
-	return generatedEntities;
 
 }
 
-//TODO using a lot of shared pointers - performence heavy.
-//TODO imporve all function performence!.
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
+
 	this->setCurrentTrack(points, types, size, frame);
 	this->matchEntity(this->entities, this->currentRecognition, this->frame);
 
 	if (visualization::_toVisualize){
 
-		this->drawPredictions();
 		this->drawEntities();
 		cv::imshow("frame", this->frame);
 		cv::waitKey(visualization::_waitKey);
 	}
-	// std::cin.get();
 	this->addToTrajectory();
-	this->currentPrediction.clear();
 
 }	
