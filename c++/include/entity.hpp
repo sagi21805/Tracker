@@ -4,7 +4,6 @@
 #include "linkedList.hpp"
 #include <limits>
 #include "vectorFuncs.hpp"
-#include "imgUtils.hpp"
 #include "recognition.hpp"
 //////////////////////////////////////////// Entity //////////////////////////////////////////////////////
 /**

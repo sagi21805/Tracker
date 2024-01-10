@@ -2,7 +2,6 @@
 #define _Tracker_
 
 #include "entity.hpp"
-#include "imgUtils.hpp"
 
 /**
  * @file tracker.hpp
