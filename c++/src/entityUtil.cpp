@@ -2,8 +2,8 @@
 
 
 void Entity::calcAndSetVelocity(){
-    if (this->trajectory->length > 3){
-        uint8_t numOfFrames = 3;
+    uint8_t numOfFrames = 2; //TODO replace the magic number with a var name.
+    if (this->trajectory->length >= numOfFrames){
         const Rect& startRect = this->trajectory->getItem(numOfFrames).rect; //the place before 
         const Rect& endRect = this->trajectory->getItem(0).rect; //current place
         Velocity2D rawVelocity((endRect.x - startRect.x) / numOfFrames, (endRect.y - startRect.y) / numOfFrames);
@@ -29,11 +29,16 @@ uint Entity::squareDistanceTo(const Rect& r){
 
 Rect Entity::predictPossibleLocations(){
     Rect& currentRect = this->getBoundingRect();
-    const int& W = currentRect.width;
-    const int& H = currentRect.height;
-    const float& K = predictions::_offsetCoefficient; 
-    const float& J = predictions::_sizeCoefficient;
-    Rect possibleLocations = Rect(currentRect.tl() - Point(K * W,  K * H), cv::Size2i(J * W, J * H));
+
+    const uint16_t DB = core::_velocityDeadBand;
+    const int& w = currentRect.width;
+    const int& h = currentRect.height;
+    const int& vX = abs(this->velocity.x*3);
+    const int& vY = abs(this->velocity.y*3);
+    const int offset = 10;
+
+    cout << this->velocity << " " << this->getId() <<"\n";
+    Rect possibleLocations = Rect(currentRect.tl() - Point(DB+vX+w, DB+vY+h), currentRect.tl() + Point(DB+vX+w+offset, DB+vY+h+offset));
     return possibleLocations;
 }
 

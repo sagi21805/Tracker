@@ -2,7 +2,7 @@ from python_utils.Tracker import Tracker
 from pynput import keyboard
 import threading
 
-tracker = Tracker("bumperWeights.pt", "TestVideo.mp4")
+tracker = Tracker("bumperWeights.pt", "/home/sagi21805/dcmp4.mp4")
 is_running = True
 
 def main_code():

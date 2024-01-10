@@ -35,6 +35,7 @@ void Tracker::addToTrajectory(){
 		entity.addToTrajectory();
 		cout << entity.getTrajectory().lock()->length << " ";
 	}
+	cout << "\n";
 }	
 
 cv::Scalar Tracker::chooseColor(Entity& e){
