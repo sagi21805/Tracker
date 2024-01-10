@@ -119,37 +119,6 @@ void config(const std::string& filename) {
 
     visualization::_colors = getRgbVector(config["visualization"]["colors"], "colors");
 
-    // ImgProcessing
-    if (config["imgProcessing"]["convolutionThresh"].is_number()) {
-        imgProcessing::_convolutionThresh = config["imgProcessing"]["convolutionThresh"].get<float>();
-    } else {
-        throw std::runtime_error("Value for key 'convolutionThresh' is not a number.");
-    }
-
-    // Kmeans
-    if (config["kmeans"]["k"].is_number_unsigned()) {
-        kmeans::_k = config["kmeans"]["k"].get<uint8_t>();
-    } else {
-        throw std::runtime_error("Value for key 'k' is not an unsigned number.");
-    }
-
-    if (config["kmeans"]["epsilon"].is_number()) {
-        kmeans::_epsilon = config["kmeans"]["epsilon"].get<float>();
-    } else {
-        throw std::runtime_error("Value for key 'epsilon' is not a number.");
-    }
-
-    if (config["kmeans"]["maxIterPerAttempt"].is_number_unsigned()) {
-        kmeans::_maxIterPerAttempt = config["kmeans"]["maxIterPerAttempt"].get<uint8_t>();
-    } else {
-        throw std::runtime_error("Value for key 'maxIterPerAttempt' is not an unsigned number.");
-    }
-
-    if (config["kmeans"]["maxAttemps"].is_number_unsigned()) {
-        kmeans::_maxAttempts = config["kmeans"]["maxAttemps"].get<uint8_t>();
-    } else {
-        throw std::runtime_error("Value for key 'maxAttempts' is not an unsigned number.");
-    }
 
     std::cout << "[INFO]: Done initializing variables\n";
 

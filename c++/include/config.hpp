@@ -29,16 +29,6 @@ namespace predictions{
     extern float _sizeCoefficient;
 }
 
-namespace imgProcessing{
-    extern float _convolutionThresh;
-}
-
-namespace kmeans{
-    extern uint8_t _k;
-    extern float _epsilon;
-    extern uint8_t _maxIterPerAttempt;
-    extern uint8_t _maxAttempts;
-}
  
 
 // Function to initialize global variables from JSON

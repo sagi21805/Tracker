@@ -1,11 +1,11 @@
 {
     "pointSize" : 4,
     "startingId" : 0,
-    "velocityDeadBand" : 2,
+    "velocityDeadBand" : 10,
 
     "predictions" : {
-        "offsetCoefficient" : 0.35,
-        "sizeCoefficient" : 0.7,
+        "offsetCoefficient" : 0.25,
+        "sizeCoefficient" : 0.5,
         "numOfFrames" : 3
     },
 
@@ -16,16 +16,5 @@
             "blueRobot" : [0, 0, 255],
             "redRobot" : [255, 0, 0]
         }
-    }, 
-    
-    "imgProcessing" : {
-        "convolutionThresh" : 0.25
-    },
-
-    "kmeans" : {
-        "k" : 3,
-        "epsilon" : 0.2,
-        "maxIterPerAttempt" : 100,
-        "maxAttemps" : 10 
     }
 }
