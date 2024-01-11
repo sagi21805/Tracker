@@ -1,7 +1,7 @@
 {
     "elementsInPoint" : 4,
     "startingId" : 0,
-    "velocityDeadBand" : 10,
+    "velocityDeadBand" : 20,
 
     "predictions" : {
         "sizeCoefficient" : 0.5,
