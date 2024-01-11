@@ -2,13 +2,13 @@ from python_utils.Tracker import Tracker
 from pynput import keyboard
 import threading
 
-tracker = Tracker("bumperWeights.pt", "/home/sagi21805/dcmp4.mp4")
+tracker = Tracker("bumperWeights.pt", "./TestVideo.mp4")
 is_running = True
 
 def main_code():
     while True:
         if is_running:
-            tracker.track(True)
+            tracker.track(show_time=True)
             
 
 def on_press(key):
