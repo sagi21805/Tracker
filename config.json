@@ -1,12 +1,13 @@
 {
-    "pointSize" : 4,
+    "elementsInPoint" : 4,
     "startingId" : 0,
     "velocityDeadBand" : 10,
 
     "predictions" : {
-        "offsetCoefficient" : 0.25,
         "sizeCoefficient" : 0.5,
-        "numOfFrames" : 3
+        "numOfFrames" : 3,
+        "velocityCoefficient" : 2,
+        "offset" : 10
     },
 
     "visualization" : {

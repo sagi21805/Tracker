@@ -1,9 +1,9 @@
 #include "config.hpp"
 
 namespace core {
-    uint8_t _pointSize;
-    uint16_t _startingId;
-    uint8_t _velocityDeadBand;
+    uint8_t _elementsInPoint;
+    size_t _startingId;
+    size_t _velocityDeadBand;
 }
 
 namespace visualization {
@@ -14,20 +14,11 @@ namespace visualization {
 
 namespace predictions {
     uint8_t _numOfFrames;
-    float _offsetCoefficient;
     float _sizeCoefficient;
+    float _velocityCoefficient;
+    uint16_t _offset;
 }
 
-namespace imgProcessing {
-    float _convolutionThresh;
-}
-
-namespace kmeans {
-    uint8_t _k;
-    float _epsilon;
-    uint8_t _maxIterPerAttempt;
-    uint8_t _maxAttempts;
-}
 
 cv::Scalar_<uint8_t> getRgbArray(const json& array, const std::string& key) {
     if (array.size() == 3) {
@@ -67,8 +58,8 @@ void config(const std::string& filename) {
     input_file >> config;
     
     // CORE DATA
-    if (config["pointSize"].is_number_unsigned()) {
-        core::_pointSize = config["pointSize"].get<uint8_t>();
+    if (config["elementsInPoint"].is_number_unsigned()) {
+        core::_elementsInPoint = config["elementsInPoint"].get<uint8_t>();
     } else {
         throw std::runtime_error("Value for key 'pointSize' is not an unsigned number.");
     }
@@ -85,12 +76,7 @@ void config(const std::string& filename) {
         throw std::runtime_error("Value for key 'velocityDeadBand' is not an unsigned number.");
     }
 
-    // Visualization
-    if (config["predictions"]["offsetCoefficient"].is_number_float()) {
-        predictions::_offsetCoefficient = config["predictions"]["offsetCoefficient"].get<float>();
-    } else {
-        throw std::runtime_error("Value for key 'offsetCoefficient' is not a number.");
-    }
+    // Predictions
 
     if (config["predictions"]["sizeCoefficient"].is_number_float()) {
         predictions::_sizeCoefficient = config["predictions"]["sizeCoefficient"].get<float>();
@@ -104,7 +90,11 @@ void config(const std::string& filename) {
         throw std::runtime_error("Value for key 'numOfFrames' is not an unsigned number.");
     }
 
-    // Predictions
+    predictions::_velocityCoefficient = config["predictions"]["velocityCoefficient"];
+
+    predictions::_offset = config["predictions"]["offset"];
+
+    // Visualization
     if (config["visualization"]["toVisualize"].is_boolean()) {
         visualization::_toVisualize = config["visualization"]["toVisualize"].get<bool>();
     } else {
