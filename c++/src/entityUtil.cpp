@@ -1,12 +1,11 @@
 #include "entity.hpp"
-
+using predictions::_offset, predictions::_numOfFrames;
 
 void Entity::calcAndSetVelocity(){
-    uint8_t numOfFrames = 2; //TODO replace the magic number with a var name.
-    if (this->trajectory->length >= numOfFrames){
-        const Rect& startRect = this->trajectory->getItem(numOfFrames).rect; //the place before 
+    if (this->trajectory->length >= _numOfFrames){
+        const Rect& startRect = this->trajectory->getItem(_numOfFrames).rect; //the place before 
         const Rect& endRect = this->trajectory->getItem(0).rect; //current place
-        Velocity2D rawVelocity((endRect.x - startRect.x) / numOfFrames, (endRect.y - startRect.y) / numOfFrames);
+        Velocity2D rawVelocity((endRect.x - startRect.x) / _numOfFrames, (endRect.y - startRect.y) / _numOfFrames);
         this->velocity.x = applyDeadband(rawVelocity.x, core::_velocityDeadBand);
         this->velocity.y = applyDeadband(rawVelocity.y, core::_velocityDeadBand);
     }
@@ -28,17 +27,27 @@ uint Entity::squareDistanceTo(const Rect& r){
 }
 
 Rect Entity::predictPossibleLocations(){
-    Rect& currentRect = this->getBoundingRect();
+    Point tl = this->getBoundingRect().tl();
 
-    const uint16_t DB = core::_velocityDeadBand;
-    const int& w = currentRect.width;
-    const int& h = currentRect.height;
-    const int& vX = abs(this->velocity.x*3);
-    const int& vY = abs(this->velocity.y*3);
-    const int offset = 10;
+    const int w = this->getBoundingRect().width*predictions::_sizeCoefficient;
+    const int h = this->getBoundingRect().height*predictions::_sizeCoefficient;
+    const int vX = this->velocity.x*predictions::_velocityCoefficient;
+    const int vY = this->velocity.y*predictions::_velocityCoefficient;
+    Rect possibleLocations = Rect(tl + Point(vX, vY),  tl - Point(vX, vY));
 
-    cout << this->velocity << " " << this->getId() <<"\n";
-    Rect possibleLocations = Rect(currentRect.tl() - Point(DB+vX+w, DB+vY+h), currentRect.tl() + Point(DB+vX+w+offset, DB+vY+h+offset));
+    // if (vX > 0 && vY > 0){
+    //     possibleLocations = Rect(tl, tl + Point(vX+w+_offset, vY+h+_offset));
+    // }
+    // if (vX < 0 && vY < 0){
+    //     possibleLocations = Rect(tl, tl + Point(vX+w+_offset, vY+h+_offset));
+    // }
+    // if (vX < 0 && vY > 0){
+    //     possibleLocations = Rect(tl - Point(vX+w, vY+h), tl + Point(vX+w+_offset, vY+h+_offset));
+    // }
+    // if (vY > 0 && vY < 0){
+    //     possibleLocations = Rect(tl - Point(vX+w, vY+h), tl + Point(vX+w+_offset, vY+h+_offset));
+    // }
+
     return possibleLocations;
 }
 
