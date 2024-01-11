@@ -26,29 +26,14 @@ uint Entity::squareDistanceTo(const Rect& r){
     return this->getBoundingRect().squareDistanceTo(r);
 }
 
-Rect Entity::predictPossibleLocations(){
+void Entity::predictPossibleLocations(){
     Point tl = this->getBoundingRect().tl();
 
     const int w = this->getBoundingRect().width*predictions::_sizeCoefficient;
     const int h = this->getBoundingRect().height*predictions::_sizeCoefficient;
     const int vX = this->velocity.x*predictions::_velocityCoefficient;
     const int vY = this->velocity.y*predictions::_velocityCoefficient;
-    Rect possibleLocations = Rect(tl + Point(vX, vY),  tl - Point(vX, vY));
-
-    // if (vX > 0 && vY > 0){
-    //     possibleLocations = Rect(tl, tl + Point(vX+w+_offset, vY+h+_offset));
-    // }
-    // if (vX < 0 && vY < 0){
-    //     possibleLocations = Rect(tl, tl + Point(vX+w+_offset, vY+h+_offset));
-    // }
-    // if (vX < 0 && vY > 0){
-    //     possibleLocations = Rect(tl - Point(vX+w, vY+h), tl + Point(vX+w+_offset, vY+h+_offset));
-    // }
-    // if (vY > 0 && vY < 0){
-    //     possibleLocations = Rect(tl - Point(vX+w, vY+h), tl + Point(vX+w+_offset, vY+h+_offset));
-    // }
-
-    return possibleLocations;
+    this->possibleLocation = Rect(tl + Point(vX, vY),  tl - Point(vX, vY));
 }
 
 Entity generateEntity(Rect r, uint16_t type){
