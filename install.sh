@@ -24,7 +24,9 @@ make -j5
 sudo make install
 
 cd ~
-sudo apt install python3.11-venv -y
+sudo add-apt-repository ppa:deadsnakes/ppa -y
+sudo apt install python3.11 -y
+sudo apt install python3.11-full -y
 python3.11 -m venv Tracker-Venv
 source ~/Tracker-Venv/bin/activate
 sudo pip install -r $wd/requirements.txt
