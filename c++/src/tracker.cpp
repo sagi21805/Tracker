@@ -60,8 +60,8 @@ void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentR
         Entity& currentEntity = currentEntities[j];
         uint distanceSquared = UINT32_MAX;
         currentEntity.calcAndSetVelocity();
-        Rect possibleLocations = currentEntity.predictPossibleLocations();
-        possibleLocations.draw(frame, CV_RGB(255, 255, 255));
+		currentEntity.predictPossibleLocations();
+        currentEntity.getPossibleLocation().draw(frame, CV_RGB(255, 255, 255));
         uint16_t matchingEntityIndex = UINT16_MAX;
         for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
             const Rect& checkedRect = currentRecognition.rects[i];
@@ -70,7 +70,7 @@ void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentR
             if (currentEntity.getType() == checkedType) { 
                 uint currentDistanceSquared = currentEntity.squareDistanceTo(checkedRect);
                 if (currentDistanceSquared < distanceSquared && 
-                    possibleLocations.contains(checkedRect.tl())){
+                    currentEntity.getPossibleLocation().contains(checkedRect.tl())){
                     matchingEntityIndex = i;
                     distanceSquared = currentDistanceSquared;
                 }
