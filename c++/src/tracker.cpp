@@ -14,7 +14,7 @@ Tracker::~Tracker(){
 
 void Tracker::setCurrentTrack(uint16_t *points, uint16_t* types, uint16_t size, uint8_t* frame){
 	this->setFrame(frame);
-	this->currentRecognition = Recognition(pointsToRects(points, size), types);
+	this->currentRecognition = Recognition(points, size, types);
 }
 
 void Tracker::setFrame(uint8_t* frame){

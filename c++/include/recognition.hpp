@@ -14,6 +14,9 @@ struct Recognition{
     Recognition(vector<Rect> rects, uint16_t* types) 
         : rects(rects), types(vector<uint16_t>(types, types + rects.size())), size(rects.size()) {}
 
+    Recognition(uint16_t* points, uint16_t size, uint16_t* types)
+        : rects(pointsToRects(points, size)), types(vector<uint16_t>(types, types + size)), size(size) {}
+
     Recognition() : rects(vector<Rect>()), types(vector<uint16_t>()), size(0) {}
 
     Recognition(const Recognition & rec) : rects(rec.rects), types(rec.types), size(rec.size){}
