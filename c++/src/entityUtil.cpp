@@ -29,11 +29,11 @@ uint Entity::squareDistanceTo(const Rect& r){
 void Entity::predictPossibleLocations(){
     Point tl = this->getBoundingRect().tl();
 
-    const int w = this->getBoundingRect().width*predictions::_sizeCoefficient;
-    const int h = this->getBoundingRect().height*predictions::_sizeCoefficient;
     const int vX = this->velocity.x*predictions::_velocityCoefficient;
     const int vY = this->velocity.y*predictions::_velocityCoefficient;
-    this->possibleLocation = Rect(tl + Point(vX, vY),  tl - Point(vX, vY));
+    const int w = this->getBoundingRect().width*predictions::_sizeCoefficient*signum(vX);
+    const int h = this->getBoundingRect().height*predictions::_sizeCoefficient*signum(vY);
+    this->possibleLocation = Rect(tl + Point(vX+w, vY+h),  tl - Point(w, h));
 }
 
 Entity generateEntity(Rect r, uint16_t type){
