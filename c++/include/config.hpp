@@ -12,9 +12,9 @@ using json = nlohmann::json;
 
 // Declare global variables
 namespace core{
-    extern uint8_t  _pointSize;  
-    extern uint16_t _startingId;
-    extern uint8_t _velocityDeadBand;
+    extern uint8_t  _elementsInPoint;  
+    extern size_t _startingId;
+    extern size_t _velocityDeadBand;
 } 
 
 namespace visualization{
@@ -25,20 +25,11 @@ namespace visualization{
 
 namespace predictions{
     extern uint8_t _numOfFrames;
-    extern float _offsetCoefficient;
     extern float _sizeCoefficient;
+    extern float _velocityCoefficient;
+    extern uint16_t _offset;
 }
 
-namespace imgProcessing{
-    extern float _convolutionThresh;
-}
-
-namespace kmeans{
-    extern uint8_t _k;
-    extern float _epsilon;
-    extern uint8_t _maxIterPerAttempt;
-    extern uint8_t _maxAttempts;
-}
  
 
 // Function to initialize global variables from JSON

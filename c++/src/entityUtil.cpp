@@ -1,12 +1,11 @@
 #include "entity.hpp"
-
+using predictions::_offset, predictions::_numOfFrames;
 
 void Entity::calcAndSetVelocity(){
-    if (this->trajectory->length > 3){
-        uint8_t numOfFrames = 3;
-        const Rect& startRect = this->trajectory->getItem(numOfFrames).rect; //the place before 
+    if (this->trajectory->length >= _numOfFrames){
+        const Rect& startRect = this->trajectory->getItem(_numOfFrames).rect; //the place before 
         const Rect& endRect = this->trajectory->getItem(0).rect; //current place
-        Velocity2D rawVelocity((endRect.x - startRect.x) / numOfFrames, (endRect.y - startRect.y) / numOfFrames);
+        Velocity2D rawVelocity((endRect.x - startRect.x) / _numOfFrames, (endRect.y - startRect.y) / _numOfFrames);
         this->velocity.x = applyDeadband(rawVelocity.x, core::_velocityDeadBand);
         this->velocity.y = applyDeadband(rawVelocity.y, core::_velocityDeadBand);
     }
@@ -27,14 +26,14 @@ uint Entity::squareDistanceTo(const Rect& r){
     return this->getBoundingRect().squareDistanceTo(r);
 }
 
-Rect Entity::predictPossibleLocations(){
-    Rect& currentRect = this->getBoundingRect();
-    const int& W = currentRect.width;
-    const int& H = currentRect.height;
-    const float& K = predictions::_offsetCoefficient; 
-    const float& J = predictions::_sizeCoefficient;
-    Rect possibleLocations = Rect(currentRect.tl() - Point(K * W,  K * H), cv::Size2i(J * W, J * H));
-    return possibleLocations;
+void Entity::predictPossibleLocations(){
+    Point tl = this->getBoundingRect().tl();
+
+    const int vX = this->velocity.x*predictions::_velocityCoefficient;
+    const int vY = this->velocity.y*predictions::_velocityCoefficient;
+    const int w = this->getBoundingRect().width*predictions::_sizeCoefficient*signum(vX);
+    const int h = this->getBoundingRect().height*predictions::_sizeCoefficient*signum(vY);
+    this->possibleLocation = Rect(tl + Point(vX+w, vY+h),  tl - Point(w, h));
 }
 
 Entity generateEntity(Rect r, uint16_t type){

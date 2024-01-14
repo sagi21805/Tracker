@@ -30,11 +30,12 @@ void Tracker::drawEntities(){
 }
 
 void Tracker::addToTrajectory(){
-	cout << "Trajectory Length: ";
+	// cout << "Trajectory Length: ";
 	for (Entity& entity : this->entities){
 		entity.addToTrajectory();
-		cout << entity.getTrajectory().lock()->length << " ";
+		// cout << entity.getTrajectory().lock()->length << " ";
 	}
+	// cout << "\n";
 }	
 
 cv::Scalar Tracker::chooseColor(Entity& e){
@@ -52,15 +53,19 @@ cv::Scalar Tracker::chooseColor(Entity& e){
 	return color;
 }
 
-void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentRecognition, Mat& frame){
-    
+void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentRecognition){
 
-    for (uint16_t j = 0, size = MIN(currentEntities.size(), currentRecognition.size); j < size; j++){
+	cout << "Recognition Size: " << currentRecognition.size << "\n";
+
+	for (Rect& r : currentRecognition.rects){
+		r.draw(this->frame, CV_RGB(0, 0, 0));
+	}
+    for (uint16_t j = 0, size = currentEntities.size(); j < size; j++){
         Entity& currentEntity = currentEntities[j];
         uint distanceSquared = UINT32_MAX;
-        currentEntity.calcAndSetVelocity();
-        Rect possibleLocations = currentEntity.predictPossibleLocations();
-        possibleLocations.draw(frame, CV_RGB(255, 255, 255));
+		currentEntity.calcAndSetVelocity();
+		currentEntity.predictPossibleLocations();
+        currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
         uint16_t matchingEntityIndex = UINT16_MAX;
         for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
             const Rect& checkedRect = currentRecognition.rects[i];
@@ -69,7 +74,7 @@ void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentR
             if (currentEntity.getType() == checkedType) { 
                 uint currentDistanceSquared = currentEntity.squareDistanceTo(checkedRect);
                 if (currentDistanceSquared < distanceSquared && 
-                    possibleLocations.contains(checkedRect.tl())){
+                    currentEntity.getPossibleLocation().contains(checkedRect.tl())){
                     matchingEntityIndex = i;
                     distanceSquared = currentDistanceSquared;
                 }
@@ -85,7 +90,7 @@ void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentR
             currentEntity.setBoundingRect(currentEntity.predictNextBoundingRect());
         }
     }
-}
+}	
 
 void Tracker::generateEntites(Recognition currentRecognition){
 
@@ -100,7 +105,7 @@ void Tracker::generateEntites(Recognition currentRecognition){
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
 
 	this->setCurrentTrack(points, types, size, frame);
-	this->matchEntity(this->entities, this->currentRecognition, this->frame);
+	this->matchEntity(this->entities, this->currentRecognition);
 
 	if (visualization::_toVisualize){
 

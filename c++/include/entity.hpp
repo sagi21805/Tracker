@@ -24,6 +24,7 @@ class Entity{
         uint16_t type; //The Type/Class of the Entity **cannot be changed outside of Entity after creation**
         Velocity2D velocity; //The Velocity (x, y) of the Entity in pixels per frame
         Rect boundingRect; //The bounding rectangle of the Entity in pixels
+        Rect possibleLocation;
         std::shared_ptr<LinkedList> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
         //countour
 
@@ -106,6 +107,8 @@ class Entity{
          * @author Sagi Or
         */
         std::shared_ptr<LinkedList> copyTrajectory();
+
+        Rect& getPossibleLocation();
 
         /**
          * @file entity.cpp
@@ -221,7 +224,7 @@ class Entity{
          *
          * @see Entity::calcVelocity(uint8_t numOfFrames) for calculating the entity's velocity.
          */
-        Rect predictPossibleLocations();
+        void predictPossibleLocations();
         
         Rect predictNextBoundingRect();
         

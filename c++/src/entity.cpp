@@ -5,6 +5,7 @@
 Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect)
     : id(id), type(type){
     this->setBoundingRect(boundingRect);
+    this->predictPossibleLocations();
     this->trajectory = std::make_shared<LinkedList>(boundingRect, Velocity2D(0, 0));
     // this->calcContour(frameInside);
 }
@@ -46,6 +47,10 @@ std::weak_ptr<LinkedList> Entity::getTrajectory(){
 
 std::shared_ptr<LinkedList> Entity::copyTrajectory(){
     return this->trajectory;
+}
+
+Rect& Entity::getPossibleLocation(){
+    return this->possibleLocation;
 }
 
 Rect Entity::getBoundingRect() const{

@@ -7,7 +7,7 @@
 
 
 using std::vector;
-typedef cv::Point_<uint16_t> Point;
+typedef cv::Point2i Point;
 
 /**
  * @file mathUtils.cpp
@@ -19,8 +19,14 @@ uint squareDistance(Point A, Point B);
 
 uint16_t findMostOccurrence(const cv::Mat& labels, uint8_t k);
 
+//NOTICE IN THIS FUNCTION 0 COUNTS AS POSITIVE
+//=
+template <typename T> int signum(T val) {
+    return (val >= T(0)) - (val < T(0));
+}
+
 template <typename T>
 T applyDeadband(T value, uint8_t deadBand) {
-    return (std::abs(value) < deadBand) ? T(0) : value;
+    return (std::abs(value) > deadBand) ? value : deadBand*signum(value);
 }
 #endif
