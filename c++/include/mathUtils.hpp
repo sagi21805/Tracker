@@ -17,8 +17,6 @@ typedef cv::Point2i Point;
 */
 uint squareDistance(Point A, Point B);
 
-uint16_t findMostOccurrence(const cv::Mat& labels, uint8_t k);
-
 //NOTICE IN THIS FUNCTION 0 COUNTS AS POSITIVE
 //=
 template <typename T> int signum(T val) {
