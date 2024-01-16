@@ -60,7 +60,7 @@ class Tracker{
          * @param frame 
          * @author Sagi Or
         */
-        void setCurrentTrack(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
+        void setCurrentRecognition(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
 
         /**
          * @file tracker.cpp

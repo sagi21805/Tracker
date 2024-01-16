@@ -3,7 +3,7 @@
 Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
 	: rows(rows), cols(cols){
 	config("config.json");
-	this->setCurrentTrack(points, types, size, frame); // sets this current recognition
+	this->setCurrentRecognition(points, types, size, frame); // sets this current recognition
 	this->generateEntites(this->currentRecognition);
 	this->addToTrajectory();
 }
@@ -12,7 +12,7 @@ Tracker::~Tracker(){
 	cv::destroyAllWindows();
 }
 
-void Tracker::setCurrentTrack(uint16_t *points, uint16_t* types, uint16_t size, uint8_t* frame){
+void Tracker::setCurrentRecognition(uint16_t *points, uint16_t* types, uint16_t size, uint8_t* frame){
 	this->setFrame(frame);
 	this->currentRecognition = Recognition(points, size, types);
 }
@@ -30,12 +30,9 @@ void Tracker::drawEntities(){
 }
 
 void Tracker::addToTrajectory(){
-	// cout << "Trajectory Length: ";
 	for (Entity& entity : this->entities){
 		entity.addToTrajectory();
-		// cout << entity.getTrajectory().lock()->length << " ";
 	}
-	// cout << "\n";
 }	
 
 cv::Scalar Tracker::chooseColor(Entity& e){
@@ -104,7 +101,9 @@ void Tracker::generateEntites(Recognition currentRecognition){
 
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
 
-	this->setCurrentTrack(points, types, size, frame);
+	cout << "Strted!\n";
+
+	this->setCurrentRecognition(points, types, size, frame);
 	this->matchEntity(this->entities, this->currentRecognition);
 
 	if (visualization::_toVisualize){
