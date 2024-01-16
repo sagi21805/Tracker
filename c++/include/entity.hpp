@@ -25,7 +25,7 @@ class Entity{
         Velocity2D velocity; //The Velocity (x, y) of the Entity in pixels per frame
         Rect boundingRect; //The bounding rectangle of the Entity in pixels
         Rect possibleLocation;
-        std::shared_ptr<LinkedList> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
+        std::shared_ptr<LinkedList<TrajectoryNode>> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
         //countour
 
     public:
@@ -98,7 +98,7 @@ class Entity{
          * @returns Weak_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        std::weak_ptr<LinkedList> getTrajectory();
+        std::weak_ptr<LinkedList<TrajectoryNode>> getTrajectory();
         
         /**
          * @file entity.cpp
@@ -106,7 +106,7 @@ class Entity{
          * @returns Shared_ptr to the Entity's Trajectory.
          * @author Sagi Or
         */
-        std::shared_ptr<LinkedList> copyTrajectory();
+        std::shared_ptr<LinkedList<TrajectoryNode>> copyTrajectory();
 
         Rect& getPossibleLocation();
 
@@ -148,7 +148,7 @@ class Entity{
          * @returns Weak_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        std::weak_ptr<LinkedList> getTrajectory() const;
+        std::weak_ptr<LinkedList<TrajectoryNode>> getTrajectory() const;
 
         /**
          * @file entity.cpp
@@ -156,7 +156,7 @@ class Entity{
          * @returns Shared_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        std::shared_ptr<LinkedList> copyTrajectory() const;
+        std::shared_ptr<LinkedList<TrajectoryNode>> copyTrajectory() const;
 
 
 ///////////////////////////////////////// Set Functions //////////////////////////////////////////////////
