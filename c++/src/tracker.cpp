@@ -93,7 +93,7 @@ void Tracker::generateEntites(Recognition currentRecognition){
 	this->entities.reserve(currentRecognition.size);
 	
 	for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
-        this->entities.emplace_back(generateEntity(currentRecognition.rects[i], currentRecognition.types[i]));
+        this->entities.emplace_back(currentRecognition.types[i], currentRecognition.rects[i]);
 	}
 
 }

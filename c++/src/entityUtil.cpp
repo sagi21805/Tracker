@@ -36,12 +36,6 @@ void Entity::predictPossibleLocations(){
     this->possibleLocation = Rect(tl + Point(vX+w, vY+h),  tl - Point(w, h));
 }
 
-Entity generateEntity(Rect r, uint16_t type){
-	core::_startingId++;
-	return Entity(core::_startingId, type, r);
-}
-
-
 void Entity::draw(cv::Mat& frame, cv::Scalar color){
 		this->getBoundingRect().draw(frame, color);
 		cv::putText(frame, std::to_string(this->id), this->boundingRect.tl(), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(255, 255, 0), 2);

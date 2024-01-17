@@ -2,17 +2,16 @@
 
 ////////////////////////////////// constructors //////////////////////////////////////////////////
 
-Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect)
-    : id(id), type(type){
-    this->setBoundingRect(boundingRect);
+Entity::Entity(uint16_t type, Rect boundingRect)
+    : id(core::_startingId), type(type), velocity(Velocity2D(0, 0)), boundingRect(boundingRect){
+    core::_startingId++;
     this->trajectory = std::make_shared<LinkedList<TrajectoryNode>>(TrajectoryNode(boundingRect, Velocity2D(0, 0)));
     this->predictPossibleLocations();
 }
 
 Entity::Entity(const Entity& e) 
-    : id(e.getId()), type(e.getType()){
-    this->setBoundingRect(e.getBoundingRect());
-    this->trajectory = e.copyTrajectory();
+    : id(e.getId()), type(e.getType()), velocity(e.getVelocity()), boundingRect(e.getBoundingRect()), 
+    trajectory(e.copyTrajectory()), possibleLocation(e.getPossibleLocation()){
 }
 
 Entity::Entity() 
@@ -75,6 +74,10 @@ std::weak_ptr<LinkedList<TrajectoryNode>> Entity::getTrajectory() const{
 
 std::shared_ptr<LinkedList<TrajectoryNode>> Entity::copyTrajectory() const{
     return this->trajectory;
+}
+
+Rect Entity::getPossibleLocation() const{
+    return this->possibleLocation;
 }
 
 void Entity::setBoundingRect(Rect boundningRect){
