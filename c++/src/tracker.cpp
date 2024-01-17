@@ -60,7 +60,6 @@ void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentR
     for (uint16_t j = 0, size = currentEntities.size(); j < size; j++){
         Entity& currentEntity = currentEntities[j];
         uint distanceSquared = UINT32_MAX;
-		currentEntity.calcAndSetVelocity();
 		currentEntity.predictPossibleLocations();
         currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
         uint16_t matchingEntityIndex = UINT16_MAX;

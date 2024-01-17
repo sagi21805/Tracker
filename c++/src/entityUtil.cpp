@@ -27,8 +27,8 @@ uint Entity::squareDistanceTo(const Rect& r){
 }
 
 void Entity::predictPossibleLocations(){
+    this->calcAndSetVelocity();
     Point tl = this->getBoundingRect().tl();
-
     const int vX = this->velocity.x*predictions::_velocityCoefficient;
     const int vY = this->velocity.y*predictions::_velocityCoefficient;
     const int w = this->getBoundingRect().width*predictions::_sizeCoefficient*signum(vX);

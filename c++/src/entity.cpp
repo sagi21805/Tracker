@@ -5,9 +5,8 @@
 Entity::Entity(uint16_t id, uint16_t type, Rect boundingRect)
     : id(id), type(type){
     this->setBoundingRect(boundingRect);
-    this->predictPossibleLocations();
     this->trajectory = std::make_shared<LinkedList<TrajectoryNode>>(TrajectoryNode(boundingRect, Velocity2D(0, 0)));
-    // this->calcContour(frameInside);
+    this->predictPossibleLocations();
 }
 
 Entity::Entity(const Entity& e) 
