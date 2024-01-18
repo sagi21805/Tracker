@@ -17,6 +17,7 @@ Entity::Entity(const Entity& e)
 Entity::Entity() 
     : id(UINT16_MAX), type(UINT16_MAX), color(this->chooseColor()){
     this->boundingRect = Rect();
+    this->trajectory = LinkedList<Trajectory>();
 }
 
 ////////////////////////////////// Get Functions //////////////////////////////////////////////////
