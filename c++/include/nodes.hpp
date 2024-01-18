@@ -12,8 +12,10 @@
  * 
 */  
 
-typedef struct TrajectoryNode TrajectoryNode;
 typedef cv::Point2i Velocity2D;
+
+
+typedef struct TrajectoryNode TrajectoryNode;
 
 struct TrajectoryNode{
     
@@ -23,21 +25,23 @@ struct TrajectoryNode{
 
 ///////////////////////////////////////// Constructors //////////////////////////////////////////////////
 
-    /**
-     * @file linkedList.hpp
-     * @brief Node constructor from raw data.
-     * @author Sagi Or
-    */
     TrajectoryNode(Rect rect, Velocity2D velocity): rect(rect), velocity(velocity), next(nullptr) {}
 
     TrajectoryNode(const TrajectoryNode& node) : rect(node.rect), velocity(node.velocity), next(nullptr) {}
 
-    /**
-     * @file linkedList.hpp
-     * @brief Node defualt constructor.
-     * @author Sagi Or
-    */
     TrajectoryNode(): rect(Rect()), next(nullptr) {}
 
+};
+
+typedef struct EntityNode EntityNode;
+
+struct EntityNode{
+
+    const Entity entity;
+    std::shared_ptr<struct EntityNode> next;
+
+    EntityNode(const Entity entity) : entity(entity), next(nullptr) {}
+
+    EntityNode() : entity(Entity()), next(nullptr) {}
 };
 
