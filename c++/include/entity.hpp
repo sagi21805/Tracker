@@ -5,6 +5,11 @@
 #include <limits>
 #include "vectorFuncs.hpp"
 #include "recognition.hpp"
+
+enum Types{
+    BlueRobot = 0, RedRobot
+};
+
 //////////////////////////////////////////// Entity //////////////////////////////////////////////////////
 /**
  * @file entity.hpp
@@ -26,6 +31,7 @@ class Entity{
         Rect boundingRect; //The bounding rectangle of the Entity in pixels
         std::shared_ptr<LinkedList<TrajectoryNode>> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
         Rect possibleLocation;
+        cv::Scalar color;
         //countour
 
     public:
@@ -221,7 +227,9 @@ class Entity{
          * @param color The color of the BoundingRect.
          * @author Sagi Or
         */
-        void draw(cv::Mat& frame, cv::Scalar color);
+        void draw(cv::Mat& frame);
+
+        cv::Scalar chooseColor();
 };
 
 /**
