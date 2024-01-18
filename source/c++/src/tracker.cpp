@@ -44,8 +44,10 @@ void Tracker::matchEntity(){
 	for (Rect& r : currentRecognition.rects){
 		r.draw(this->frame, CV_RGB(0, 0, 0));
 	}
-    for (uint16_t j = 0, size = currentEntities.size(); j < size; j++){
-        Entity& currentEntity = currentEntities[j];
+
+    std::shared_ptr<Node<Entity>> traverse = this->entities.start;
+	while (traverse != nullptr){
+        Entity& currentEntity = traverse->item;
         uint distanceSquared = UINT32_MAX;
 		currentEntity.predictPossibleLocations();
         currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
@@ -72,6 +74,7 @@ void Tracker::matchEntity(){
         else {
             currentEntity.setBoundingRect(currentEntity.predictNextBoundingRect());
         }
+		traverse = traverse->next;
     }
 }	
 
@@ -85,11 +88,9 @@ void Tracker::generateEntites(){
 
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
 
-	cout << "Strted!\n";
 
 	this->setCurrentRecognition(points, types, size, frame);
 	this->matchEntity();
-
 	if (visualization::_toVisualize){
 
 		this->drawEntities();
