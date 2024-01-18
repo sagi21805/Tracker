@@ -3,6 +3,14 @@
 
 #include "entity.hpp"
 
+/**
+ * @file tracker.hpp
+ * @brief The enum for the types, each type that gets in is a num in the enum.
+ * @author Sagi Or
+*/
+enum Types{
+    BlueRobot = 0, RedRobot
+};
 
 /**
  * @file tracker.hpp
@@ -81,12 +89,20 @@ class Tracker{
 
         /**
          * @file tracker.cpp
+         * @brief Choose the color of an Entitiy by their type.
+         * @param e The entity to choose his color.
+         * @author Sagi Or
+        */
+        cv::Scalar chooseColor(Entity& e);
+
+        /**
+         * @file tracker.cpp
          * @brief Turn a rect vector into a Entity vector.
          * @param rects The rect vector to turn.
          * @param types The types corresponding to the rect vector.
          * @author Sagi Or
         */
-        void generateEntites();
+        void generateEntites(Recognition currentRecognition);
         
         /**
          * @file tracker.cpp
@@ -99,7 +115,7 @@ class Tracker{
         */
         void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
 
-        void matchEntity();
+        void matchEntity(std::vector<Entity> &currentEntities, Recognition& currentRecognition);
         
 
 };  

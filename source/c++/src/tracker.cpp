@@ -22,32 +22,43 @@ void Tracker::setFrame(uint8_t* frame){
 }
 
 void Tracker::drawEntities(){
-	std::shared_ptr<Node<Entity>> traverse = this->entities.start;
-	while (traverse != nullptr){
-		traverse->item.draw(this->frame);
-		traverse = traverse->next;
+	for (uint16_t i = 0, size = this->entities.size(); i < size; i++){
+		Entity& drawnEntity = this->entities[i];
+		cv::Scalar color = this->chooseColor(drawnEntity);
+		drawnEntity.draw(this->frame, color);
 	}
 }
 
 void Tracker::addToTrajectory(){
-	std::shared_ptr<Node<Entity>> traverse = this->entities.start;
-	while (traverse != nullptr){
-		traverse->item.addToTrajectory();
-		traverse = traverse->next;
+	for (Entity& entity : this->entities){
+		entity.addToTrajectory();
 	}
 }	
 
-void Tracker::matchEntity(){
+cv::Scalar Tracker::chooseColor(Entity& e){
+	cv::Scalar color;
+	switch (e.getType()){
+			case RedRobot:
+				color = visualization::_colors[RedRobot];
+				break;
+			case BlueRobot:
+				color = visualization::_colors[BlueRobot];
+				break;
+			default:
+				color = CV_RGB(0, 0, 0);
+		}
+	return color;
+}
+
+void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentRecognition){
 
 	cout << "Recognition Size: " << currentRecognition.size << "\n";
 
 	for (Rect& r : currentRecognition.rects){
 		r.draw(this->frame, CV_RGB(0, 0, 0));
 	}
-
-    std::shared_ptr<Node<Entity>> traverse = this->entities.start;
-	while (traverse != nullptr){
-        Entity& currentEntity = traverse->item;
+    for (uint16_t j = 0, size = currentEntities.size(); j < size; j++){
+        Entity& currentEntity = currentEntities[j];
         uint distanceSquared = UINT32_MAX;
 		currentEntity.predictPossibleLocations();
         currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
@@ -74,23 +85,26 @@ void Tracker::matchEntity(){
         else {
             currentEntity.setBoundingRect(currentEntity.predictNextBoundingRect());
         }
-		traverse = traverse->next;
     }
 }	
 
-void Tracker::generateEntites(){
+void Tracker::generateEntites(Recognition currentRecognition){
 
+	this->entities.reserve(currentRecognition.size);
+	
 	for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
-        this->entities.append(Entity(currentRecognition.types[i], currentRecognition.rects[i]));
+        this->entities.emplace_back(currentRecognition.types[i], currentRecognition.rects[i]);
 	}
 
 }
 
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
 
+	cout << "Strted!\n";
 
 	this->setCurrentRecognition(points, types, size, frame);
-	this->matchEntity();
+	this->matchEntity(this->entities, this->currentRecognition);
+
 	if (visualization::_toVisualize){
 
 		this->drawEntities();
