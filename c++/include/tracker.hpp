@@ -3,14 +3,6 @@
 
 #include "entity.hpp"
 
-/**
- * @file tracker.hpp
- * @brief The enum for the types, each type that gets in is a num in the enum.
- * @author Sagi Or
-*/
-enum Types{
-    BlueRobot = 0, RedRobot
-};
 
 /**
  * @file tracker.hpp
@@ -28,7 +20,7 @@ class Tracker{
         const uint16_t rows; //The number of rows in the given Img (assumes The same for each input).
         const uint16_t cols; //The number of columns in the given Img (assumes The same for each input).
         cv::Mat frame; //The current frame that is being tracked.
-        vector<Entity> entities; //All the Entities that the Tracker keeps track on.
+        LinkedList<Entity> entities; //All the Entities that the Tracker keeps track on.
         Recognition currentRecognition; //The Entities from The current recognition.
 
 
@@ -89,20 +81,12 @@ class Tracker{
 
         /**
          * @file tracker.cpp
-         * @brief Choose the color of an Entitiy by their type.
-         * @param e The entity to choose his color.
-         * @author Sagi Or
-        */
-        cv::Scalar chooseColor(Entity& e);
-
-        /**
-         * @file tracker.cpp
          * @brief Turn a rect vector into a Entity vector.
          * @param rects The rect vector to turn.
          * @param types The types corresponding to the rect vector.
          * @author Sagi Or
         */
-        void generateEntites(Recognition currentRecognition);
+        void generateEntites();
         
         /**
          * @file tracker.cpp
@@ -115,7 +99,7 @@ class Tracker{
         */
         void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
 
-        void matchEntity(std::vector<Entity> &currentEntities, Recognition& currentRecognition);
+        void matchEntity();
         
 
 };  
