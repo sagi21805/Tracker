@@ -35,21 +35,6 @@ void Tracker::addToTrajectory(){
 	}
 }	
 
-cv::Scalar Tracker::chooseColor(Entity& e){
-	cv::Scalar color;
-	switch (e.getType()){
-			case RedRobot:
-				color = visualization::_colors[RedRobot];
-				break;
-			case BlueRobot:
-				color = visualization::_colors[BlueRobot];
-				break;
-			default:
-				color = CV_RGB(0, 0, 0);
-		}
-	return color;
-}
-
 void Tracker::matchEntity(vector<Entity>& currentEntities, Recognition& currentRecognition){
 
 	cout << "Recognition Size: " << currentRecognition.size << "\n";

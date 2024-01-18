@@ -3,7 +3,7 @@
 ////////////////////////////////// constructors //////////////////////////////////////////////////
 
 Entity::Entity(uint16_t type, Rect boundingRect)
-    : id(core::_startingId), type(type), velocity(Velocity2D(0, 0)), boundingRect(boundingRect){
+    : id(core::_startingId), type(type), velocity(Velocity2D(0, 0)), boundingRect(boundingRect), color(this->chooseColor()){
     core::_startingId++;
     this->trajectory = std::make_shared<LinkedList<TrajectoryNode>>(TrajectoryNode(boundingRect, Velocity2D(0, 0)));
     this->predictPossibleLocations();

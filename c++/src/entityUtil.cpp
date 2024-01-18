@@ -36,10 +36,26 @@ void Entity::predictPossibleLocations(){
     this->possibleLocation = Rect(tl + Point(vX+w, vY+h),  tl - Point(w, h));
 }
 
-void Entity::draw(cv::Mat& frame, cv::Scalar color){
-		this->getBoundingRect().draw(frame, color);
-		cv::putText(frame, std::to_string(this->id), this->boundingRect.tl(), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(255, 255, 0), 2);
+cv::Scalar Entity::chooseColor(){
+	cv::Scalar color;
+	switch (this->type){
+			case RedRobot:
+				color = visualization::_colors[RedRobot];
+				break;
+			case BlueRobot:
+				color = visualization::_colors[BlueRobot];
+				break;
+			default:
+				color = CV_RGB(0, 0, 0);
+		}
+	return color;
 }
+
+void Entity::draw(cv::Mat& frame){
+	this->getBoundingRect().draw(frame, this->color);
+	cv::putText(frame, std::to_string(this->id), this->boundingRect.tl(), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(255, 255, 0), 2);
+}
+
 
 std::ostream& operator<<(std::ostream& os, const Entity& t){
     os << "id: " << t.getId() << "\n";
