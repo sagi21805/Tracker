@@ -3,9 +3,6 @@
 
 #include <memory>
 
-// Include the necessary header for the Node type
-#include "nodes.hpp"
-
 /**
  * @file linkedList.hpp
  * @brief The LinkedList class.
@@ -15,44 +12,60 @@
  *  
  * @author Sagi Or
 */  
-template<typename _Node> 
+
+template <class _Type>
+struct Node{
+
+    _Type item;
+    std::shared_ptr<Node<_Type>> next;
+
+    Node(_Type __item) : item(__item), next(nullptr) {}
+
+    Node() : item(_Type()), next(nullptr) {}
+
+};
+
+template<typename NodeType> 
 class LinkedList {
 
 public: 
-    std::shared_ptr<_Node> start;
-    std::shared_ptr<_Node> end;
+    std::shared_ptr<Node<NodeType>> start;
+    std::shared_ptr<Node<NodeType>> end;
     size_t length = 0;
 
 ///////////////////////////////////////// Constructors //////////////////////////////////////////////////
 
-    LinkedList(_Node node) {
-        std::shared_ptr<_Node> newNode = std::make_shared<_Node>(node);
+    LinkedList(Node<NodeType> node) {
+        std::shared_ptr<Node<NodeType>> newNode = std::make_shared<Node<NodeType>>(node);
         this->start = newNode;
         this->end = newNode;
         this->length++;
     }
 
     LinkedList() {
-        std::shared_ptr<_Node> newNode = std::make_shared<_Node>();
-        this->start = newNode;
-        this->end = newNode;
-        this->length++;
+        this->start = nullptr;
+        this->end = nullptr;
     }
 
-    _Node& getItem(size_t __i) {
+    NodeType& getItem(size_t __i) {
         if (__i > this->length) {
             throw std::runtime_error("Out of Bounds Index is \"" + std::to_string(__i) + "\" and the length is \"" + std::to_string(this->length) + "\"");
         }
-        std::shared_ptr<_Node> ref = this->start;
+        std::shared_ptr<Node<NodeType>> ref = this->start;
 
         for (size_t i = 0; i < __i; i++) {
             ref = ref->next;
         }
-        return *ref;
+        return ref->item;
     }
 
-    void append(_Node node) {
-        std::shared_ptr<_Node> newNode = std::make_shared<_Node>(node); 
+    void append(NodeType __item) {
+        std::shared_ptr<Node<NodeType>> newNode = std::make_shared<Node<NodeType>>(__item); 
+        if (end == nullptr){
+            this->end = newNode;
+            this->start = newNode;
+        }
+
         this->end->next = newNode;
         this->end = newNode;
         this->length++;
@@ -62,7 +75,7 @@ public:
         if (__i >= this->length) {
             throw "Out of Bounds";
         }
-        std::shared_ptr<_Node> ref = this->start;
+        std::shared_ptr<Node<NodeType>> ref = this->start;
         if (__i == 0) {
             this->start = ref->next;
             return;
@@ -70,32 +83,37 @@ public:
         for (size_t i = 0; ref != nullptr && i < __i - 1; i++) {
             ref = ref->next;
         }
-        std::shared_ptr<_Node> next = ref->next->next;
+        std::shared_ptr<Node<NodeType>> next = ref->next->next;
         ref->next = next;
         this->length--;
     }
 
-    void prepend(_Node node) {
-        std::shared_ptr<_Node> newNode = std::make_shared<_Node>(node); 
+    void prepend(NodeType __item) {
+        std::shared_ptr<Node<NodeType>> newNode = std::make_shared<Node<NodeType>>(__item); 
+        if (start == nullptr){
+            this->start = newNode;
+            this->end = newNode;
+        }
+
         newNode->next = this->start;    
         this->start = newNode;
         this->length++;
     }
 
-    void insert(size_t __i, _Node node) {
+    void insert(size_t __i, NodeType __item) {
         if (__i >= this->length) {
             throw "Out of Bounds";
         }
         if (__i == 0) {
-            this->prepend(node);
+            this->prepend(__item);
             return;
         }
         if (__i == this->length - 1) {
-            this->append(node);
+            this->append(__item);
             return;
         }
-        std::shared_ptr<_Node> ref = this->start;
-        std::shared_ptr<_Node> newNode = std::make_shared<_Node>(node); 
+        std::shared_ptr<Node<NodeType>> ref = this->start;
+        std::shared_ptr<Node<NodeType>> newNode = std::make_shared<Node<NodeType>>(__item); 
         for (size_t i = 0; ref != nullptr && i < __i - 1; i++) {
             ref = ref->next;
         }
@@ -104,7 +122,7 @@ public:
         this->length++;
     }
 
-    _Node& operator[](size_t __i) {
+    Node<NodeType>& operator[](size_t __i) {
         return this->getItem(__i);
     }
 };
