@@ -6,6 +6,11 @@
 #include "vectorFuncs.hpp"
 #include "recognition.hpp"
 #include "trajectory.hpp"
+
+enum Types{
+    BlueRobot = 0, RedRobot
+};
+
 //////////////////////////////////////////// Entity //////////////////////////////////////////////////////
 /**
  * @file entity.hpp
@@ -27,6 +32,7 @@ class Entity{
         Rect boundingRect; //The bounding recangle of the Entity in pixels
         LinkedList<Trajectory> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
         Rect possibleLocation;
+        cv::Scalar color;
         //countour
 
     public:
@@ -99,7 +105,7 @@ class Entity{
          * @returns Weak_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        LinkedList<Trajectory> getTrajectory();
+        LinkedList<Trajectory>& getTrajectory();
         
         /**
          * @file entity.cpp
@@ -149,7 +155,7 @@ class Entity{
          * @returns Weak_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        LinkedList<Trajectory> getTrajectory() const;
+        LinkedList<Trajectory>& getTrajectory() const;
 
         /**
          * @file entity.cpp
@@ -222,7 +228,9 @@ class Entity{
          * @param color The color of the BoundingRect.
          * @author Sagi Or
         */
-        void draw(cv::Mat& frame, cv::Scalar color);
+        void draw(cv::Mat& frame);
+
+        cv::Scalar Entity::chooseColor();
 };
 
 /**
