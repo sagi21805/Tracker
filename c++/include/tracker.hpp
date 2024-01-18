@@ -20,7 +20,7 @@ class Tracker{
         const uint16_t rows; //The number of rows in the given Img (assumes The same for each input).
         const uint16_t cols; //The number of columns in the given Img (assumes The same for each input).
         cv::Mat frame; //The current frame that is being tracked.
-        LinkedList<EntityNode> entities; //All the Entities that the Tracker keeps track on.
+        LinkedList<Entity> entities; //All the Entities that the Tracker keeps track on.
         Recognition currentRecognition; //The Entities from The current recognition.
 
 
@@ -86,7 +86,7 @@ class Tracker{
          * @param types The types corresponding to the rect vector.
          * @author Sagi Or
         */
-        void generateEntites(Recognition currentRecognition);
+        void generateEntites();
         
         /**
          * @file tracker.cpp
@@ -99,7 +99,7 @@ class Tracker{
         */
         void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
 
-        void matchEntity(std::vector<Entity> &currentEntities, Recognition& currentRecognition);
+        void matchEntity();
         
 
 };  

@@ -5,6 +5,7 @@
 #include <limits>
 #include "vectorFuncs.hpp"
 #include "recognition.hpp"
+#include "trajectory.hpp"
 
 enum Types{
     BlueRobot = 0, RedRobot
@@ -29,7 +30,7 @@ class Entity{
         uint16_t type; //The Type/Class of the Entity **cannot be changed outside of Entity after creation**
         Velocity2D velocity; //The Velocity (x, y) of the Entity in pixels per frame
         Rect boundingRect; //The bounding rectangle of the Entity in pixels
-        std::shared_ptr<LinkedList<TrajectoryNode>> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
+        std::shared_ptr<LinkedList<Trajectory>> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
         Rect possibleLocation;
         cv::Scalar color;
         //countour
@@ -104,7 +105,7 @@ class Entity{
          * @returns Weak_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        std::weak_ptr<LinkedList<TrajectoryNode>> getTrajectory();
+        std::weak_ptr<LinkedList<Trajectory>> getTrajectory();
         
         /**
          * @file entity.cpp
@@ -112,7 +113,7 @@ class Entity{
          * @returns Shared_ptr to the Entity's Trajectory.
          * @author Sagi Or
         */
-        std::shared_ptr<LinkedList<TrajectoryNode>> copyTrajectory();
+        std::shared_ptr<LinkedList<Trajectory>> copyTrajectory();
 
         Rect& getPossibleLocation();
 
@@ -154,7 +155,7 @@ class Entity{
          * @returns Weak_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        std::weak_ptr<LinkedList<TrajectoryNode>> getTrajectory() const;
+        std::weak_ptr<LinkedList<Trajectory>> getTrajectory() const;
 
         /**
          * @file entity.cpp
@@ -162,7 +163,7 @@ class Entity{
          * @returns Shared_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        std::shared_ptr<LinkedList<TrajectoryNode>> copyTrajectory() const;
+        std::shared_ptr<LinkedList<Trajectory>> copyTrajectory() const;
 
         Rect getPossibleLocation() const;
 
