@@ -102,7 +102,7 @@ class Tracker{
          * @param types The types corresponding to the rect vector.
          * @author Sagi Or
         */
-        void generateEntites(Recognition currentRecognition);
+        void generateEntites();
         
         /**
          * @file tracker.cpp
@@ -115,7 +115,7 @@ class Tracker{
         */
         void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
 
-        void matchEntity(std::vector<Entity> &currentEntities, Recognition& currentRecognition);
+        void matchEntity();
         
 
 };  
