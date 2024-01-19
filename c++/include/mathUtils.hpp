@@ -25,6 +25,6 @@ template <typename T> int signum(T val) {
 
 template <typename T>
 T applyDeadband(T value, uint8_t deadBand) {
-    return (std::abs(value) > deadBand) ? value : deadBand*signum(value);
-}
+    return (std::abs(value) > deadBand) ? value : 0;
+} 
 #endif
