@@ -50,7 +50,7 @@ public:
     NodeType& getItem(size_t __i) {
         checkBounds(__i);
 
-        if (__i == thie->length-1){ return this->end->item; }
+        if (__i == this->length-1){ return this->end->item; }
 
         std::shared_ptr<Node<NodeType>> ref = this->start;
 
@@ -117,11 +117,11 @@ public:
         this->length++;
     }
 
-    bool checkBounds(size_t __i){
+    void checkBounds(size_t __i){
         if (__i >= this->length) {throw std::runtime_error("Out of Bounds Index is \""+std::to_string(__i)+"\" length is \"" + std::to_string(this->length) + "\""); }
     }
 
-    Node<NodeType>& operator[](size_t __i) {
+    NodeType& operator[](size_t __i) {
         return this->getItem(__i);
     }
 };
