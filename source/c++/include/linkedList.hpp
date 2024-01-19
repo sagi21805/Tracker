@@ -48,9 +48,10 @@ public:
     }
 
     NodeType& getItem(size_t __i) {
-        if (__i > this->length) {
-            throw std::runtime_error("Out of Bounds Index is \"" + std::to_string(__i) + "\" and the length is \"" + std::to_string(this->length) + "\"");
-        }
+        checkBounds(__i);
+
+        if (__i == thie->length-1){ return this->end->item; }
+
         std::shared_ptr<Node<NodeType>> ref = this->start;
 
         for (size_t i = 0; i < __i; i++) {
@@ -72,9 +73,8 @@ public:
     }
 
     void remove(size_t __i) {
-        if (__i >= this->length) {
-            throw "Out of Bounds";
-        }
+        checkBounds(__i);
+
         std::shared_ptr<Node<NodeType>> ref = this->start;
         if (__i == 0) {
             this->start = ref->next;
@@ -101,17 +101,12 @@ public:
     }
 
     void insert(size_t __i, NodeType __item) {
-        if (__i >= this->length) {
-            throw "Out of Bounds";
-        }
-        if (__i == 0) {
-            this->prepend(__item);
-            return;
-        }
-        if (__i == this->length - 1) {
-            this->append(__item);
-            return;
-        }
+        checkBounds(__i);
+
+        if (__i == 0) { this->prepend(__item); return;}
+        
+        if (__i == this->length - 1) { this->append(__item); return; }
+
         std::shared_ptr<Node<NodeType>> ref = this->start;
         std::shared_ptr<Node<NodeType>> newNode = std::make_shared<Node<NodeType>>(__item); 
         for (size_t i = 0; ref != nullptr && i < __i - 1; i++) {
@@ -120,6 +115,10 @@ public:
         newNode->next = ref->next;
         ref->next = newNode;
         this->length++;
+    }
+
+    bool checkBounds(size_t __i){
+        if (__i >= this->length) {throw std::runtime_error("Out of Bounds Index is \""+std::to_string(__i)+"\" length is \"" + std::to_string(this->length) + "\""); }
     }
 
     Node<NodeType>& operator[](size_t __i) {
