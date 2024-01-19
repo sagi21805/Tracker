@@ -59,7 +59,7 @@ void Tracker::matchEntity(){
             if (currentEntity.getType() == checkedType) { 
                 uint currentDistanceSquared = currentEntity.squareDistanceTo(checkedRect);
                 if (currentDistanceSquared < distanceSquared && 
-                    currentEntity.getPossibleLocation().contains(checkedRect.tl())){
+                    currentEntity.getPossibleLocation().contains(checkedRect.center)){
                     matchingEntityIndex = i;
                     distanceSquared = currentDistanceSquared;
                 }
