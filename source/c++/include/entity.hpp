@@ -33,6 +33,7 @@ class Entity{
         LinkedList<Trajectory> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
         Rect possibleLocation;
         cv::Scalar color;
+        size_t predictCount;
         //countour
 
     public:
@@ -155,7 +156,7 @@ class Entity{
          * @returns Weak_ptr the Entity's Trajectory.
          * @author Sagi Or
         */
-        LinkedList<Trajectory>& getTrajectory() const;
+        std::weak_ptr<LinkedList<Trajectory>> getTrajectory() const;
 
         /**
          * @file entity.cpp
