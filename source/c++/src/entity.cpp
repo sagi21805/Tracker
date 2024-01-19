@@ -5,7 +5,7 @@
 Entity::Entity(uint16_t type, Rect boundingRect)
     : id(core::_startingId), type(type), velocity(Velocity2D(0, 0)), boundingRect(boundingRect), color(this->chooseColor()){
     core::_startingId++;
-    this->trajectory = std::make_shared<LinkedList<Trajectory>>(Trajectory(boundingRect, Velocity2D(0, 0)));
+    this->trajectory = LinkedList<Trajectory>(Trajectory(boundingRect, Velocity2D(0, 0)));
     this->predictPossibleLocations();
 }
 
@@ -17,7 +17,6 @@ Entity::Entity(const Entity& e)
 Entity::Entity() 
     : id(UINT16_MAX), type(UINT16_MAX), color(this->chooseColor()){
     this->boundingRect = Rect();
-    this->trajectory = std::make_shared<LinkedList<Trajectory>>();
 }
 
 ////////////////////////////////// Get Functions //////////////////////////////////////////////////
@@ -38,12 +37,11 @@ Velocity2D& Entity::getVelocity(){
     return this->velocity;
 }
 
-std::weak_ptr<LinkedList<Trajectory>> Entity::getTrajectory(){
-    std::weak_ptr<LinkedList<Trajectory>> weak_trajectory = this->trajectory;
-    return weak_trajectory;
+LinkedList<Trajectory>& Entity::getTrajectory(){
+    return this->trajectory;
 }
 
-std::shared_ptr<LinkedList<Trajectory>> Entity::copyTrajectory(){
+LinkedList<Trajectory> Entity::copyTrajectory(){
     return this->trajectory;
 }
 
@@ -67,12 +65,7 @@ Velocity2D Entity::getVelocity() const{
     return this->velocity;
 }
 
-std::weak_ptr<LinkedList<Trajectory>> Entity::getTrajectory() const{
-    std::weak_ptr<LinkedList<Trajectory>> weak_trajectory = this->trajectory;
-    return weak_trajectory;
-}
-
-std::shared_ptr<LinkedList<Trajectory>> Entity::copyTrajectory() const{
+LinkedList<Trajectory> Entity::copyTrajectory() const{
     return this->trajectory;
 }
 
@@ -85,7 +78,7 @@ void Entity::setBoundingRect(Rect boundningRect){
 }
 
 void Entity::addToTrajectory(){
-    this->trajectory->prepend(Trajectory(this->boundingRect, this->velocity));
+    this->trajectory.prepend(Trajectory(this->boundingRect, this->velocity));
 }
 
 void Entity::emptyBoundingRect(){
