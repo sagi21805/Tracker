@@ -1,7 +1,7 @@
-import python_utils.cpp_utils as cpp
+import python.cpp_utils as cpp
 from ultralytics import YOLO
 import cv2
-from python_utils.tracker_utils import *
+from python.tracker_utils import *
 from time import time
 
 class Tracker():        
