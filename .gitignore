@@ -7,3 +7,5 @@ __pycache__
 test.*
 yolov8n.pt
 main.py
+**/target
+*.lock
