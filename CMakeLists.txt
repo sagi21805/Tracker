@@ -14,9 +14,9 @@ set(CMAKE_CXX_FLAGS "-Wall -std=c++23 -O3 -save-temps")
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${nlohmann_json_INCLUDE_DIRS})
-include_directories(${PROJECT_SOURCE_DIR}/c++/include)
+include_directories(${PROJECT_SOURCE_DIR}/source/c++/include)
 
-file(GLOB all_SRCS ${PROJECT_SOURCE_DIR}/c++/src/*.cpp)
+file(GLOB all_SRCS ${PROJECT_SOURCE_DIR}/source/c++/src/*.cpp)
 
 add_library( ${PROJECT_NAME} SHARED ${all_SRCS})
 # add_executable(  ${PROJECT_NAME} ${all_SRCS})
