@@ -30,3 +30,6 @@ sudo apt install python3.11-full -y
 python3.11 -m venv Tracker-Venv
 source ~/Tracker-Venv/bin/activate
 sudo pip install -r $wd/requirements.txt
+
+echo Installing Rust \& Cargo
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
