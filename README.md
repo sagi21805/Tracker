@@ -25,3 +25,14 @@ Create a Tracker Object, give it the weights of a yolo model, and a video or cam
 
 SEE example.py for more information. 
 
+# Vscode Setup
+
+Add this to the setting.json of the project to use the rust analizer
+
+```json
+{
+    "rust-analyzer.linkedProjects": [
+        "source/rust/Cargo.toml"
+    ]
+}
+```
