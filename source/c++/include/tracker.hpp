@@ -5,15 +5,6 @@
 
 /**
  * @file tracker.hpp
- * @brief The enum for the types, each type that gets in is a num in the enum.
- * @author Sagi Or
-*/
-enum Types{
-    BlueRobot = 0, RedRobot
-};
-
-/**
- * @file tracker.hpp
  * @brief custom Tracker that is ment to get his input from Yolo Model and run Fast and Acurate custom SORT like algorithem.
  * @paragraph 
  *  This Tracker is ment to Track Acuratlly and Quicklly Tragets based on thier attributes
