@@ -3,7 +3,6 @@
 
 #include "entity.hpp"
 
-
 /**
  * @file tracker.hpp
  * @brief custom Tracker that is ment to get his input from Yolo Model and run Fast and Acurate custom SORT like algorithem.
@@ -81,6 +80,7 @@ class Tracker{
 
         /**
          * @file tracker.cpp
+
          * @brief Turn a rect vector into a Entity vector.
          * @param rects The rect vector to turn.
          * @param types The types corresponding to the rect vector.
