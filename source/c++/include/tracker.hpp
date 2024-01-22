@@ -80,14 +80,7 @@ class Tracker{
 
         /**
          * @file tracker.cpp
-         * @brief Choose the color of an Entitiy by their type.
-         * @param e The entity to choose his color.
-         * @author Sagi Or
-        */
-        cv::Scalar chooseColor(Entity& e);
 
-        /**
-         * @file tracker.cpp
          * @brief Turn a rect vector into a Entity vector.
          * @param rects The rect vector to turn.
          * @param types The types corresponding to the rect vector.
