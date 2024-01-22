@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 
 [lib]
-name = "vect"
+name = "stable_points"
 crate-type = ["cdylib"] # ["staticlib"] for a static library.
