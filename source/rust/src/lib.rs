@@ -1,4 +1,4 @@
-use std::os::raw::c_int;
+use std::{os::raw::c_ushort, os::raw::c_int};
 
 #[allow(
     non_camel_case_types,
@@ -19,3 +19,7 @@ pub extern "C" fn printArray(ptr: *const c_int, len: usize){
     println!("");
 }
 
+#[no_mangle]
+pub extern "C" fn stablePoints(pointsArray: *const c_ushort, length: c_ushort) -> *const c_ushort{
+    pointsArray
+}
