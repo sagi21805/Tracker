@@ -86,10 +86,13 @@ void Tracker::generateEntites(){
 
 }
 
+extern "C" void printRects(Rect* p, uint size);
+
 void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
 
 
 	this->setCurrentRecognition(points, types, size, frame);
+	printRects(&this->currentRecognition.rects.front(), this->currentRecognition.size);
 	this->matchEntity();
 	if (visualization::_toVisualize){
 
