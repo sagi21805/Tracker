@@ -1,4 +1,3 @@
-#[allow(non_snake_case)]
 mod point;
 use point::PointU16;
 
@@ -7,9 +6,7 @@ use point::PointI32;
 #[repr(C)]
 pub struct Rect{
     pub tl: PointU16,
-    ///The width of the rect
     pub width: u16, 
-    ///The height of the rect
     pub heigth: u16,
     pub center: PointI32
 }
