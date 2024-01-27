@@ -10,6 +10,9 @@
 
 using json = nlohmann::json;
 
+typedef float float32;
+
+
 // Declare global variables
 namespace core{
     extern uint8_t  _elementsInPoint;  
