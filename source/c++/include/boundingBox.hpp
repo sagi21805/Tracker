@@ -11,7 +11,7 @@ struct BoundingBox {
  
     BoundingBox(Rect rect, uint16_t type, float32 confidance): rect(rect), type(type), confidance(confidance) {}
     BoundingBox(const BoundingBox& box) : rect(box.rect), type(box.type), confidance(box.confidance) {}
-    BoundingBox() : rect(Rect()) {}
+    BoundingBox() : rect(Rect()), type(UINT16_MAX), confidance(0) {}
     BoundingBox& operator=(const BoundingBox& box){
     if (this != &box){
         rect = box.rect;

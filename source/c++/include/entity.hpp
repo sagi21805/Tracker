@@ -6,6 +6,7 @@
 #include "vectorFuncs.hpp"
 #include "trajectory.hpp"
 #include "boundingBox.hpp"
+#include <format>
 
 enum Types{
     BlueRobot = 0, RedRobot
