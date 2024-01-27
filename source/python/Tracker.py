@@ -8,9 +8,9 @@ class Tracker():
     
     @staticmethod
     def setFuncs():
-        c.lib._Tracker.argtypes = [c.uint16_array, c.uint16_array, c.uint16, c.uint8_array, c.uint16, c.uint16]
+        c.lib._Tracker.argtypes = [c.uint16_array, c.uint16_array, c.float32_array,c.uint16, c.uint8_array, c.uint16, c.uint16]
         c.lib._Tracker.restype = c.object
-        c.lib._track.argtypes = [c.object, c.uint16_array, c.uint16_array, c.uint16, c.uint8_array]
+        c.lib._track.argtypes = [c.object, c.uint16_array, c.uint16_array, c.float32_array, c.uint16, c.uint8_array]
     
     def __init__(self, model_path: str, video) -> None:
         """Creates A Tracker Object
@@ -34,18 +34,17 @@ class Tracker():
         
         result, frame = predict(self.model, self.cap)
         Tracker.setFuncs()
-        points, types, size, confidance = YoloToPointsAndTypes(result)
-        self.Tracker = c.lib._Tracker(points, types, c.c_uint16(size), frameToArray(frame),\
+        points, types, confidance, size = YoloToPointsAndTypes(result)
+        self.Tracker = c.lib._Tracker(points, types, confidance, c.c_uint16(size), frameToArray(frame),\
                                       c.c_uint16(frame.shape[0]), c.c_uint16(frame.shape[1]))
         
     def track(self, show_time = False):
         model_time = time()
         result, frame = predict(self.model, self.cap)
         model_time = time() - model_time
-        points, types, size, confidance = YoloToPointsAndTypes(result)
-        print(confidance)
+        points, types, confidance, size = YoloToPointsAndTypes(result)
         track_time = time()
-        c.lib._track(self.Tracker, points, types, c.c_uint16(size), frameToArray(frame))
+        c.lib._track(self.Tracker, points, types, confidance, c.c_uint16(size), frameToArray(frame))
         track_time = time() - track_time
         if show_time:
             print(f"Model Time: {model_time}, Tracking Time: {track_time}")
