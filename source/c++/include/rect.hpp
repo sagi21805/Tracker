@@ -17,6 +17,14 @@ class Rect : public cv::Rect_<uint16_t>{
     public: 
         Point center;
 
+        Rect(uint16_t* points){
+            this->x = points[0];
+            this->y = points[1];
+            this->width = points[2] - x;
+            this->height = points[3] - y;
+            this->center = Point(x + (width / 2), y + (height / 2));
+        }
+
         Rect(const Point& pt1, const Point& pt2) : Base(pt1, pt2){
             this->center = Point(x + (width / 2), y + (height / 2));
         }

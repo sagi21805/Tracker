@@ -20,7 +20,7 @@ class Tracker{
         const uint16_t cols; //The number of columns in the given Img (assumes The same for each input).
         cv::Mat frame; //The current frame that is being tracked.
         LinkedList<Entity> entities; //All the Entities that the Tracker keeps track on.
-        Recognition currentRecognition; //The Entities from The current recognition.
+        vector<BoundingBox> currentRecognition; //The Entities from The current recognition.
 
 
 /////////////////////////////////////////////////////// Constructors ///////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ class Tracker{
          * @param cols The num of cols in the frame.
          * @author Sagi Or
         */
-        Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols);
+        Tracker(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols);
 
         ~Tracker();
 
@@ -51,7 +51,7 @@ class Tracker{
          * @param frame 
          * @author Sagi Or
         */
-        void setCurrentRecognition(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
+        void setCurrentRecognition(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame);
 
         /**
          * @file tracker.cpp
@@ -97,7 +97,7 @@ class Tracker{
          * @param frame The current frame that the recognition is on.
          * @author Sagi Or
         */
-        void track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame);
+        void track(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame);
 
         void matchEntity();
         

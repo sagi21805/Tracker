@@ -1,4 +1,5 @@
 #include "entity.hpp"
+
 using predictions::_offset, predictions::_numOfFrames;
 
 void Entity::calcAndSetVelocity(){
@@ -11,24 +12,22 @@ void Entity::calcAndSetVelocity(){
     }
 }
 
-Rect Entity::predictNextBoundingRect(){
-    Rect prediction = this->boundingRect;
-    prediction.x += this->velocity.x;
-    prediction.y += this->velocity.y;
-    return prediction;
+void Entity::predictNextBoundingBox(){
+    this->boundingBox.rect.y += this->velocity.x;
+    this->boundingBox.rect.y += this->velocity.x;
 }
 
 uint Entity::squareDistanceTo(const Entity& e){
-    return this->getBoundingRect().squareDistanceTo(e.getBoundingRect());
+    return this->getBoundingBox().rect.squareDistanceTo(e.getBoundingBox().rect);
 }
 
 uint Entity::squareDistanceTo(const Rect& r){
-    return this->getBoundingRect().squareDistanceTo(r);
+    return this->getBoundingBox().rect.squareDistanceTo(r);
 }
 
 void Entity::predictPossibleLocations(){
     this->calcAndSetVelocity();
-    Rect& r = this->getBoundingRect();
+    Rect& r = this->getBoundingBox().rect;
     const int vX = this->velocity.x*predictions::_velocityCoefficient;
     const int vY = this->velocity.y*predictions::_velocityCoefficient;
     const int w = r.width*predictions::_sizeCoefficient*signum(vX);
@@ -38,7 +37,7 @@ void Entity::predictPossibleLocations(){
 
 cv::Scalar Entity::chooseColor(){
 	cv::Scalar color;
-	switch (this->type){
+	switch (this->boundingBox.type){
 			case RedRobot:
 				color = visualization::_colors[RedRobot];
 				break;
@@ -52,14 +51,14 @@ cv::Scalar Entity::chooseColor(){
 }
 
 void Entity::draw(cv::Mat& frame){
-	this->getBoundingRect().draw(frame, this->color);
-	cv::putText(frame, std::to_string(this->id), this->boundingRect.tl(), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(255, 255, 0), 2);
+	this->getBoundingBox().rect.draw(frame, this->color);
+	cv::putText(frame, std::to_string(this->id), this->boundingBox.rect.tl(), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(255, 255, 0), 2);
 }
 
 
 std::ostream& operator<<(std::ostream& os, const Entity& t){
     os << "id: " << t.getId() << "\n";
     os << "type: " << t.getType() << "\n";
-    os << "box: " << t.getBoundingRect() << "\n";
+    os << "box: " << t.getBoundingBox().rect << "\n";
     return os;
 }

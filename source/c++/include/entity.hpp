@@ -4,8 +4,8 @@
 #include "linkedList.hpp"
 #include <limits>
 #include "vectorFuncs.hpp"
-#include "recognition.hpp"
 #include "trajectory.hpp"
+#include "boundingBox.hpp"
 
 enum Types{
     BlueRobot = 0, RedRobot
@@ -27,13 +27,11 @@ class Entity{
     private:
 
         uint16_t id; //The id of the Entity **cannot be changed outside of Entity after creation**
-        uint16_t type; //The Type/Class of the Entity **cannot be changed outside of Entity after creation**
+        BoundingBox boundingBox; //The bounding rectangle of the Entity in pixels
         Velocity2D velocity; //The Velocity (x, y) of the Entity in pixels per frame
-        Rect boundingRect; //The bounding rectangle of the Entity in pixels
-        LinkedList<Trajectory> trajectory; //the Trajectory of the Entity which contains previous boundingRect and velocity
+        LinkedList<Trajectory> trajectory; //the Trajectory of the Entity which contains previous boundingBox and velocity
         Rect possibleLocation;
         cv::Scalar color;
-        size_t predictCount;
         //countour
 
     public:
@@ -45,10 +43,10 @@ class Entity{
          * @brief Entity constractor from raw data.
          * @param id The id of the Entity.
          * @param type The type of the Entity.
-         * @param BoundingRect The boundingRect of the Entity.
+         * @param boundingBox The boundingBox of the Entity.
          * @author Sagi Or
         */
-        Entity(uint16_t type, Rect boundingRect);
+        Entity(BoundingBox boundingBox);
 
         /**
          * @file entity.cpp
@@ -70,11 +68,11 @@ class Entity{
 
         /**
          * @file entity.cpp
-         * @brief Get Entity's BoundingRect
-         * @returns Reference to the Entity's BoundingRect.
+         * @brief Get Entity's boundingBox
+         * @returns Reference to the Entity's boundingBox.
          * @author Sagi Or
         */
-        Rect& getBoundingRect();
+        BoundingBox& getBoundingBox();
         
         /**
          * @file entity.cpp
@@ -120,11 +118,11 @@ class Entity{
 
         /**
          * @file entity.cpp
-         * @brief Get Entity's BoundingRect.
-         * @returns copy of the Entity's BoundingRect.
+         * @brief Get Entity's boundingBox.
+         * @returns copy of the Entity's boundingBox.
          * @author Sagi Or
         */
-        Rect getBoundingRect() const;
+        BoundingBox getBoundingBox() const;
 
         /**
          * @file entity.cpp
@@ -165,11 +163,11 @@ class Entity{
 
         /**
          * @file entity.cpp
-         * @brief Sets the boundingRect of the Entity to a given Rect.
-         * @param newBoundingRect The new BoundingRect to set.
+         * @brief Sets the boundingBox of the Entity to a given Rect.
+         * @param newboundingBox The new boundingBox to set.
          * @author Sagi Or
         */
-        void setBoundingRect(Rect newBoundingRect);
+        void setBoundingBox(BoundingBox boundingBox);
 
 
 ///////////////////////////////////////// Util Functions //////////////////////////////////////////////////
@@ -187,21 +185,21 @@ class Entity{
 
         /**
          * @file entity.cpp
-         * @brief Addes the current BoundingRect and Velocity to the Trajectory.
+         * @brief Addes the current boundingBox and Velocity to the Trajectory.
          * @author Sagi Or
         */
         void addToTrajectory();     
 
         /**
          * @file entity.cpp
-         * @brief Sets the Entity's BoundingRect to EmptyRect.
+         * @brief Sets the Entity's boundingBox to EmptyRect.
          * @author Sagi Or
         */
-        void emptyBoundingRect();
+        void emptyboundingBox();
 
         /**
          * @file entity.cpp
-         * @brief Calculates the Square distance between two Entities BoundingRect.
+         * @brief Calculates the Square distance between two Entities boundingBox.
          * @returns The Squared distance between the Entities.
          * @author Sagi Or
         */
@@ -211,14 +209,14 @@ class Entity{
 
         void predictPossibleLocations();
         
-        Rect predictNextBoundingRect();
+        void predictNextBoundingBox();
         
         
         /**
          * @file entity.cpp
-         * @brief draws the BoundingRect of the Entity on a given frame 
-         * @param frame The frame to draw the BoundingRect on.
-         * @param color The color of the BoundingRect.
+         * @brief draws the boundingBox of the Entity on a given frame 
+         * @param frame The frame to draw the boundingBox on.
+         * @param color The color of the boundingBox.
          * @author Sagi Or
         */
         void draw(cv::Mat& frame);

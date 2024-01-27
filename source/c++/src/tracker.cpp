@@ -1,9 +1,9 @@
 #include "tracker.hpp"
 
-Tracker::Tracker(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
+Tracker::Tracker(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
 	: rows(rows), cols(cols){
 	config("config.json");
-	this->setCurrentRecognition(points, types, size, frame); // sets this current recognition
+	this->setCurrentRecognition(points, types, confidances, size, frame); // sets this current recognition
 	this->generateEntites();
 	this->addToTrajectory();
 }
@@ -12,9 +12,9 @@ Tracker::~Tracker(){
 	cv::destroyAllWindows();
 }
 
-void Tracker::setCurrentRecognition(uint16_t *points, uint16_t* types, uint16_t size, uint8_t* frame){
+void Tracker::setCurrentRecognition(uint16_t *points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
+	this->currentRecognition = generateBoundingBoxes(points, types, confidances, size);
 	this->setFrame(frame);
-	this->currentRecognition = Recognition(points, size, types);
 }
 
 void Tracker::setFrame(uint8_t* frame){
@@ -39,10 +39,10 @@ void Tracker::addToTrajectory(){
 
 void Tracker::matchEntity(){
 
-	cout << "Recognition Size: " << currentRecognition.size << "\n";
+	cout << "Recognition Size: " << currentRecognition.size() << "\n";
 
-	for (Rect& r : currentRecognition.rects){
-		r.draw(this->frame, CV_RGB(0, 0, 0));
+	for (BoundingBox& b : currentRecognition){
+		b.rect.draw(this->frame, CV_RGB(0, 0, 0));
 	}
 
     std::shared_ptr<Node<Entity>> traverse = this->entities.start;
@@ -51,28 +51,25 @@ void Tracker::matchEntity(){
         uint distanceSquared = UINT32_MAX;
 		currentEntity.predictPossibleLocations();
         currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
-        uint16_t matchingEntityIndex = UINT16_MAX;
-        for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
-            const Rect& checkedRect = currentRecognition.rects[i];
-            const uint16_t& checkedType = currentRecognition.types[i];
+        BoundingBox matchingBox = BoundingBox();
+        for (BoundingBox box : currentRecognition){
 
-            if (currentEntity.getType() == checkedType) { 
-                uint currentDistanceSquared = currentEntity.squareDistanceTo(checkedRect);
+            if (currentEntity.getType() == box.type) { 
+                uint currentDistanceSquared = currentEntity.squareDistanceTo(box.rect);
                 if (currentDistanceSquared < distanceSquared && 
-                    currentEntity.getPossibleLocation().contains(checkedRect.center)){
-                    matchingEntityIndex = i;
+                    currentEntity.getPossibleLocation().contains(box.rect.center)){
                     distanceSquared = currentDistanceSquared;
+					matchingBox = box;
                 }
             }
 
             
         }
-        if (matchingEntityIndex < UINT16_MAX){
-            currentEntity.setBoundingRect(currentRecognition.rects[matchingEntityIndex]);
-            currentRecognition.remove(matchingEntityIndex);
+        if (!(matchingBox.isEmpty())){
+            currentEntity.setBoundingBox(matchingBox);
         }
         else {
-            currentEntity.setBoundingRect(currentEntity.predictNextBoundingRect());
+            currentEntity.predictNextBoundingBox();
         }
 		traverse = traverse->next;
     }
@@ -80,22 +77,18 @@ void Tracker::matchEntity(){
 
 void Tracker::generateEntites(){
 
-	for (uint16_t i = 0, size = currentRecognition.size; i < size; i++){
-        this->entities.append(Entity(currentRecognition.types[i], currentRecognition.rects[i]));
+	for (BoundingBox& box : currentRecognition){
+        this->entities.append(Entity(box));
 	}
 
 }
 
-extern "C" void printRects(Rect* p, uint size);
-
-void Tracker::track(uint16_t* points, uint16_t* types, uint16_t size, uint8_t* frame){
+void Tracker::track(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
 
 
-	this->setCurrentRecognition(points, types, size, frame);
-	printRects(&this->currentRecognition.rects.front(), this->currentRecognition.size);
+	this->setCurrentRecognition(points, types, confidances, size, frame);
 	this->matchEntity();
-	if (visualization::_toVisualize){
-
+	if (visualization::_toVisualize){	
 		this->drawEntities();
 		cv::imshow("frame", this->frame);
 		cv::waitKey(visualization::_waitKey);
