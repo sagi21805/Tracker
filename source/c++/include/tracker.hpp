@@ -101,8 +101,10 @@ class Tracker{
 
         void matchEntity();
         
+        void stableRecognition();
 
 };  
 
+extern "C" uint16_t duplicatesCount(BoundingBox* currentRecognition, uint16_t size, float32 confidanceMargin, float32 intersetionPercentage);
 
 #endif

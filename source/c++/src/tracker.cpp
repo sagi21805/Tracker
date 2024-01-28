@@ -14,6 +14,7 @@ Tracker::~Tracker(){
 
 void Tracker::setCurrentRecognition(uint16_t *points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
 	this->currentRecognition = generateBoundingBoxes(points, types, confidances, size);
+	this->stableRecognition();
 	this->setFrame(frame);
 }
 
@@ -36,6 +37,11 @@ void Tracker::addToTrajectory(){
 		traverse = traverse->next;
 	}
 }	
+
+void Tracker::stableRecognition() {
+	uint16_t count = duplicatesCount(&this->currentRecognition.front(), this->currentRecognition.size(), 0.1, 0.2);
+	this->currentRecognition.erase(this->currentRecognition.end() - count, this->currentRecognition.end());
+}
 
 void Tracker::matchEntity(){
 
