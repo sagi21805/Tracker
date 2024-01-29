@@ -10,14 +10,14 @@ using cv::Mat;
  * @brief This is an extension to the Rect opencv class which allows more functionallity.
  * @author Sagi Or
 */
-class Rect : public cv::Rect_<uint16_t>{
-    using Base = cv::Rect_<uint16_t>;
+class Rect : public cv::Rect2i{
+    using Base = cv::Rect2i;
     using Base::Base;
     
     public: 
         Point center;
 
-        Rect(uint16_t* points){
+        Rect(int32_t* points){
             this->x = points[0];
             this->y = points[1];
             this->width = points[2] - x;
@@ -29,11 +29,11 @@ class Rect : public cv::Rect_<uint16_t>{
             this->center = Point(x + (width / 2), y + (height / 2));
         }
 
-        Rect(uint16_t _x, uint16_t _y, uint16_t _width, uint16_t _height) : Base(x, y, _width, _height){
+        Rect(int32_t _x, int32_t _y, int32_t _width, int32_t _height) : Base(x, y, _width, _height){
             this->center = Point(x + (width / 2), y + (height / 2));
         }
 
-        Rect(const Point& org, const cv::Size_<uint16_t> sz) : Base(org, sz){
+        Rect(const Point& org, const cv::Size_<int32_t> sz) : Base(org, sz){
             this->center = Point(x + (width / 2), y + (height / 2));
         }
 
@@ -78,7 +78,7 @@ class Rect : public cv::Rect_<uint16_t>{
  * @returns A vector of Rects contains all the points as Rect object.
  * @author Sagi Or
 */
-std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size);
+std::vector<Rect> pointsToRects(int32_t *points, uint16_t size);
 
 /**
  * @file opencvExtention.cpp

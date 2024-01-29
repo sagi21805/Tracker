@@ -1,6 +1,6 @@
 #include "tracker.hpp"
 
-Tracker::Tracker(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
+Tracker::Tracker(int32_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
 	: rows(rows), cols(cols){
 	config("config.json");
 	this->setCurrentRecognition(points, types, confidances, size, frame); // sets this current recognition
@@ -12,7 +12,7 @@ Tracker::~Tracker(){
 	cv::destroyAllWindows();
 }
 
-void Tracker::setCurrentRecognition(uint16_t *points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
+void Tracker::setCurrentRecognition(int32_t *points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
 	this->currentRecognition = generateBoundingBoxes(points, types, confidances, size);
 	this->stableRecognition();
 	this->setFrame(frame);
@@ -89,7 +89,7 @@ void Tracker::generateEntites(){
 
 }
 
-void Tracker::track(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
+void Tracker::track(int32_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
 
 
 	this->setCurrentRecognition(points, types, confidances, size, frame);

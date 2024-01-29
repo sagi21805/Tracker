@@ -36,7 +36,7 @@ class Tracker{
          * @param cols The num of cols in the frame.
          * @author Sagi Or
         */
-        Tracker(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols);
+        Tracker(int32_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols);
 
         ~Tracker();
 
@@ -51,7 +51,7 @@ class Tracker{
          * @param frame 
          * @author Sagi Or
         */
-        void setCurrentRecognition(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame);
+        void setCurrentRecognition(int32_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame);
 
         /**
          * @file tracker.cpp
@@ -97,7 +97,7 @@ class Tracker{
          * @param frame The current frame that the recognition is on.
          * @author Sagi Or
         */
-        void track(uint16_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame);
+        void track(int32_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame);
 
         void matchEntity();
         

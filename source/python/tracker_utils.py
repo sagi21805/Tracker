@@ -8,7 +8,7 @@ Y_coordinates = []
 
 def YoloToPointsAndTypes(YOLO_result):
     boxes = YOLO_result.boxes.cpu().numpy()      
-    points = boxes.xyxy.flatten().astype(np.uint16)
+    points = boxes.xyxy.flatten().astype(np.int32)
     types = boxes.cls.flatten().astype(np.uint16)
     confidence = boxes.conf.flatten().astype(np.float32)
     return (points, types, confidence, len(types))
