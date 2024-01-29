@@ -1,9 +1,9 @@
 #include "tracker.hpp"
 
-Tracker::Tracker(int32_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
+Tracker::Tracker(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame, uint16_t rows, uint16_t cols) 
 	: rows(rows), cols(cols){
 	config("config.json");
-	this->setCurrentRecognition(points, types, confidances, size, frame); // sets this current recognition
+	this->setCurrentRecognition(points, types, confidences, size, frame); // sets this current recognition
 	this->generateEntites();
 	this->addToTrajectory();
 }
@@ -12,8 +12,8 @@ Tracker::~Tracker(){
 	cv::destroyAllWindows();
 }
 
-void Tracker::setCurrentRecognition(int32_t *points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
-	this->currentRecognition = generateBoundingBoxes(points, types, confidances, size);
+void Tracker::setCurrentRecognition(int32_t *points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame){
+	this->currentRecognition = generateBoundingBoxes(points, types, confidences, size);
 	this->stableRecognition();
 	this->setFrame(frame);
 }
@@ -39,8 +39,16 @@ void Tracker::addToTrajectory(){
 }	
 
 void Tracker::stableRecognition() {
-	uint16_t count = duplicatesCount(&this->currentRecognition.front(), this->currentRecognition.size(), 0.1, 0.2);
-	this->currentRecognition.erase(this->currentRecognition.end() - count, this->currentRecognition.end());
+
+	//TODO maybe the minConfidance can be automated.
+
+	if (this->currentRecognition.back().confidence < core::_minconfidence){
+		cout << "Recognition INITIAL Size: " << currentRecognition.size() << "\n";
+		vector<BoundingBox> lowThresh = splitByThreshold(this->currentRecognition, core::_minconfidence);
+		cout << "Recognition AFTER Size: " << currentRecognition.size() << "\n";
+	}
+
+
 }
 
 void Tracker::matchEntity(){
@@ -89,10 +97,13 @@ void Tracker::generateEntites(){
 
 }
 
-void Tracker::track(int32_t* points, uint16_t* types, float32* confidances, uint16_t size, uint8_t* frame){
+void Tracker::track(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame){
 
-
-	this->setCurrentRecognition(points, types, confidances, size, frame);
+	this->setCurrentRecognition(points, types, confidences, size, frame);
+	for (BoundingBox& b : this->currentRecognition){
+		cout << b.confidence << " ";
+	}
+	cout << "\n";
 	this->matchEntity();
 	if (visualization::_toVisualize){	
 		this->drawEntities();
@@ -101,4 +112,5 @@ void Tracker::track(int32_t* points, uint16_t* types, float32* confidances, uint
 	}
 	this->addToTrajectory();
 
+	cout << "\n";
 }	
