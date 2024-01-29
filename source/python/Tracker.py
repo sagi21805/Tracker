@@ -34,17 +34,17 @@ class Tracker():
         
         result, frame = predict(self.model, self.cap)
         Tracker.setFuncs()
-        points, types, confidance, size = YoloToPointsAndTypes(result)
-        self.Tracker = c.lib._Tracker(points, types, confidance, c.c_uint16(size), frameToArray(frame),\
+        points, types, confidence, size = YoloToPointsAndTypes(result)
+        self.Tracker = c.lib._Tracker(points, types, confidence, c.c_uint16(size), frameToArray(frame),\
                                       c.c_uint16(frame.shape[0]), c.c_uint16(frame.shape[1]))
         
     def track(self, show_time = False):
         model_time = time()
         result, frame = predict(self.model, self.cap)
         model_time = time() - model_time
-        points, types, confidance, size = YoloToPointsAndTypes(result)
+        points, types, confidence, size = YoloToPointsAndTypes(result)
         track_time = time()
-        c.lib._track(self.Tracker, points, types, confidance, c.c_uint16(size), frameToArray(frame))
+        c.lib._track(self.Tracker, points, types, confidence, c.c_uint16(size), frameToArray(frame))
         track_time = time() - track_time
         if show_time:
             print(f"Model Time: {model_time}, Tracking Time: {track_time}")
