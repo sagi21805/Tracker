@@ -18,6 +18,7 @@ namespace core{
     extern uint8_t  _elementsInPoint;  
     extern size_t _startingId;
     extern size_t _velocityDeadBand;
+    extern float32 _minconfidence;
 } 
 
 namespace visualization{
