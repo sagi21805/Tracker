@@ -53,7 +53,7 @@ cv::Scalar Entity::chooseColor(){
 void Entity::draw(cv::Mat& frame){
 	this->getBoundingBox().rect.draw(frame, this->color);
 	cv::putText(frame, std::to_string(this->id), this->boundingBox.rect.tl(), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(255, 255, 0), 2);
-    cv::putText(frame, std::format("{:.2f}", this->boundingBox.confidance), this->boundingBox.rect.center - Point(24, -12), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(0, 255, 255), 2);
+    cv::putText(frame, std::format("{:.2f}", this->boundingBox.confidence), this->boundingBox.rect.center - Point(24, -12), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(0, 255, 255), 2);
 }
 
 
