@@ -56,6 +56,10 @@ void Entity::draw(cv::Mat& frame){
     cv::putText(frame, std::format("{:.2f}", this->boundingBox.confidence), this->boundingBox.rect.center - Point(24, -12), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(0, 255, 255), 2);
 }
 
+void Entity::mergeBoundingBox(BoundingBox& b){
+    float32 confSum = this->boundingBox.confidence + b.confidence;
+}
+
 
 std::ostream& operator<<(std::ostream& os, const Entity& t){
     os << "id: " << t.getId() << "\n";

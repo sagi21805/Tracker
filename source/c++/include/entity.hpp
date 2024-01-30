@@ -223,6 +223,8 @@ class Entity{
         void draw(cv::Mat& frame);
 
         cv::Scalar chooseColor();
+
+        void mergeBoundingBox(BoundingBox& b);
 };
 
 /**
