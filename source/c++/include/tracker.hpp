@@ -101,8 +101,6 @@ class Tracker{
 
         void matchEntity();
         
-        void stableRecognition();
-
 };  
 
 #endif

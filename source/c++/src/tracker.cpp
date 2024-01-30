@@ -14,7 +14,6 @@ Tracker::~Tracker(){
 
 void Tracker::setCurrentRecognition(int32_t *points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame){
 	this->currentRecognition = generateBoundingBoxes(points, types, confidences, size);
-	this->stableRecognition();
 	this->setFrame(frame);
 }
 
@@ -38,19 +37,6 @@ void Tracker::addToTrajectory(){
 	}
 }	
 
-void Tracker::stableRecognition() {
-
-	//TODO maybe the minConfidance can be automated.
-
-	if (this->currentRecognition.back().confidence < core::_minconfidence){
-		cout << "Recognition INITIAL Size: " << currentRecognition.size() << "\n";
-		vector<BoundingBox> lowThresh = splitByThreshold(this->currentRecognition, core::_minconfidence);
-		cout << "Recognition AFTER Size: " << currentRecognition.size() << "\n";
-	}
-
-
-}
-
 void Tracker::matchEntity(){
 
 	cout << "Recognition Size: " << currentRecognition.size() << "\n";
@@ -62,31 +48,41 @@ void Tracker::matchEntity(){
     std::shared_ptr<Node<Entity>> traverse = this->entities.start;
 	while (traverse != nullptr){
         Entity& currentEntity = traverse->item;
-        uint distanceSquared = UINT32_MAX;
+        uint distanceSquared = squareDistance(currentEntity.getBoundingBox().rect.center, currentEntity.getBoundingBox().rect.tl());
 		currentEntity.predictPossibleLocations();
         currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
-        BoundingBox matchingBox = BoundingBox();
-        for (BoundingBox box : currentRecognition){
+        uint16_t matchingBoxIndex = UINT16_MAX;
+        for (uint16_t i = 0; i < currentRecognition.size(); i++){
+			
+			BoundingBox& box = currentRecognition[i];
 
             if (currentEntity.getType() == box.type) { 
                 uint currentDistanceSquared = currentEntity.squareDistanceTo(box.rect);
                 if (currentDistanceSquared < distanceSquared && 
-                    currentEntity.getPossibleLocation().contains(box.rect.center)){
+                    currentEntity.getPossibleLocation().contains(box.rect.center) &&
+					currentEntity.getPossibleLocation().contains(box.rect.tl()) &&
+					currentEntity.getPossibleLocation().contains(box.rect.br())){
                     distanceSquared = currentDistanceSquared;
-					matchingBox = box;
+					matchingBoxIndex = i;
                 }
             }
 
             
         }
-        if (!(matchingBox.isEmpty())){
-            currentEntity.setBoundingBox(matchingBox);
+        if (matchingBoxIndex < UINT16_MAX){
+            currentEntity.setBoundingBox(currentRecognition[matchingBoxIndex]);
+			currentRecognition.erase(currentRecognition.begin() + matchingBoxIndex);
         }
         else {
             currentEntity.predictNextBoundingBox();
         }
 		traverse = traverse->next;
     }
+	for (BoundingBox& b : this->currentRecognition){
+		if (b.confidence > core::_minconfidence){
+			entities.append(Entity(b));
+		}
+	}
 }	
 
 void Tracker::generateEntites(){
@@ -100,10 +96,7 @@ void Tracker::generateEntites(){
 void Tracker::track(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame){
 
 	this->setCurrentRecognition(points, types, confidences, size, frame);
-	for (BoundingBox& b : this->currentRecognition){
-		cout << b.confidence << " ";
-	}
-	cout << "\n";
+
 	this->matchEntity();
 	if (visualization::_toVisualize){	
 		this->drawEntities();

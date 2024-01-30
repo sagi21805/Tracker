@@ -16,11 +16,3 @@ vector<BoundingBox> generateBoundingBoxes(int32_t* points, uint16_t* types, floa
 bool BoundingBox::isEmpty(){
     return this->rect.empty();
 }
-
-vector<BoundingBox> splitByThreshold(vector<BoundingBox>& boundingBoxes, double threshold) {    
-    uint16_t count = 0;
-    uint16_t i = boundingBoxes.size() - 1;
-    while (boundingBoxes[i].confidence < threshold){ count++; i--;}
-    boundingBoxes = vector<BoundingBox>(boundingBoxes.begin(), boundingBoxes.end() - count);
-    return vector<BoundingBox>(boundingBoxes.end() - count, boundingBoxes.end());
-}
