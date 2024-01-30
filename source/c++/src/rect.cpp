@@ -3,7 +3,7 @@
 using std::cout;
 
 uint Rect::squareDistanceTo(const Rect& r){
-    return squareDistance(this->tl(), r.tl());
+    return squareDistance(this->center, r.center);
 }
 
 bool Rect::isCloseTo(Rect& r, double distance){
