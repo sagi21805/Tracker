@@ -56,8 +56,12 @@ void Entity::draw(cv::Mat& frame){
     cv::putText(frame, std::format("{:.2f}", this->boundingBox.confidence), this->boundingBox.rect.center - Point(24, -12), cv::FONT_HERSHEY_DUPLEX, 1, CV_RGB(0, 255, 255), 2);
 }
 
-void Entity::mergeBoundingBox(BoundingBox& b){
-    float32 confSum = this->boundingBox.confidence + b.confidence;
+void Entity::combineBoundingBox(BoundingBox& b){
+    int32_t x = MIN(boundingBox.rect.x, b.rect.x); 
+    int32_t y = MIN(boundingBox.rect.y, b.rect.y); 
+    int32_t x2 = MAX(boundingBox.rect.width + boundingBox.rect.x, b.rect.width + b.rect.x); 
+    int32_t y2 = MAX(boundingBox.rect.height + boundingBox.rect.y, b.rect.height + b.rect.y); 
+    this->boundingBox = BoundingBox(Rect(Point(x, y), Point(x2, y2)), b.type, (boundingBox.confidence + b.confidence) / 2); //type must be equal.
 }
 
 
