@@ -224,7 +224,7 @@ class Entity{
 
         cv::Scalar chooseColor();
 
-        void mergeBoundingBox(BoundingBox& b);
+        void combineBoundingBox(BoundingBox& b);
 };
 
 /**
