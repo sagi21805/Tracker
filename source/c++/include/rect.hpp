@@ -29,8 +29,8 @@ class Rect : public cv::Rect2i{
             this->center = Point(x + (width / 2), y + (height / 2));
         }
 
-        Rect(int32_t _x, int32_t _y, int32_t _width, int32_t _height) : Base(x, y, _width, _height){
-            this->center = Point(x + (width / 2), y + (height / 2));
+        Rect(int32_t _x, int32_t _y, int32_t _width, int32_t _height) : Base(_x, _y, _width, _height){
+            this->center = Point(_x + (_width / 2), _y + (_height / 2));
         }
 
         Rect(const Point& org, const cv::Size_<int32_t> sz) : Base(org, sz){
