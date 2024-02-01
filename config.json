@@ -5,7 +5,7 @@
     "minconfidence" : 0.8,
 
     "predictions" : {
-        "sizeCoefficient" : 1.5,
+        "sizeCoefficient" : 1.2,
         "numOfFrames" : 4,
         "velocityCoefficient" : 3,
         "offset" : 10
@@ -13,7 +13,7 @@
 
     "visualization" : {
         "toVisualize" : true,
-        "waitKey" : 1,
+        "waitKey" : 100,
         "colors" : {
             "blueRobot" : [0, 0, 255],
             "redRobot" : [255, 0, 0]
