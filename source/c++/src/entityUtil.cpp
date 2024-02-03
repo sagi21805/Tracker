@@ -64,6 +64,12 @@ void Entity::combineBoundingBox(BoundingBox& b){
     this->boundingBox = BoundingBox(Rect(Point(x, y), Point(x2, y2)), b.type, (boundingBox.confidence + b.confidence) / 2); //type must be equal.
 }
 
+bool Entity::predictionContains(BoundingBox& b){
+    return  this->getType() == b.type &&
+            this->getPossibleLocation().contains(b.rect.center) &&
+            this->getPossibleLocation().contains(b.rect.tl()) &&
+            this->getPossibleLocation().contains(b.rect.br());
+}
 
 std::ostream& operator<<(std::ostream& os, const Entity& t){
     os << "id: " << t.getId() << "\n";
