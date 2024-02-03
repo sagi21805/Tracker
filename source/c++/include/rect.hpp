@@ -46,7 +46,7 @@ class Rect : public cv::Rect2i{
      * @returns The Squared distance.
      * @author Sagi Or
     */
-    uint squareDistanceTo(const Rect& r);
+    uint squareDistanceTo(const Rect& r) const;
     
     /**
      * @file opencvExtention.cpp
