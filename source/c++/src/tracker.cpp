@@ -36,39 +36,43 @@ void Tracker::addToTrajectory(){
 		traverse = traverse->next;
 	}
 }	
-
 void Tracker::matchEntity(){
 
 	// cout << "Recognition Size: " << currentRecognition.size() << "\n";
 
 
     std::shared_ptr<Node<Entity>> traverse = this->entities.start;
+	vector<int> matchingIndexes(currentRecognition.size(), -1);
 	while (traverse != nullptr){
         Entity& currentEntity = traverse->item;
-        uint distanceSquared = UINT32_MAX;
+        vector<uint16_t> sortedIndexes; //boxes in the currentRecogintion, that are sorted by distance to the box of current entity box
 		currentEntity.predictPossibleLocations();
         currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
-        uint16_t matchingBoxIndex = UINT16_MAX;
         for (uint16_t i = 0; i < currentRecognition.size(); i++){
-			
 			BoundingBox& box = currentRecognition[i];
+			if (currentEntity.predictionContains(box)){
+ 				auto it = std::lower_bound(sortedIndexes.begin(), sortedIndexes.end(), box,
+				[&](uint16_t index, const BoundingBox& element) {
+					return element.rect.squareDistanceTo(currentEntity.getBoundingBox().rect) < 
+					currentRecognition[sortedIndexes[index]].rect.squareDistanceTo(currentEntity.getBoundingBox().rect); //TODO write more readable
+				});
 
-            if (currentEntity.getType() == box.type) { 
-                uint currentDistanceSquared = currentEntity.squareDistanceTo(box.rect);
-                if (currentDistanceSquared < distanceSquared && 
-                    currentEntity.getPossibleLocation().contains(box.rect.center) &&
-					currentEntity.getPossibleLocation().contains(box.rect.tl()) &&
-					currentEntity.getPossibleLocation().contains(box.rect.br())){
-                    distanceSquared = currentDistanceSquared;
-					matchingBoxIndex = i;
-                }
-            }
+				sortedIndexes.insert(it, i);
+			}
 
             
         }
-        if (matchingBoxIndex < UINT16_MAX){
-            currentEntity.setBoundingBox(currentRecognition[matchingBoxIndex]);
-			currentRecognition.erase(currentRecognition.begin() + matchingBoxIndex);
+        if (sortedIndexes.size() > 0){
+            currentEntity.setBoundingBox(currentRecognition[sortedIndexes[0]]); // set to the closet box
+        	for (uint16_t i = 1; i < sortedIndexes.size(); i++){ 
+				currentEntity.combineBoundingBox(currentRecognition[sortedIndexes[i]]); 
+				cout << "Combined\n";
+			}
+			std::sort(sortedIndexes.rbegin(), sortedIndexes.rend());
+			for (uint16_t index : sortedIndexes) {
+				currentRecognition.erase(currentRecognition.begin() + index);
+			}
+
         }
         else {
             currentEntity.predictNextBoundingBox();
@@ -76,39 +80,7 @@ void Tracker::matchEntity(){
 		traverse = traverse->next;
     }
 
-	traverse = this->entities.start;
-	if (currentRecognition.size() > 0){
-		while (traverse != nullptr){
-			Entity& currentEntity = traverse->item;
-			uint distanceSquared = UINT32_MAX;
-			uint16_t matchingBoxIndex = UINT16_MAX;
-			currentEntity.predictPossibleLocations();
-			for (uint16_t i = 0; i < currentRecognition.size(); i++){
-				
-				BoundingBox& box = currentRecognition[i];
 
-				if (currentEntity.getType() == box.type) { 
-					uint currentDistanceSquared = currentEntity.squareDistanceTo(box.rect);
-					if (currentDistanceSquared < distanceSquared && 
-						currentEntity.getPossibleLocation().contains(box.rect.center) &&
-						currentEntity.getPossibleLocation().contains(box.rect.tl()) &&
-						currentEntity.getPossibleLocation().contains(box.rect.br()) ){
-						distanceSquared = currentDistanceSquared;
-						matchingBoxIndex = i;
-					}
-				}
-
-				
-			}
-			if (matchingBoxIndex < UINT16_MAX){
-				currentEntity.combineBoundingBox(currentRecognition[matchingBoxIndex]);
-				currentRecognition.erase(currentRecognition.begin() + matchingBoxIndex);
-				currentEntity.predictPossibleLocations();
-				currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(0, 255, 0));
-			}
-			traverse = traverse->next;
-		}
-	}
 	for (BoundingBox& b : currentRecognition){
 		b.rect.draw(this->frame, CV_RGB(0, 0, 0));
 		cout << "BADDDD\n";
