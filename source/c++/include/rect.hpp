@@ -68,6 +68,8 @@ class Rect : public cv::Rect2i{
     */
     void draw(cv::Mat& frame, cv::Scalar color);
     // bool isIntersectingTo(Rect& r);
+
+    float32 iouPercentage(const Rect& r) const;
 };
 
 /**

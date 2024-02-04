@@ -29,6 +29,17 @@ vector<Rect> pointsToRects(int32_t *points, uint16_t size){
 
 }
 
+float32 Rect::iouPercentage(const Rect& other) const {
+    int Xoverlap = MIN((this->x + this->width), (other.x + other.width)) - MAX(this->x, other.x);
+    int Yoverlap = MIN((this->y + this->height), (other.y + other.height)) - MAX(this->y, other.y);
+    if (Xoverlap <= 0.0 || Yoverlap <= 0.0) {
+        return 0.0;
+    }
+    float32 intersectionArea = Xoverlap * Yoverlap;
+
+    return intersectionArea / (float32) this->area();
+}
+
 std::ostream& operator<<(std::ostream& os, Rect& rect){
     // Printing all the elements
     os << "[" << rect.x << " " << rect.y << " " << rect.width << " " << rect.height << "]";
