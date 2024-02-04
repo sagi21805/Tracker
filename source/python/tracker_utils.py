@@ -46,7 +46,7 @@ def get_coordinates(event, x, y, flags, param):
 
 def prepFrame(frame):
     global Ymin, Ymax
-    return frame[Ymin: Ymax]   #26 : 482
+    return frame[0: 480]   #26 : 482
     
     
         

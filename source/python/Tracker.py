@@ -28,7 +28,8 @@ class Tracker():
         
         success, frame = self.cap.read()
         if success:
-            on_startup(frame)
+            pass
+            # on_startup(frame)
         else: 
             raise ValueError("Frame can not be opened")
         
