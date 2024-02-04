@@ -2,10 +2,10 @@
     "elementsInPoint" : 4,
     "startingId" : 0,
     "velocityDeadBand" : 20,
-    "minconfidence" : 0.8,
+    "minIntersection" : 0.4,
 
     "predictions" : {
-        "sizeCoefficient" : 1.2,
+        "sizeCoefficient" : 0.75,
         "numOfFrames" : 4,
         "velocityCoefficient" : 3,
         "offset" : 10
