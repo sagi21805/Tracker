@@ -66,6 +66,7 @@ void Entity::combineBoundingBox(BoundingBox& b){
 
 bool Entity::predictionContains(BoundingBox& b){
     return  this->getType() == b.type &&
+            b.rect.iouPercentage(this->getPossibleLocation()) > 0;
             this->getPossibleLocation().contains(b.rect.center) &&
             this->getPossibleLocation().contains(b.rect.tl()) &&
             this->getPossibleLocation().contains(b.rect.br());
