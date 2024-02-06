@@ -212,8 +212,7 @@ class Entity{
         
         void predictNextBoundingBox();
         
-        bool predictionContains(BoundingBox& b);
-        /**
+                /**
          * @file entity.cpp
          * @brief draws the boundingBox of the Entity on a given frame 
          * @param frame The frame to draw the boundingBox on.
