@@ -36,6 +36,27 @@ void Tracker::addToTrajectory(){
 		traverse = traverse->next;
 	}
 }	
+
+float32 clacScore(Entity matchedEntity, BoundingBox matchedPrediction){ // TODO SWITCH MAGIC NUMBERS
+	// parameters should be built such that only one cant carry the score alone.
+	if (matchedEntity.getType() != matchedPrediction.type) { return 0.0; }
+	float32 score = 0.0;
+	score += matchedEntity.getPossibleLocation().contains(matchedPrediction.rect.center) ? 0.3 : 0;
+	score += matchedEntity.getPossibleLocation().contains(matchedPrediction.rect.center) ? 0.1 : 0;
+	score += matchedEntity.getPossibleLocation().contains(matchedPrediction.rect.center) ? 0.1 : 0;
+	float iou = matchedPrediction.rect.iouPercentage(matchedEntity.getBoundingBox().rect);
+	score += (iou > 0) ? 0.2 + iou * 0.3 : 0;   
+
+}
+// bool Entity::predictionContains(BoundingBox& b){
+//     return  this->getType() == b.type &&
+//             b.rect.iouPercentage(this->getPossibleLocation()) > 0;
+//             this->getPossibleLocation().contains(b.rect.center) &&
+//             this->getPossibleLocation().contains(b.rect.tl()) &&
+//             this->getPossibleLocation().contains(b.rect.br());
+// }
+
+
 void Tracker::matchEntity(){
 
 	// cout << "Recognition Size: " << currentRecognition.size() << "\n";
