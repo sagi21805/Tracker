@@ -70,6 +70,12 @@ class Rect : public cv::Rect2i{
     // bool isIntersectingTo(Rect& r);
 
     float32 iouPercentage(const Rect& r) const;
+
+    template<typename T> 
+    bool Rect::contains(const cv::Point_<T>& pt) const {
+        return x <= pt.x && pt.x <= x + width && y <= pt.y && pt.y <= y + height;
+    }
+
 };
 
 /**
