@@ -224,6 +224,8 @@ class Entity{
         cv::Scalar chooseColor();
 
         void combineBoundingBox(BoundingBox& b);
+
+        float32 clacScore(const BoundingBox& matchedPrediction);
 };
 
 /**
