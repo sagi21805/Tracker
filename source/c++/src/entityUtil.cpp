@@ -57,23 +57,22 @@ void Entity::draw(cv::Mat& frame){
 }
 
 void Entity::combineBoundingBox(BoundingBox& b){
-    int32_t x = MIN(boundingBox.rect.x, b.rect.x); 
-    int32_t y = MIN(boundingBox.rect.y, b.rect.y); 
-    int32_t x2 = MAX(boundingBox.rect.width + boundingBox.rect.x, b.rect.width + b.rect.x); 
-    int32_t y2 = MAX(boundingBox.rect.height + boundingBox.rect.y, b.rect.height + b.rect.y); 
-    this->boundingBox = BoundingBox(Rect(Point(x, y), Point(x2, y2)), b.type, (boundingBox.confidence + b.confidence) / 2); //type must be equal.
+    this->boundingBox = this->boundingBox.combinedBoundingBox(b);
 }
 
 float32 Entity::clacScore(const BoundingBox& matchedPrediction){ // TODO SWITCH MAGIC NUMBERS
 	// parameters should be built such that only one cant carry the score alone.
+    if (this->boundingBox.rect.empty()) { return 0.0; }
 	if (this->boundingBox.type != matchedPrediction.type) { return 0.0; }
 	float32 score = 0.0;
 	float32 iou = matchedPrediction.rect.iouPercentage(this->boundingBox.rect);
-	score += (iou > 0) ? 0.2 + iou * 0.3 : 0;
-	float32 distance = pow(this->boundingBox.rect.x, 2) + pow(this->boundingBox.rect.y, 2);
+	score += (iou > 0) ? iou * 0.3 : 0;
+    cout << "s1: " << score << " "; 
+	float32 distance = pow(this->boundingBox.rect.width, 2) + pow(this->boundingBox.rect.height, 2);
 	float32 slope = (1 - 0.35) / (-distance);
 	float32 currentDistance = this->squareDistanceTo(matchedPrediction.rect);
-	score += 0.5*(slope*currentDistance + 1);
+	score += 0.7*(slope*currentDistance + 1);
+    cout << "s2: " << score << " "; 
     return score;
 }
 

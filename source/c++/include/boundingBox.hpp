@@ -14,6 +14,8 @@ struct BoundingBox {
 
     bool isEmpty();
 
+    BoundingBox combinedBoundingBox(BoundingBox& b);
+
 };
 
 vector<BoundingBox> splitByThreshold(vector<BoundingBox>& boundingBoxes, double threshold);
