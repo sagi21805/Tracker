@@ -4,7 +4,7 @@ namespace core {
     uint8_t _elementsInPoint;
     size_t _startingId;
     size_t _velocityDeadBand;
-    float32 _minIntersection;
+    float32 _minScore;
 }
 
 namespace visualization {
@@ -77,7 +77,7 @@ void config(const std::string& filename) {
         throw std::runtime_error("Value for key 'velocityDeadBand' is not an unsigned number.");
     }
 
-    core::_minIntersection = config["minIntersection"];
+    core::_minScore = config["minScore"];
     // Predictions
 
     if (config["predictions"]["sizeCoefficient"].is_number_float()) {
