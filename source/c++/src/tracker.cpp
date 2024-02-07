@@ -41,38 +41,26 @@ void Tracker::addToTrajectory(){
 
 void Tracker::matchEntity(){
 
-	// cout << "Recognition Size: " << currentRecognition.size() << "\n";
-
 
     std::shared_ptr<Node<Entity>> traverse = this->entities.start;
 	while (traverse != nullptr){
         Entity& currentEntity = traverse->item;
-		bool foundPrediction = false;
-		if (currentRecognition.size() > 0) {
-			vector<std::pair<float32, uint16_t>> scores; scores.reserve(currentRecognition.size() - 1);
-			currentEntity.predictPossibleLocations();
-			for (uint16_t boxIndex = 0; boxIndex < currentRecognition.size(); boxIndex++) {
-				const BoundingBox& e = currentRecognition[boxIndex];
-				scores.push_back({currentEntity.clacScore(e), boxIndex});
-			}
-			std::sort(scores.begin(), scores.end(), [](std::pair<float32, uint16_t> s1, std::pair<float32, uint16_t> s2) { 
-				return s1.first > s2.first;
-			});
-			cout << "scores: [";
-			for (uint16_t i = 0; i < currentRecognition.size(); i++) {
-				cout << scores[i].first << ", ";
-			}
-			cout << "]\n";
-				
-			if (scores[0].first > 0){
-				currentEntity.setBoundingBox(currentRecognition[scores[0].second]); // set to the closet box
-				currentRecognition.erase(currentRecognition.begin() + scores[0].second);
-				foundPrediction = true;
+		currentEntity.predictPossibleLocations();
+		BoundingBox matchedBox = BoundingBox();
+		cout << "Entity: \n";
+		for (int16_t i = currentRecognition.size()-1; i >= 0; i--) {
+			if (currentEntity.clacScore(currentRecognition[i]) >= core::_minScore){
+				matchedBox = matchedBox.combinedBoundingBox(currentRecognition[i]);
+				currentRecognition.erase(currentRecognition.begin() + i);
 			}
 		}
-        if (!foundPrediction){
-            currentEntity.predictNextBoundingBox();
-        }
+		cout << "\n";
+        if (!(matchedBox.isEmpty())){
+            currentEntity.setBoundingBox(matchedBox);
+        } 
+		else {
+			currentEntity.predictNextBoundingBox();
+		}
 		traverse = traverse->next;
     }
 	for (BoundingBox& b : currentRecognition){
@@ -100,6 +88,4 @@ void Tracker::track(int32_t* points, uint16_t* types, float32* confidences, uint
 		cv::waitKey(visualization::_waitKey);
 	}
 	this->addToTrajectory();
-
-	cout << "\n";
 }	
