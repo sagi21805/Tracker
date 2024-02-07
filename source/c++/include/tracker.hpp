@@ -99,8 +99,10 @@ class Tracker{
         */
         void track(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame);
 
+        float32 clacScore(Entity matchedEntity, const BoundingBox& matchedPrediction);
+                
         void matchEntity();
-        
+
 };  
 
 #endif

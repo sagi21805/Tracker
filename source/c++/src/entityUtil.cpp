@@ -64,12 +64,17 @@ void Entity::combineBoundingBox(BoundingBox& b){
     this->boundingBox = BoundingBox(Rect(Point(x, y), Point(x2, y2)), b.type, (boundingBox.confidence + b.confidence) / 2); //type must be equal.
 }
 
-bool Entity::predictionContains(BoundingBox& b){
-    return  this->getType() == b.type &&
-            b.rect.iouPercentage(this->getPossibleLocation()) > 0;
-            this->getPossibleLocation().contains(b.rect.center) &&
-            this->getPossibleLocation().contains(b.rect.tl()) &&
-            this->getPossibleLocation().contains(b.rect.br());
+float32 Entity::clacScore(const BoundingBox& matchedPrediction){ // TODO SWITCH MAGIC NUMBERS
+	// parameters should be built such that only one cant carry the score alone.
+	if (this->boundingBox.type != matchedPrediction.type) { return 0.0; }
+	float32 score = 0.0;
+	float32 iou = matchedPrediction.rect.iouPercentage(this->boundingBox.rect);
+	score += (iou > 0) ? 0.2 + iou * 0.3 : 0;
+	float32 distance = pow(this->boundingBox.rect.x, 2) + pow(this->boundingBox.rect.y, 2);
+	float32 slope = (1 - 0.35) / (-distance);
+	float32 currentDistance = this->squareDistanceTo(matchedPrediction.rect);
+	score += 0.5*(slope*currentDistance + 1);
+    return score;
 }
 
 std::ostream& operator<<(std::ostream& os, const Entity& t){
