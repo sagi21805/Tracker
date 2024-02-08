@@ -26,7 +26,6 @@ uint Entity::squareDistanceTo(const Rect& r){
 }
 
 void Entity::predictPossibleLocations(){
-    this->calcAndSetVelocity();
     Rect& r = this->getBoundingBox().rect;
     const int vX = this->velocity.x*predictions::_velocityCoefficient;
     const int vY = this->velocity.y*predictions::_velocityCoefficient;
@@ -67,12 +66,10 @@ float32 Entity::clacScore(const BoundingBox& matchedPrediction){ // TODO SWITCH 
 	float32 score = 0.0;
 	float32 iou = matchedPrediction.rect.iouPercentage(this->boundingBox.rect);
 	score += (iou > 0) ? iou * 0.3 : 0;
-    cout << "s1: " << score << " "; 
 	float32 distance = pow(this->boundingBox.rect.width, 2) + pow(this->boundingBox.rect.height, 2);
-	float32 slope = (1 - 0.35) / (-distance);
+	float32 slope = (1.0 - 0.90) / (-distance);
 	float32 currentDistance = this->squareDistanceTo(matchedPrediction.rect);
 	score += 0.7*(slope*currentDistance + 1);
-    cout << "s2: " << score << " "; 
     return score;
 }
 

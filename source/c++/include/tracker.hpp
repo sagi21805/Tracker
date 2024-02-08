@@ -66,20 +66,6 @@ class Tracker{
 
         /**
          * @file tracker.cpp
-         * @brief Draws the Entities Vector on the current frame.
-         * @author Sagi Or
-        */
-        void drawEntities();
-
-        /**
-         * @file tracker.cpp
-         * @brief For all the entities in the entity vector adds Thier parameters to thier trajectory.
-         * @author Sagi Or
-        */
-        void addToTrajectory();
-
-        /**
-         * @file tracker.cpp
 
          * @brief Turn a rect vector into a Entity vector.
          * @param rects The rect vector to turn.
@@ -100,6 +86,9 @@ class Tracker{
         void track(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame);
 
         float32 clacScore(Entity matchedEntity, const BoundingBox& matchedPrediction);
+
+        void startCycle(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame);
+        void endCycle();
                 
         void matchEntity();
 
