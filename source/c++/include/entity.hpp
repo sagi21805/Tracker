@@ -33,9 +33,9 @@ class Entity{
         LinkedList<Trajectory> trajectory; //the Trajectory of the Entity which contains previous boundingBox and velocity
         Rect possibleLocation;
         cv::Scalar color;
-        //countour
-
     public:
+        bool foundRecognition = false;
+
         
 ///////////////////////////////////////// Constructors //////////////////////////////////////////////////
 
