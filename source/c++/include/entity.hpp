@@ -35,6 +35,7 @@ class Entity{
         cv::Scalar color;
     public:
         bool foundRecognition = false;
+        uint8_t timesNotFound = 0;
 
         
 ///////////////////////////////////////// Constructors //////////////////////////////////////////////////

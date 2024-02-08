@@ -23,23 +23,16 @@ void Tracker::setFrame(uint8_t* frame){
 
 void Tracker::matchEntity(){
 
-
 	for (int32_t i = currentRecognition.size()-1; i >= 0; i--) {
 		float32 maxScore = 0;
 		std::shared_ptr<Node<Entity>> matchedEntityPtr = nullptr;
-		// cout << "recognition " << i << "\ncurrentScore: ";
     	std::shared_ptr<Node<Entity>> traverse = this->entities.start;
 		while (traverse != nullptr){
 			Entity& currentEntity = traverse->item;
 			float32 currentScore = currentEntity.clacScore(currentRecognition[i]);
-			// cout << currentScore << " ";
 			if (currentScore > maxScore) { maxScore = currentScore; matchedEntityPtr = traverse; }
-			// matchedBox.combinedBoundingBox(currentRecognition[i]);
-			// 	currentRecognition.erase(currentRecognition.begin() + i);
-			// } //TODO make sure that the dup dont have a high score anywhere else
 			traverse = traverse->next;
 		}
-		// cout << "\nmaxScore: " << maxScore << "\n";
 
 		if (maxScore > core::_minScore && matchedEntityPtr != nullptr){
 			Entity& matchedEntity = matchedEntityPtr->item;
@@ -53,18 +46,6 @@ void Tracker::matchEntity(){
 			currentRecognition.erase(currentRecognition.begin() + i);
 		} 	
 	}
-	for (BoundingBox& b : currentRecognition){
-		b.rect.draw(this->frame, CV_RGB(0, 0, 0));
-		cout << "EXTRA\n";
-		std::shared_ptr<Node<Entity>> traverse = this->entities.start;
-		cout << "scores: ";
-		while (traverse != nullptr){
-			Entity& currentEntity = traverse->item;
-			float32 currentScore = currentEntity.clacScore(b);
-			cout << currentScore << " ";
-			traverse = traverse->next;
-		}
-	}	
 }
 
 void Tracker::generateEntites(){
@@ -88,6 +69,8 @@ void Tracker::startCycle(int32_t* points, uint16_t* types, float32* confidences,
 
 void Tracker::endCycle(){
 	std::shared_ptr<Node<Entity>> traverse = this->entities.start;
+	//TODO make a remove by entry function in the linked list - test with numbers
+	uint16_t k = 0;
 	while (traverse != nullptr){
 		Entity& currentEntity = traverse->item;
 		if (visualization::_toVisualize){	
@@ -95,14 +78,19 @@ void Tracker::endCycle(){
 			currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
 		}
 		currentEntity.addToTrajectory();
-		if (currentEntity.foundRecognition){
-			currentEntity.foundRecognition = false;
-		} 
-		else {
-			currentEntity.predictNextBoundingBox();
+		if (currentEntity.foundRecognition){ currentEntity.foundRecognition = false; currentEntity.timesNotFound = 0; } 
+		else { currentEntity.predictNextBoundingBox(); currentEntity.timesNotFound++; }
+
+		if (currentEntity.timesNotFound > 40){
+			entities.remove(k);
 		}
+
 		traverse = traverse->next;
+		k++;
 	}
+	cout << "len: " << currentRecognition.size() << "\n";
+	this->generateEntites(); //TODO make more sophisticated
+
 	if (visualization::_toVisualize){	
 		cv::imshow("frame", this->frame);
 		cv::waitKey(visualization::_waitKey);
