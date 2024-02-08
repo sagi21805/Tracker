@@ -1,9 +1,9 @@
 #!/bin/sh
-wd=$(pwd)
+# wd=$(pwd)
 
-cd source/rust
-cargo build --release
-cd $wd
+# cd source/rust
+# cargo build --release
+# cd $wd
 cmake -B ./build
 cd build 
 make -j4

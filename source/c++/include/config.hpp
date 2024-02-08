@@ -10,11 +10,15 @@
 
 using json = nlohmann::json;
 
+typedef float float32;
+
+
 // Declare global variables
 namespace core{
     extern uint8_t  _elementsInPoint;  
     extern size_t _startingId;
     extern size_t _velocityDeadBand;
+    extern float32 _minScore;
 } 
 
 namespace visualization{

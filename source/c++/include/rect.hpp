@@ -10,22 +10,30 @@ using cv::Mat;
  * @brief This is an extension to the Rect opencv class which allows more functionallity.
  * @author Sagi Or
 */
-class Rect : public cv::Rect_<uint16_t>{
-    using Base = cv::Rect_<uint16_t>;
+class Rect : public cv::Rect2i{
+    using Base = cv::Rect2i;
     using Base::Base;
     
     public: 
         Point center;
 
+        Rect(int32_t* points){
+            this->x = points[0];
+            this->y = points[1];
+            this->width = points[2] - x;
+            this->height = points[3] - y;
+            this->center = Point(x + (width / 2), y + (height / 2));
+        }
+
         Rect(const Point& pt1, const Point& pt2) : Base(pt1, pt2){
             this->center = Point(x + (width / 2), y + (height / 2));
         }
 
-        Rect(uint16_t _x, uint16_t _y, uint16_t _width, uint16_t _height) : Base(x, y, _width, _height){
-            this->center = Point(x + (width / 2), y + (height / 2));
+        Rect(int32_t _x, int32_t _y, int32_t _width, int32_t _height) : Base(_x, _y, _width, _height){
+            this->center = Point(_x + (_width / 2), _y + (_height / 2));
         }
 
-        Rect(const Point& org, const cv::Size_<uint16_t> sz) : Base(org, sz){
+        Rect(const Point& org, const cv::Size_<int32_t> sz) : Base(org, sz){
             this->center = Point(x + (width / 2), y + (height / 2));
         }
 
@@ -38,7 +46,7 @@ class Rect : public cv::Rect_<uint16_t>{
      * @returns The Squared distance.
      * @author Sagi Or
     */
-    uint squareDistanceTo(const Rect& r);
+    uint squareDistanceTo(const Rect& r) const;
     
     /**
      * @file opencvExtention.cpp
@@ -60,6 +68,14 @@ class Rect : public cv::Rect_<uint16_t>{
     */
     void draw(cv::Mat& frame, cv::Scalar color);
     // bool isIntersectingTo(Rect& r);
+
+    float32 iouPercentage(const Rect& r) const;
+
+    template<typename T> 
+    bool contains(const cv::Point_<T>& pt) const {
+        return x <= pt.x && pt.x <= x + width && y <= pt.y && pt.y <= y + height;
+    }
+
 };
 
 /**
@@ -70,7 +86,7 @@ class Rect : public cv::Rect_<uint16_t>{
  * @returns A vector of Rects contains all the points as Rect object.
  * @author Sagi Or
 */
-std::vector<Rect> pointsToRects(uint16_t *points, uint16_t size);
+std::vector<Rect> pointsToRects(int32_t *points, uint16_t size);
 
 /**
  * @file opencvExtention.cpp

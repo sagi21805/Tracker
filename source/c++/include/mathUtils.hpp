@@ -5,7 +5,6 @@
 #include <opencv4/opencv2/opencv.hpp>
 #include "config.hpp"
 
-
 using std::vector;
 typedef cv::Point2i Point;
 
