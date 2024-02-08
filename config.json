@@ -2,7 +2,7 @@
     "elementsInPoint" : 4,
     "startingId" : 0,
     "velocityDeadBand" : 20,
-    "minScore" : 0.60,
+    "minScore" : 0.35,
 
     "predictions" : {
         "sizeCoefficient" : 0.75,
@@ -13,7 +13,7 @@
 
     "visualization" : {
         "toVisualize" : true,
-        "waitKey" : 10,
+        "waitKey" : 100,
         "colors" : {
             "blueRobot" : [0, 0, 255],
             "redRobot" : [255, 0, 0]
