@@ -64,10 +64,9 @@ float32 Entity::clacScore(const BoundingBox& matchedPrediction){ // TODO SWITCH 
     if (this->boundingBox.rect.empty()) { return 0.0; }
 	if (this->boundingBox.type != matchedPrediction.type) { return 0.0; }
 	float32 score = 0.0;
-	float32 iou = matchedPrediction.rect.iouPercentage(this->possibleLocation);
-	score += (iou > 0) ? iou * 0.5 : 0;
-	float32 distance = pow(this->boundingBox.rect.width, 2) + pow(this->boundingBox.rect.height, 2);
-	float32 slope = (1.0 - 0.90) / (-distance);
+	score += matchedPrediction.rect.iouPercentage(this->possibleLocation) * 0.5;
+	float32 distance = pow(this->possibleLocation.width, 2) + pow(this->possibleLocation.height, 2);
+	float32 slope = (0.9 - 1.0) / (distance);
 	float32 currentDistance = this->squareDistanceTo(matchedPrediction.rect);
 	score += 0.5*(slope*currentDistance + 1);
     return score;

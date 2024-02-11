@@ -73,18 +73,22 @@ Rect Entity::getPossibleLocation() const{
 
 void Entity::setBoundingBox(BoundingBox box){
     if (this->trajectory.length >= _smoothingFrames){
-        float32 confsum = box.confidence;
-        float32 x = box.rect.x*confsum, y = box.rect.y*confsum, width = box.rect.width*confsum, height = box.rect.height*confsum;
+        float32 v = 0.5;
+        float32 x=box.rect.x*v, y=box.rect.y*v, width=box.rect.width*v, height=box.rect.height*v;
         std::shared_ptr<Node<Trajectory>> traverse = this->trajectory.start;
-        for (uint8_t i = 0; i < _smoothingFrames-1; i++){
-            confsum += traverse->item.box.confidence;
-            x += traverse->item.box.rect.x * traverse->item.box.confidence;
-            y += traverse->item.box.rect.y * traverse->item.box.confidence;
-            width += traverse->item.box.rect.width * traverse->item.box.confidence;
-            height += traverse->item.box.rect.height * traverse->item.box.confidence;
+        for (uint8_t i = 0; i < _smoothingFrames-2; i++){ //the min num of smothing must be greater or equal to 2 (over 2 frames)
+            v/=2;
+            x+=traverse->item.box.rect.x*v;
+            y+=traverse->item.box.rect.y*v;
+            width+=traverse->item.box.rect.width*v;
+            height+=traverse->item.box.rect.height*v;
             traverse = traverse->next;
         }
-        this->boundingBox = BoundingBox(Rect(x/confsum, y/confsum, width/confsum, height/confsum), getType(), confsum/_smoothingFrames);
+        x+=traverse->item.box.rect.x*v;
+        y+=traverse->item.box.rect.y*v;
+        width+=traverse->item.box.rect.width*v;
+        height+=traverse->item.box.rect.height*v;
+        this->boundingBox = BoundingBox(Rect(x, y, width, height), getType(), box.confidence);
     } else {
         this->boundingBox = box;
     }
