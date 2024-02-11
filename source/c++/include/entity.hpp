@@ -176,7 +176,7 @@ class Entity{
         /**
          * @file entity.cpp
          * @brief Calculates the average Velocity on a given number of frames and returns it.
-         * @param numOfFrames The number of frames to avrage velocity on.
+         * @param smoothingFrames The number of frames to avrage velocity on.
          * @returns The calculated Velocity.
          * @author Sagi Or
         */
