@@ -1,11 +1,12 @@
 #include "entity.hpp"
+using predictions::_offset, predictions::_smoothingFrames;
 
 ////////////////////////////////// constructors //////////////////////////////////////////////////
 
 Entity::Entity(BoundingBox boundingBox)
     : id(core::_startingId), boundingBox(boundingBox), velocity(Velocity2D(0, 0)), color(this->chooseColor()){
     core::_startingId++;
-    this->trajectory = LinkedList<Trajectory>(Trajectory(boundingBox.rect, Velocity2D(0, 0)));
+    this->trajectory = LinkedList<Trajectory>(Trajectory(boundingBox, Velocity2D(0, 0)));
     this->predictPossibleLocations();
 }
 
@@ -70,12 +71,31 @@ Rect Entity::getPossibleLocation() const{
     return this->possibleLocation;
 }
 
-void Entity::setBoundingBox(BoundingBox boundingBox){
-    this->boundingBox = boundingBox;
+void Entity::setBoundingBox(BoundingBox box){
+    if (this->trajectory.length >= _smoothingFrames){
+        float32 v = 0.5;
+        float32 x=box.rect.x*v, y=box.rect.y*v, width=box.rect.width*v, height=box.rect.height*v;
+        std::shared_ptr<Node<Trajectory>> traverse = this->trajectory.start;
+        for (uint8_t i = 0; i < _smoothingFrames-2; i++){ //the min num of smothing must be greater or equal to 2 (over 2 frames)
+            v/=2;
+            x+=traverse->item.box.rect.x*v;
+            y+=traverse->item.box.rect.y*v;
+            width+=traverse->item.box.rect.width*v;
+            height+=traverse->item.box.rect.height*v;
+            traverse = traverse->next;
+        }
+        x+=traverse->item.box.rect.x*v;
+        y+=traverse->item.box.rect.y*v;
+        width+=traverse->item.box.rect.width*v;
+        height+=traverse->item.box.rect.height*v;
+        this->boundingBox = BoundingBox(Rect(x, y, width, height), getType(), box.confidence);
+    } else {
+        this->boundingBox = box;
+    }
 }
 
 void Entity::addToTrajectory(){
-    this->trajectory.prepend(Trajectory(this->boundingBox.rect, this->velocity));
+    this->trajectory.prepend(Trajectory(this->boundingBox, this->velocity));
 }
 
 void Entity::emptyboundingBox(){

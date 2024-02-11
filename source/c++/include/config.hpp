@@ -28,7 +28,7 @@ namespace visualization{
 }
 
 namespace predictions{
-    extern uint8_t _numOfFrames;
+    extern uint8_t _smoothingFrames;
     extern float _sizeCoefficient;
     extern float _velocityCoefficient;
     extern uint16_t _offset;
