@@ -71,20 +71,22 @@ Rect Entity::getPossibleLocation() const{
     return this->possibleLocation;
 }
 
-void Entity::setBoundingBox(BoundingBox boundingBox){
+void Entity::setBoundingBox(BoundingBox box){
     if (this->trajectory.length >= _smoothingFrames){
-        float32 confsum = 0;
-        int32_t x = 0, y = 0, width = 0, height = 0;
+        float32 confsum = box.confidence;
+        float32 x = box.rect.x*confsum, y = box.rect.y*confsum, width = box.rect.width*confsum, height = box.rect.height*confsum;
         std::shared_ptr<Node<Trajectory>> traverse = this->trajectory.start;
-        for (uint8_t i = 0; i < _smoothingFrames; i++){
+        for (uint8_t i = 0; i < _smoothingFrames-1; i++){
             confsum += traverse->item.box.confidence;
-            x += traverse->item.box.rect.x;
-            y += traverse->item.box.rect.y;
-            width += traverse->item.box.rect.width;
-            height += traverse->item.box.rect.height;
+            x += traverse->item.box.rect.x * traverse->item.box.confidence;
+            y += traverse->item.box.rect.y * traverse->item.box.confidence;
+            width += traverse->item.box.rect.width * traverse->item.box.confidence;
+            height += traverse->item.box.rect.height * traverse->item.box.confidence;
+            traverse = traverse->next;
         }
+        this->boundingBox = BoundingBox(Rect(x/confsum, y/confsum, width/confsum, height/confsum), getType(), confsum/_smoothingFrames);
     } else {
-        this->boundingBox = boundingBox;
+        this->boundingBox = box;
     }
 }
 
