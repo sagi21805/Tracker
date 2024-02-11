@@ -4,8 +4,8 @@ using predictions::_offset, predictions::_smoothingFrames;
 
 void Entity::calcAndSetVelocity(){
     if (this->trajectory.length >= _smoothingFrames){
-        const Point& startPoint = this->trajectory[_smoothingFrames-1].rect.center; //the place before 
-        const Point& endPoint = this->trajectory[0].rect.center; //current place
+        const Point& startPoint = this->trajectory[_smoothingFrames-1].box.rect.center; //the place before 
+        const Point& endPoint = this->trajectory[0].box.rect.center; //current place
         Velocity2D rawVelocity((endPoint.x - startPoint.x) / _smoothingFrames, (endPoint.y - startPoint.y) / _smoothingFrames);
         this->velocity.x = applyDeadband(rawVelocity.x, core::_velocityDeadBand);
         this->velocity.y = applyDeadband(rawVelocity.y, core::_velocityDeadBand);
@@ -64,12 +64,12 @@ float32 Entity::clacScore(const BoundingBox& matchedPrediction){ // TODO SWITCH 
     if (this->boundingBox.rect.empty()) { return 0.0; }
 	if (this->boundingBox.type != matchedPrediction.type) { return 0.0; }
 	float32 score = 0.0;
-	float32 iou = matchedPrediction.rect.iouPercentage(this->boundingBox.rect);
-	score += (iou > 0) ? iou * 0.3 : 0;
+	float32 iou = matchedPrediction.rect.iouPercentage(this->possibleLocation);
+	score += (iou > 0) ? iou * 0.5 : 0;
 	float32 distance = pow(this->boundingBox.rect.width, 2) + pow(this->boundingBox.rect.height, 2);
 	float32 slope = (1.0 - 0.90) / (-distance);
 	float32 currentDistance = this->squareDistanceTo(matchedPrediction.rect);
-	score += 0.7*(slope*currentDistance + 1);
+	score += 0.5*(slope*currentDistance + 1);
     return score;
 }
 
