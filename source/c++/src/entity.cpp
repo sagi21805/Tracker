@@ -1,11 +1,12 @@
 #include "entity.hpp"
+using predictions::_offset, predictions::_smoothingFrames;
 
 ////////////////////////////////// constructors //////////////////////////////////////////////////
 
 Entity::Entity(BoundingBox boundingBox)
     : id(core::_startingId), boundingBox(boundingBox), velocity(Velocity2D(0, 0)), color(this->chooseColor()){
     core::_startingId++;
-    this->trajectory = LinkedList<Trajectory>(Trajectory(boundingBox.rect, Velocity2D(0, 0)));
+    this->trajectory = LinkedList<Trajectory>(Trajectory(boundingBox, Velocity2D(0, 0)));
     this->predictPossibleLocations();
 }
 
@@ -71,11 +72,24 @@ Rect Entity::getPossibleLocation() const{
 }
 
 void Entity::setBoundingBox(BoundingBox boundingBox){
-    this->boundingBox = boundingBox;
+    if (this->trajectory.length >= _smoothingFrames){
+        float32 confsum = 0;
+        int32_t x = 0, y = 0, width = 0, height = 0;
+        std::shared_ptr<Node<Trajectory>> traverse = this->trajectory.start;
+        for (uint8_t i = 0; i < _smoothingFrames; i++){
+            confsum += traverse->item.box.confidence;
+            x += traverse->item.box.rect.x;
+            y += traverse->item.box.rect.y;
+            width += traverse->item.box.rect.width;
+            height += traverse->item.box.rect.height;
+        }
+    } else {
+        this->boundingBox = boundingBox;
+    }
 }
 
 void Entity::addToTrajectory(){
-    this->trajectory.prepend(Trajectory(this->boundingBox.rect, this->velocity));
+    this->trajectory.prepend(Trajectory(this->boundingBox, this->velocity));
 }
 
 void Entity::emptyboundingBox(){
