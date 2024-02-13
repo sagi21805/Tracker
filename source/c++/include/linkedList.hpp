@@ -65,10 +65,11 @@ public:
         if (end == nullptr){
             this->end = newNode;
             this->start = newNode;
+        } 
+        else {
+            this->end->next = newNode;
+            this->end = newNode;
         }
-
-        this->end->next = newNode;
-        this->end = newNode;
         this->length++;
     }
 
@@ -93,10 +94,10 @@ public:
         if (start == nullptr){
             this->start = newNode;
             this->end = newNode;
-        }
-
+        } else {
         newNode->next = this->start;    
         this->start = newNode;
+        }
         this->length++;
     }
 
