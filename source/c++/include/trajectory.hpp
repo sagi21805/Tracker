@@ -1,18 +1,18 @@
 #ifndef _RECOGNITION_
 #define _RECOGNITION_
 
-#include "rect.hpp"
+#include "boundingBox.hpp"
 
 typedef cv::Point2i Velocity2D;
 
 typedef struct Trajectory Trajectory;
 struct Trajectory{
-    const Rect rect;
+    const BoundingBox box;
     Velocity2D velocity;
     
-    Trajectory(Rect rect, Velocity2D velocity): rect(rect), velocity(velocity) {}
+    Trajectory(BoundingBox box, Velocity2D velocity): box(box), velocity(velocity) {}
 
-    Trajectory() : rect(Rect()), velocity(Velocity2D()) {}
+    Trajectory() : box(BoundingBox()), velocity(Velocity2D()) {}
 };
 
 #endif

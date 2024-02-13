@@ -46,6 +46,7 @@ void Tracker::matchEntity(){
 			currentRecognition.erase(currentRecognition.begin() + i);
 		} 	
 	}
+
 }
 
 void Tracker::generateEntites(){

@@ -14,7 +14,7 @@ namespace visualization {
 }
 
 namespace predictions {
-    uint8_t _numOfFrames;
+    uint8_t _smoothingFrames;
     float _sizeCoefficient;
     float _velocityCoefficient;
     uint16_t _offset;
@@ -86,10 +86,10 @@ void config(const std::string& filename) {
         throw std::runtime_error("Value for key 'sizeCoefficient' is not a number.");
     }
 
-    if (config["predictions"]["numOfFrames"].is_number_unsigned()) {
-        predictions::_numOfFrames = config["predictions"]["numOfFrames"].get<uint8_t>();
+    if (config["predictions"]["smoothingFrames"].is_number_unsigned()) {
+        predictions::_smoothingFrames = config["predictions"]["smoothingFrames"].get<uint8_t>();
     } else {
-        throw std::runtime_error("Value for key 'numOfFrames' is not an unsigned number.");
+        throw std::runtime_error("Value for key 'smoothingFrames' is not an unsigned number.");
     }
 
     predictions::_velocityCoefficient = config["predictions"]["velocityCoefficient"];

@@ -6,7 +6,7 @@
 
     "predictions" : {
         "sizeCoefficient" : 0.75,
-        "numOfFrames" : 4,
+        "smoothingFrames" : 4,
         "velocityCoefficient" : 3,
         "offset" : 10
     },
