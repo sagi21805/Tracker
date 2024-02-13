@@ -51,7 +51,7 @@ void Tracker::matchEntity(){
 void Tracker::generateEntites(){
 
 	for (BoundingBox& box : currentRecognition){
-        this->entities.append(Entity(box));
+        this->entities.prepend(Entity(box));
 	}
 
 }
@@ -73,11 +73,10 @@ void Tracker::startCycle(int32_t* points, uint16_t* types, float32* confidences,
 }
 
 void Tracker::endCycle(){
-	std::shared_ptr<Node<Entity>> traverse = this->entities.start;
+	std::shared_ptr<Node<Entity>>* traverse = &this->entities.start;
 	//TODO make a remove by entry function in the linked list - test with numbers
-	uint16_t k = 0;
-	while (traverse != nullptr){
-		Entity& currentEntity = traverse->item;
+	while (*traverse != nullptr){
+		Entity& currentEntity = (*traverse)->item;
 		if (visualization::_toVisualize){	
 			currentEntity.draw(this->frame);
 			currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
@@ -87,12 +86,13 @@ void Tracker::endCycle(){
 		else { currentEntity.predictNextBoundingBox(); currentEntity.timesNotFound++; }
 
 		if (currentEntity.timesNotFound > 40){
-			entities.remove(k);
+			if ((*traverse)->next != nullptr) { *traverse = (*traverse)->next; }  //Remove the entity from the list.
+			else { *traverse = nullptr; break; }	
+			/* NOTICE - CHECK IF THIS IS A MEMORY LEAK (SHOULDN'T BE BECAUSE OF SHARED_PTR BUT JUST TO BE SURE) */ 
 		}
-
-		traverse = traverse->next;
-		k++;
+		traverse = &(*traverse)->next;
 	}
+
 	cout << "len: " << currentRecognition.size() << "\n";
 	this->generateEntites(); //TODO make more sophisticated
 
@@ -100,8 +100,8 @@ void Tracker::endCycle(){
 		cv::imshow("frame", this->frame);
 		cv::waitKey(visualization::_waitKey);
 	}
-}
 
+}
 void Tracker::track(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame){
 
 	this->startCycle(points, types, confidences, size, frame);
