@@ -65,6 +65,7 @@ void Tracker::matchEntity(){
 			traverse = traverse->next;
 		}
 	}	
+	
 }
 
 void Tracker::generateEntites(){
@@ -83,6 +84,11 @@ void Tracker::startCycle(int32_t* points, uint16_t* types, float32* confidences,
 		currentEntity.calcAndSetVelocity();
 		currentEntity.predictPossibleLocations();
 		traverse = traverse->next;
+	}
+	if (visualization::_toVisualize){
+		for (BoundingBox& b : currentRecognition){
+			b.rect.draw(this->frame, CV_RGB(0, 255, 0));
+		}	
 	}
 }
 
