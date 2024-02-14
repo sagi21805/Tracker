@@ -37,7 +37,7 @@ void Tracker::matchEntity(){
 		if (maxScore > core::_minScore && matchedEntityPtr != nullptr){
 			Entity& matchedEntity = matchedEntityPtr->item;
 			if (matchedEntity.foundRecognition){
-				matchedEntity.setBoundingBox(currentRecognition[i].combinedBoundingBox(matchedEntity.getBoundingBox()));
+				matchedEntity.combineBoundingBox(matchedEntity.getBoundingBox());
 			} 
 			else {
 				matchedEntity.setBoundingBox(currentRecognition[i]);
@@ -86,7 +86,7 @@ void Tracker::endCycle(){
 		if (currentEntity.foundRecognition){ currentEntity.foundRecognition = false; currentEntity.timesNotFound = 0; } 
 		else { currentEntity.predictNextBoundingBox(); currentEntity.timesNotFound++; }
 
-		if (currentEntity.timesNotFound > 40){
+		if (currentEntity.timesNotFound > 10){
 			if ((*traverse)->next != nullptr) { *traverse = (*traverse)->next; }  //Remove the entity from the list.
 			else { *traverse = nullptr; break; }	
 			/* NOTICE - CHECK IF THIS IS A MEMORY LEAK (SHOULDN'T BE BECAUSE OF SHARED_PTR BUT JUST TO BE SURE) */ 
