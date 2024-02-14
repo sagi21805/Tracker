@@ -2,7 +2,7 @@ from source.python.Tracker import Tracker
 from pynput import keyboard
 import threading
 
-tracker = Tracker("bumperWeights.pt", "TestVideo.mp4") #load weights and a video.
+tracker = Tracker("assets/bumperWeights.pt", "assets/TestVideo.mp4") #load weights and a video.
 is_running = True
 
 def main_code():
