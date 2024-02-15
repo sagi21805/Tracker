@@ -37,7 +37,7 @@ void Tracker::matchEntity(){
 		if (maxScore > core::_minScore && matchedEntityPtr != nullptr){
 			Entity& matchedEntity = matchedEntityPtr->item;
 			if (matchedEntity.foundRecognition){
-				matchedEntity.combineBoundingBox(matchedEntity.getBoundingBox());
+				matchedEntity.combineBoundingBox(currentRecognition[i]);
 			} 
 			else {
 				matchedEntity.setBoundingBox(currentRecognition[i]);
