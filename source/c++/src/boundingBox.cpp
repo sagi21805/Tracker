@@ -17,11 +17,11 @@ BoundingBox BoundingBox::combinedBoundingBox(BoundingBox& b){
 
     if (this->isEmpty()) { return b; }
     if (b.isEmpty()) {return *this; }
-    int32_t x = MIN(rect.x, b.rect.x); 
-    int32_t y = MIN(rect.y, b.rect.y); 
-    int32_t x2 = MAX(rect.width + rect.x, b.rect.width + b.rect.x); 
-    int32_t y2 = MAX(rect.height + rect.y, b.rect.height + b.rect.y); 
-    return BoundingBox(Rect(Point(x, y), Point(x2, y2)), b.type, (confidence + b.confidence) / 2); 
+    int32_t x = (rect.x + b.rect.x) / 2; 
+    int32_t y = (rect.y + b.rect.y) / 2; 
+    int32_t w = (rect.width + b.rect.width) / 2; 
+    int32_t h = (rect.height + b.rect.height) / 2; 
+    return BoundingBox(Rect(x, y, w, h), b.type, (confidence + b.confidence) / 2); 
 }
 
 bool BoundingBox::isEmpty(){
