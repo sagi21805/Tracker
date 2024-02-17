@@ -56,7 +56,7 @@ void Entity::draw(cv::Mat& frame){
 }
 
 void Entity::combineBoundingBox(BoundingBox& b){
-    this->boundingBox = this->boundingBox.combinedBoundingBox(b);
+    this->boundingBox = this->boundingBox.mergeBoundingBox(b);
 }
 
 float32 Entity::clacScore(const BoundingBox& matchedPrediction){ // TODO SWITCH MAGIC NUMBERS

@@ -12,9 +12,11 @@ struct BoundingBox {
     BoundingBox(const BoundingBox& box) : rect(box.rect), type(box.type), confidence(box.confidence) {}
     BoundingBox() : rect(Rect()), type(UINT16_MAX), confidence(0) {}
 
-    bool isEmpty();
+    bool isEmpty() const;
 
-    BoundingBox combinedBoundingBox(BoundingBox& b);
+    BoundingBox mergeBoundingBox(const BoundingBox& b) const;
+
+    BoundingBox combineBoundingBox(const BoundingBox& b) const;
 
 };
 
