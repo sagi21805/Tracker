@@ -73,6 +73,10 @@ float32 Entity::clacScore(const BoundingBox& matchedPrediction){ // TODO SWITCH 
     return score;
 }
 
+bool Entity::outsideFrame(const uint16_t rows, const uint16_t cols) const {
+    
+}
+
 std::ostream& operator<<(std::ostream& os, const Entity& t){
     os << "id: " << t.getId() << "\n";
     os << "type: " << t.getType() << "\n";

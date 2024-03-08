@@ -59,7 +59,7 @@ void Tracker::generateEntites(){
 
 void Tracker::startCycle(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame){
 	this->setCurrentRecognition(points, types, confidences, size, frame);
-	std::shared_ptr<Node<Entity>> traverse = this->entities.start;
+	auto traverse = this->entities.start;
 	while (traverse != nullptr){
 		Entity& currentEntity = traverse->item;
 		currentEntity.calcAndSetVelocity();
@@ -73,8 +73,20 @@ void Tracker::startCycle(int32_t* points, uint16_t* types, float32* confidences,
 	}
 }
 
-void Tracker::endCycle(){
-	std::shared_ptr<Node<Entity>>* traverse = &this->entities.start;
+void Tracker::manageLastSeen(){
+	auto traverse = &this->lastSeen.start;
+	while (*traverse != nullptr){
+		Entity& currentEntity = (*traverse)->item;
+		
+
+	}
+
+}
+
+
+void Tracker::endCycle(){	
+	
+	auto traverse = &this->entities.start;
 	//TODO make a remove by entry function in the linked list - test with numbers
 	while (*traverse != nullptr){
 		Entity& currentEntity = (*traverse)->item;
@@ -86,11 +98,11 @@ void Tracker::endCycle(){
 		if (currentEntity.foundRecognition){ currentEntity.foundRecognition = false; currentEntity.timesNotFound = 0; } 
 		else { currentEntity.predictNextBoundingBox(); currentEntity.timesNotFound++; }
 
-		if (currentEntity.timesNotFound > 10){
-			if ((*traverse)->next != nullptr) { *traverse = (*traverse)->next; }  //Remove the entity from the list.
-			else { *traverse = nullptr; break; }	
-			/* NOTICE - CHECK IF THIS IS A MEMORY LEAK (SHOULDN'T BE BECAUSE OF SHARED_PTR BUT JUST TO BE SURE) */ 
+		if (currentEntity.timesNotFound >= 10){
+			*traverse = (*traverse)->next;  //Remove the entity from the list.
+			if (*traverse == nullptr){ break; }
 		}
+			
 		traverse = &(*traverse)->next;
 	}
 

@@ -20,6 +20,7 @@ class Tracker{
         const uint16_t cols; //The number of columns in the given Img (assumes The same for each input).
         cv::Mat frame; //The current frame that is being tracked.
         LinkedList<Entity> entities; //All the Entities that the Tracker keeps track on.
+        LinkedList<Entity> lastSeen;
         vector<BoundingBox> currentRecognition; //The Entities from The current recognition.
 
 
@@ -91,7 +92,7 @@ class Tracker{
         void endCycle();
                 
         void matchEntity();
-
+        void manageLastSeen();
 };  
 
 #endif
