@@ -66,11 +66,11 @@ void Tracker::startCycle(int32_t* points, uint16_t* types, float32* confidences,
 		currentEntity.predictPossibleLocations();
 		traverse = traverse->next;
 	}
-	if (visualization::_toVisualize){
-		for (BoundingBox& b : currentRecognition){
-			b.rect.draw(this->frame, CV_RGB(0, 255, 0));
-		}	
-	}
+	// if (visualization::_toVisualize){
+	// 	for (BoundingBox& b : currentRecognition){
+	// 		b.rect.draw(this->frame, CV_RGB(0, 255, 0));
+	// 	}	
+	// }
 }
 
 void Tracker::manageLastSeen(){
@@ -93,7 +93,7 @@ void Tracker::endCycle(){
 		Entity& currentEntity = (*traverse)->item;
 		if (visualization::_toVisualize){	
 			currentEntity.draw(this->frame);
-			currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
+			// currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
 		}
 		currentEntity.addToTrajectory();
 		if (currentEntity.foundRecognition){ currentEntity.foundRecognition = false; currentEntity.timesNotFound = 0; } 
@@ -101,7 +101,6 @@ void Tracker::endCycle(){
 
 		if (currentEntity.timesNotFound >= 5){
 			entities.moveNode(lastSeen, traverse);
-			cout << "Moved!\n";
 			*traverse = (*traverse)->next;  //Remove the entity from the list.
 			if (*traverse == nullptr){ break; }
 		}

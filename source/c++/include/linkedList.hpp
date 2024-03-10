@@ -91,7 +91,6 @@ public:
     }
 
     void prepend(std::shared_ptr<Node<NodeType>> newNode){
-        std::cout << "prependCalled\n";
         if (start == nullptr){
             this->start = newNode;
             this->end = newNode;
@@ -130,8 +129,7 @@ public:
      * @param newList the list to move the node.
      * @param movedNode the adress to the pointer of the node that is being moved.
     */
-    void moveNode(LinkedList<NodeType> newList, shared_ptr<Node<NodeType>>* movedNodePtr) {
-        std::cout << "called\n";
+    void moveNode(LinkedList<NodeType>& newList, shared_ptr<Node<NodeType>>* movedNodePtr) {
         shared_ptr<Node<NodeType>> movedNode = *movedNodePtr;
         *movedNodePtr = (*movedNodePtr)->next;
         newList.prepend(movedNode);
