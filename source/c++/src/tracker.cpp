@@ -80,6 +80,7 @@ void Tracker::manageLastSeen(){
 		
 
 	}
+	cout << "lastSeen length: " << lastSeen.length << "\n";
 
 }
 
@@ -98,15 +99,17 @@ void Tracker::endCycle(){
 		if (currentEntity.foundRecognition){ currentEntity.foundRecognition = false; currentEntity.timesNotFound = 0; } 
 		else { currentEntity.predictNextBoundingBox(); currentEntity.timesNotFound++; }
 
-		if (currentEntity.timesNotFound >= 10){
+		if (currentEntity.timesNotFound >= 5){
+			entities.moveNode(lastSeen, traverse);
+			cout << "Moved!\n";
 			*traverse = (*traverse)->next;  //Remove the entity from the list.
 			if (*traverse == nullptr){ break; }
 		}
 			
 		traverse = &(*traverse)->next;
 	}
+	manageLastSeen();
 
-	cout << "len: " << currentRecognition.size() << "\n";
 	this->generateEntites(); //TODO make more sophisticated
 
 	if (visualization::_toVisualize){	
