@@ -13,8 +13,8 @@ void Entity::calcAndSetVelocity(){
 }
 
 void Entity::predictNextBoundingBox(){
-    this->boundingBox.rect.y += this->velocity.x;
-    this->boundingBox.rect.y += this->velocity.x;
+    this->boundingBox.rect.x += this->velocity.x;
+    this->boundingBox.rect.y += this->velocity.y;
 }
 
 uint Entity::squareDistanceTo(const Entity& e){
