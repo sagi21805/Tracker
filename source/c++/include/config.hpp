@@ -19,6 +19,7 @@ namespace core{
     extern size_t _startingId;
     extern size_t _velocityDeadBand;
     extern float32 _minScore;
+    extern uint8_t _moveToLastSeen;
 } 
 
 namespace visualization{
