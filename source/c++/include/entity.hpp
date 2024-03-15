@@ -226,7 +226,7 @@ class Entity{
 
         void combineBoundingBox(BoundingBox& b);
 
-        float32 clacScore(const BoundingBox& matchedPrediction);
+        float32 calcScore(const BoundingBox& matchedPrediction);
 
         bool outsideFrame(const uint16_t rows, const uint16_t cols) const;
 };
