@@ -72,18 +72,11 @@ Rect Entity::getPossibleLocation() const{
 }
 
 void Entity::setBoundingBox(BoundingBox box){
-    if (this->trajectory.length >= _smoothingFrames){
-        float32 v = 0.5;
+    if (this->trajectory.length >= 2){
+        float32 v = 0.8;
         float32 x=box.rect.x*v, y=box.rect.y*v, width=box.rect.width*v, height=box.rect.height*v;
         std::shared_ptr<Node<Trajectory>> traverse = this->trajectory.start;
-        for (uint8_t i = 0; i < _smoothingFrames-2; i++){ //the min num of smothing must be greater or equal to 2 (over 2 frames)
-            v/=2;
-            x+=traverse->item.box.rect.x*v;
-            y+=traverse->item.box.rect.y*v;
-            width+=traverse->item.box.rect.width*v;
-            height+=traverse->item.box.rect.height*v;
-            traverse = traverse->next;
-        }
+        v = 1-v;
         x+=traverse->item.box.rect.x*v;
         y+=traverse->item.box.rect.y*v;
         width+=traverse->item.box.rect.width*v;
