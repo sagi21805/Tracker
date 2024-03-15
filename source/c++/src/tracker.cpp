@@ -27,24 +27,24 @@ void Tracker::matchEntity(){
 		float32 maxScore = 0;
 		std::shared_ptr<Node<Entity>> matchedEntityPtr = nullptr;
     	std::shared_ptr<Node<Entity>> traverse = this->entities.start;
+		cout << "scores: ";
 		while (traverse != nullptr){
 			Entity& currentEntity = traverse->item;
-			float32 currentScore = currentEntity.clacScore(currentRecognition[i]);
+			float32 currentScore = currentEntity.calcScore(currentRecognition[i]);
+			cout << currentScore << " ";
 			if (currentScore > maxScore) { maxScore = currentScore; matchedEntityPtr = traverse; }
 			traverse = traverse->next;
 		}
-
 		if (maxScore > core::_minScore && matchedEntityPtr != nullptr){
 			Entity& matchedEntity = matchedEntityPtr->item;
-			if (matchedEntity.foundRecognition){
-				matchedEntity.combineBoundingBox(currentRecognition[i]);
-			} 
-			else {
-				matchedEntity.setBoundingBox(currentRecognition[i]);
-			}
+			cout << " id: " << matchedEntity.getId();
+			matchedEntity.foundRecognition ? 
+			matchedEntity.combineBoundingBox(currentRecognition[i]) : matchedEntity.setBoundingBox(currentRecognition[i]); 
+			
 			matchedEntity.foundRecognition = true;
 			currentRecognition.erase(currentRecognition.begin() + i);
 		} 	
+		cout << "\n";
 	}
 
 }
@@ -93,21 +93,20 @@ void Tracker::endCycle(){
 		Entity& currentEntity = (*traverse)->item;
 		if (visualization::_toVisualize){	
 			currentEntity.draw(this->frame);
-			// currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
+			currentEntity.getPossibleLocation().draw(this->frame, CV_RGB(255, 255, 255));
 		}
 		currentEntity.addToTrajectory();
 		if (currentEntity.foundRecognition){ currentEntity.foundRecognition = false; currentEntity.timesNotFound = 0; } 
 		else { currentEntity.predictNextBoundingBox(); currentEntity.timesNotFound++; }
 
-		if (currentEntity.timesNotFound >= 5){
-			entities.moveNode(lastSeen, traverse);
+		if (currentEntity.timesNotFound >= core::_moveToLastSeen){
+			cout << "complitly not found\n";
 			*traverse = (*traverse)->next;  //Remove the entity from the list.
 			if (*traverse == nullptr){ break; }
 		}
 			
 		traverse = &(*traverse)->next;
 	}
-	manageLastSeen();
 
 	this->generateEntites(); //TODO make more sophisticated
 
