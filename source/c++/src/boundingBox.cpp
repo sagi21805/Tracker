@@ -7,7 +7,9 @@ vector<BoundingBox> generateBoundingBoxes(int32_t* points, uint16_t* types, floa
         int32_t* currentPoint = points + i*core::_elementsInPoint;
         uint16_t currentType = types[i];
         float32 currentconfidence = confidences[i];
-        boundingBoxes.emplace_back(Rect(currentPoint), currentType, currentconfidence);
+        if (currentconfidence > core::_minConfidence) {
+            boundingBoxes.emplace_back(Rect(currentPoint), currentType, currentconfidence);
+        }
 	}
 
     return boundingBoxes;

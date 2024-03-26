@@ -2,8 +2,9 @@
     "elementsInPoint" : 4,
     "startingId" : 0,
     "velocityDeadBand" : 5,
-    "minScore" : 0.2,
-    "moveToLastSeen" : 10,
+    "minScore" : 0.7,
+    "moveToLastSeen" : 15,
+    "minConfidence" : 0.5,
 
     "predictions" : {
         "sizeCoefficient" : 0.75,
