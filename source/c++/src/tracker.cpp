@@ -21,30 +21,27 @@ void Tracker::setFrame(uint8_t* frame){
 }
 
 
-void Tracker::matchEntity(){
+void Tracker::matchEntity(LinkedList<Entity>& matchedListOfEntities, vector<BoundingBox>& recognition, float32 minScore){
 
-	for (int32_t i = currentRecognition.size()-1; i >= 0; i--) {
+	for (int32_t i = recognition.size()-1; i >= 0; i--) {
 		float32 maxScore = 0;
 		std::shared_ptr<Node<Entity>> matchedEntityPtr = nullptr;
-    	std::shared_ptr<Node<Entity>> traverse = this->entities.start;
-		cout << "scores: ";
+    	std::shared_ptr<Node<Entity>> traverse = matchedListOfEntities.start;
 		while (traverse != nullptr){
 			Entity& currentEntity = traverse->item;
-			float32 currentScore = currentEntity.calcScore(currentRecognition[i]);
-			cout << currentScore << " ";
+			float32 currentScore = currentEntity.calcScore(recognition[i]);
 			if (currentScore > maxScore) { maxScore = currentScore; matchedEntityPtr = traverse; }
 			traverse = traverse->next;
 		}
-		if (maxScore > core::_minScore && matchedEntityPtr != nullptr){
+		if (maxScore > minScore && matchedEntityPtr != nullptr){
 			Entity& matchedEntity = matchedEntityPtr->item;
-			cout << " id: " << matchedEntity.getId();
-			matchedEntity.foundRecognition ? 
-			matchedEntity.combineBoundingBox(currentRecognition[i]) : matchedEntity.setBoundingBox(currentRecognition[i]); 
+			matchedEntity.foundRecognition 
+			? matchedEntity.combineBoundingBox(recognition[i])
+			: matchedEntity.setBoundingBox(recognition[i]); 
 			
 			matchedEntity.foundRecognition = true;
-			currentRecognition.erase(currentRecognition.begin() + i);
+			recognition.erase(recognition.begin() + i);
 		} 	
-		cout << "\n";
 	}
 
 }
@@ -74,19 +71,31 @@ void Tracker::startCycle(int32_t* points, uint16_t* types, float32* confidences,
 }
 
 void Tracker::manageLastSeen(){
-	auto traverse = &this->lastSeen.start;
-	while (*traverse != nullptr){
-		Entity& currentEntity = (*traverse)->item;
-		
+	cout << "length: " << lastSeen.length << "\n";
+	if (lastSeen.length > 0) {
+		this->matchEntity(this->lastSeen, this->currentRecognition, core::_minScore / 2.0);
+		auto traverse = &this->lastSeen.start;
+		while (*traverse != nullptr){
+			Entity& currentEntity = (*traverse)->item;
+			if (currentEntity.timesNotFound > 60) { //TODO CHANGE MAGIC NUMBER
+				*traverse = (*traverse)->next;
+				lastSeen.length--;
+				continue;
+			} 
 
+			if (currentEntity.foundRecognition) {
+				lastSeen.moveNode(entities, traverse);
+			}
+			else {
+				currentEntity.timesNotFound++;
+				traverse = &(*traverse)->next;
+			}
+
+		}
 	}
-	cout << "lastSeen length: " << lastSeen.length << "\n";
-
 }
 
-
-void Tracker::endCycle(){	
-	
+void Tracker::manageEntities() {
 	auto traverse = &this->entities.start;
 	//TODO make a remove by entry function in the linked list - test with numbers
 	while (*traverse != nullptr){
@@ -107,7 +116,13 @@ void Tracker::endCycle(){
 		} 
 			
 	}
+}
 
+
+void Tracker::endCycle(){	
+	
+	this->manageEntities();
+	this->manageLastSeen();
 	this->generateEntites(); //TODO make more sophisticated
 
 	if (visualization::_toVisualize){	
@@ -119,6 +134,6 @@ void Tracker::endCycle(){
 void Tracker::track(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame){
 
 	this->startCycle(points, types, confidences, size, frame);
-	this->matchEntity();
+	this->matchEntity(this->entities, this->currentRecognition, core::_minScore);
 	this->endCycle();
 }	
