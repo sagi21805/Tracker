@@ -91,8 +91,9 @@ class Tracker{
         void startCycle(int32_t* points, uint16_t* types, float32* confidences, uint16_t size, uint8_t* frame);
         void endCycle();
                 
-        void matchEntity();
+        void matchEntity(LinkedList<Entity>& matchedListOfEntities, vector<BoundingBox>& recognition, float32 minScore);
         void manageLastSeen();
+        void manageEntities();
 };  
 
 #endif
