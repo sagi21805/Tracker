@@ -100,12 +100,12 @@ void Tracker::endCycle(){
 		else { currentEntity.predictNextBoundingBox(); currentEntity.timesNotFound++; }
 
 		if (currentEntity.timesNotFound >= core::_moveToLastSeen){
-			cout << "complitly not found\n";
-			*traverse = (*traverse)->next;  //Remove the entity from the list.
-			if (*traverse == nullptr){ break; }
-		}
+			entities.moveNode(lastSeen, traverse);
+		} 
+		else {
+ 			traverse = &(*traverse)->next;
+		} 
 			
-		traverse = &(*traverse)->next;
 	}
 
 	this->generateEntites(); //TODO make more sophisticated
