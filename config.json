@@ -1,12 +1,14 @@
 {
     "elementsInPoint" : 4,
     "startingId" : 0,
-    "velocityDeadBand" : 20,
-    "minScore" : 0.5,
+    "velocityDeadBand" : 5,
+    "minScore" : 0.7,
+    "moveToLastSeen" : 15,
+    "minConfidence" : 0.0,
 
     "predictions" : {
         "sizeCoefficient" : 0.75,
-        "smoothingFrames" : 4,
+        "smoothingFrames" : 2,
         "velocityCoefficient" : 3,
         "offset" : 10
     },

@@ -13,8 +13,8 @@ void Entity::calcAndSetVelocity(){
 }
 
 void Entity::predictNextBoundingBox(){
-    this->boundingBox.rect.y += this->velocity.x;
-    this->boundingBox.rect.y += this->velocity.x;
+    this->boundingBox.rect.x += this->velocity.x;
+    this->boundingBox.rect.y += this->velocity.y;
 }
 
 uint Entity::squareDistanceTo(const Entity& e){
@@ -29,8 +29,8 @@ void Entity::predictPossibleLocations(){
     Rect& r = this->getBoundingBox().rect;
     const int vX = this->velocity.x*predictions::_velocityCoefficient;
     const int vY = this->velocity.y*predictions::_velocityCoefficient;
-    const int w = r.width*predictions::_sizeCoefficient*signum(vX);
-    const int h = r.height*predictions::_sizeCoefficient*signum(vY);
+    const int w = r.width*predictions::_sizeCoefficient*signum(vX)*(timesNotFound+5)/5;
+    const int h = r.height*predictions::_sizeCoefficient*signum(vY)*(timesNotFound+5)/5;
     this->possibleLocation = Rect(r.center + Point(vX+w, vY+h),  r.center - Point(w, h));
 }
 
@@ -59,18 +59,26 @@ void Entity::combineBoundingBox(BoundingBox& b){
     this->boundingBox = this->boundingBox.mergeBoundingBox(b);
 }
 
-float32 Entity::clacScore(const BoundingBox& matchedPrediction){ // TODO SWITCH MAGIC NUMBERS
+float32 Entity::calcScore(const BoundingBox& matchedPrediction){ // TODO SWITCH MAGIC NUMBERS
 	// parameters should be built such that only one cant carry the score alone.
     if (this->boundingBox.rect.empty()) { return 0.0; }
 	if (this->boundingBox.type != matchedPrediction.type) { return 0.0; }
 	float32 score = 0.0;
-    score += this->getPossibleLocation().contains(matchedPrediction.rect.center) ? 0.1 : 0;
-	score += matchedPrediction.rect.iouPercentage(this->possibleLocation) * 0.45;
+    score += this->getPossibleLocation().contains(matchedPrediction.rect.center) ? 0.15 : 0;
+    score += this->getPossibleLocation().contains(matchedPrediction.rect.tl()) ? 0.1 : 0;
+    score += this->getPossibleLocation().contains(matchedPrediction.rect.br()) ? 0.1 : 0;
+
+	score += matchedPrediction.rect.iouPercentage(this->possibleLocation) * 0.15;
+    /* (0, 1), (distance, 0.75)*/                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ;
 	float32 distance = pow(this->possibleLocation.width, 2) + pow(this->possibleLocation.height, 2);
-	float32 slope = (0.9 - 1.0) / (distance);
+	float32 slope = (0.75 - 1.0) / (distance);
 	float32 currentDistance = this->squareDistanceTo(matchedPrediction.rect);
-	score += 0.45*(slope*currentDistance + 1);
+	score += MAX(0.5*(slope*currentDistance + 1), 0);
     return score;
+}
+
+bool Entity::outsideFrame(const uint16_t rows, const uint16_t cols) const {
+    
 }
 
 std::ostream& operator<<(std::ostream& os, const Entity& t){

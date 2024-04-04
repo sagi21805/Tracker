@@ -5,6 +5,8 @@ namespace core {
     size_t _startingId;
     size_t _velocityDeadBand;
     float32 _minScore;
+    uint8_t _moveToLastSeen;
+    float32 _minConfidence;
 }
 
 namespace visualization {
@@ -78,6 +80,8 @@ void config(const std::string& filename) {
     }
 
     core::_minScore = config["minScore"];
+    core::_moveToLastSeen = config["moveToLastSeen"];
+    core::_minConfidence = config["minConfidence"];
     // Predictions
 
     if (config["predictions"]["sizeCoefficient"].is_number_float()) {

@@ -1,8 +1,8 @@
-set(CMAKE_C_COMPILER "/usr/bin/gcc-13")
-set(CMAKE_CXX_COMPILER "/usr/bin/g++-13")
-
 cmake_minimum_required(VERSION 3.15) 
 PROJECT ( Tracker )
+
+set(CMAKE_C_COMPILER "/usr/bin/gcc-13")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-13")
 
 find_package(OpenCV REQUIRED )
 find_package(nlohmann_json REQUIRED)

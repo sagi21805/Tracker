@@ -2,7 +2,8 @@
 #define _LinkedList_
 
 #include <memory>
-
+#include <iostream>
+using std::shared_ptr;
 /**
  * @file linkedList.hpp
  * @brief The LinkedList class.
@@ -89,16 +90,21 @@ public:
         this->length--;
     }
 
-    void prepend(NodeType __item) {
-        std::shared_ptr<Node<NodeType>> newNode = std::make_shared<Node<NodeType>>(__item); 
+    void prepend(std::shared_ptr<Node<NodeType>> newNode){
         if (start == nullptr){
             this->start = newNode;
             this->end = newNode;
+            newNode->next = nullptr;
         } else {
         newNode->next = this->start;    
         this->start = newNode;
         }
         this->length++;
+    }
+
+    void prepend(NodeType __item) {
+        std::shared_ptr<Node<NodeType>> newNode = std::make_shared<Node<NodeType>>(__item); 
+        prepend(newNode);
     }
 
     void insert(size_t __i, NodeType __item) {
@@ -118,6 +124,18 @@ public:
         this->length++;
     }
 
+    /**
+     * move a node from this list to the new list.
+     * @param newList the list to move the node.
+     * @param movedNode the adress to the pointer of the node that is being moved.
+    */
+    void moveNode(LinkedList<NodeType>& newList, shared_ptr<Node<NodeType>>* movedNodePtr) {
+        shared_ptr<Node<NodeType>> movedNode = *movedNodePtr;
+        *movedNodePtr = (*movedNodePtr)->next;
+        newList.prepend(movedNode);
+        length--;
+    }
+
     void checkBounds(size_t __i){
         if (__i >= this->length) {throw std::runtime_error("Out of Bounds Index is \""+std::to_string(__i)+"\" length is \"" + std::to_string(this->length) + "\""); }
     }
@@ -126,5 +144,6 @@ public:
         return this->getItem(__i);
     }
 };
+
 
 #endif

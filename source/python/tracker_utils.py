@@ -17,7 +17,8 @@ def frameToArray(coloredframe: np.ndarray):
     return np.array(coloredframe.flatten(), dtype=np.uint8)
 
 def predict(model: YOLO, cap: cv2.VideoCapture):
-    success, frame = cap.read()
+    for i in range(2):
+        success, frame = cap.read()
     if success:    
         frame = prepFrame(frame)
         result = model(frame, verbose=False)
