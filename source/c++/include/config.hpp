@@ -11,6 +11,7 @@
 using json = nlohmann::json;
 
 typedef float float32;
+typedef std::runtime_error error; 
 
 
 // Declare global variables
