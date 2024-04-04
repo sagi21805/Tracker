@@ -4,7 +4,7 @@
     "velocityDeadBand" : 5,
     "minScore" : 0.7,
     "moveToLastSeen" : 15,
-    "minConfidence" : 0.5,
+    "minConfidence" : 0.0,
 
     "predictions" : {
         "sizeCoefficient" : 0.75,

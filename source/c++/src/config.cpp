@@ -6,7 +6,7 @@ namespace core {
     size_t _velocityDeadBand;
     float32 _minScore;
     uint8_t _moveToLastSeen;
-    uint8_t _minConfidence;
+    float32 _minConfidence;
 }
 
 namespace visualization {
