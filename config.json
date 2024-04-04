@@ -3,14 +3,12 @@
     "startingId" : 0,
     "velocityDeadBand" : 5,
     "minScore" : 0.7,
-    "moveToLastSeen" : 15,
+    "moveToLastSeen" : 10,
     "minConfidence" : 0.0,
 
     "predictions" : {
         "sizeCoefficient" : 0.75,
-        "smoothingFrames" : 2,
-        "velocityCoefficient" : 3,
-        "offset" : 10
+        "velocityCoefficient" : 3.0
     },
 
     "visualization" : {
