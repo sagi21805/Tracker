@@ -29,8 +29,8 @@ void Entity::predictPossibleLocations(){
     Rect& r = this->getBoundingBox().rect;
     const int vX = this->velocity.x*predictions::_velocityCoefficient;
     const int vY = this->velocity.y*predictions::_velocityCoefficient;
-    const int w = r.width*predictions::_sizeCoefficient*signum(vX)*(timesNotFound+2)/2;
-    const int h = r.height*predictions::_sizeCoefficient*signum(vY)*(timesNotFound+2)/2;
+    const int w = r.width*predictions::_sizeCoefficient*signum(vX)*(timesNotFound+5)/5;
+    const int h = r.height*predictions::_sizeCoefficient*signum(vY)*(timesNotFound+5)/5;
     this->possibleLocation = Rect(r.center + Point(vX+w, vY+h),  r.center - Point(w, h));
 }
 

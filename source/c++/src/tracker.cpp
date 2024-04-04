@@ -116,16 +116,17 @@ void Tracker::manageEntities() {
 		} 
 			
 	}
+	this->manageLastSeen();
 }
 
 
 void Tracker::endCycle(){	
 	
 	this->manageEntities();
-	this->manageLastSeen();
 	this->generateEntites(); //TODO make more sophisticated
 
 	if (visualization::_toVisualize){	
+		// cv::resize(frame, frame, cv::Size(720, 1280));
 		cv::imshow("frame", this->frame);
 		cv::waitKey(visualization::_waitKey);
 	}
