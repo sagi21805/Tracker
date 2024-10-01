@@ -1,0 +1,10 @@
+[package]
+name = "Tracker"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+euclid = "0.22.11"
+extend = "1.2.0"
+opencv = "0.93.1"
+serde_json = "1.0.128"
