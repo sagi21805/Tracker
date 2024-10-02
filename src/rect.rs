@@ -1,5 +1,5 @@
-use std::cmp::{min, max};
 use crate::constants::*;
+use std::cmp::{max, min};
 
 #[repr(C)]
 #[derive(Clone)]
@@ -11,15 +11,23 @@ pub struct Rect {
 }
 
 impl Rect {
-
-    pub fn new(a: Point, b: Point) -> Self {
+    pub fn from_points(a: Point, b: Point) -> Self {
         let x = min(a.x, b.x);
         let y = min(a.y, b.y);
         Rect {
-            x,  
+            x,
             y,
             width: max(a.x, b.x) - x,
-            height: max(a.y, b.y) - y
+            height: max(a.y, b.y) - y,
+        }
+    }
+
+    pub fn new(x: i32, y: i32, width: i32, height: i32) -> Self {
+        Rect {
+            x,
+            y,
+            width,
+            height,
         }
     }
 
@@ -27,27 +35,23 @@ impl Rect {
         Point::new(self.x + self.width / 2, self.y + self.height / 2)
     }
 
-    pub fn square_distance_to(&self, r: &Rect) -> u32 {
-        square_distance(&self.get_center(), &r.get_center())
-    }
-
-    pub fn is_close_to(&self, r: &Rect, distance: f64) -> bool {
-        self.square_distance_to(r) < distance as u32
+    pub fn square_distance_to(&self, r: &Rect) -> i32 {
+        self.get_center().square_distance(&r.get_center())
     }
 
     pub fn iou_percentage(&self, other: &Rect) -> f32 {
         let x_overlap = min(self.x, other.x) - max(self.x, other.x);
         let y_overlap = min(self.y, other.y) - max(self.y, other.y);
-        
+
         if x_overlap <= 0 || y_overlap <= 0 {
             return 0.0;
         }
-        
+
         let intersection_area = x_overlap * y_overlap;
         intersection_area as f32 / self.area() as f32
     }
 
-    pub fn empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         return self.width <= 0 && self.height <= 0;
     }
 
@@ -55,34 +59,45 @@ impl Rect {
         self.width * self.height
     }
 
-    pub fn from_points(points: &[i32], size: u16) -> Vec<Rect> {
+    pub fn vec_from_points(points: &[i32], size: u16) -> Vec<Rect> {
         let mut rects = Vec::with_capacity(size as usize);
-        for p in points.chunks(ELEMENTS_IN_POINT ) {
+        for p in points.chunks(ELEMENTS_IN_POINT) {
             let a = Point::new(p[0], p[1]);
             let b = Point::new(p[2], p[3]);
-            rects.push(Rect::new(a, b));
+            rects.push(Rect::from_points(a, b));
         }
         rects
+    }
+
+    #[inline]
+    pub fn contains(&self, p: Point) -> bool {
+        p.x >= self.x && p.x <= self.x + self.width && p.y >= self.y && p.y <= self.y + self.height
+    }
+
+    #[inline]
+    pub fn tl(&self) -> Point {
+        Point::new(self.x, self.y)
+    }
+
+    #[inline]
+    pub fn br(&self) -> Point {
+        Point::new(self.x + self.width, self.y + self.height)
     }
 }
 
 impl Default for Rect {
-
     fn default() -> Self {
-        Rect { x: 0, y: 0, width: 0, height: 0 }
+        Rect {
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+        }
     }
 }
-
 
 impl std::fmt::Display for Rect {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}\nArea: {}", self.get_center() , self.area())
+        write!(f, "{:?}\nArea: {}", self.get_center(), self.area())
     }
 }
-
-fn square_distance(p1: &Point, p2: &Point) -> u32 {
-    let dx = p1.x - p2.x;
-    let dy = p1.y - p2.y;
-    (dx * dx + dy * dy) as u32
-}
-

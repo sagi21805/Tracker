@@ -1,14 +1,12 @@
 use opencv::{core, imgproc, prelude::*};
 use std::cmp::max;
 
-// Assuming these are defined elsewhere in your Rust project
-use crate::{Point, Velocity2D, Rect, BoundingBox, Entity, EntityType};
 
 impl Entity {
     pub fn calc_and_set_velocity(&mut self) {
-        if self.trajectory.len() >= _smoothingFrames {
-            let start_point = &self.trajectory[_smoothingFrames - 1].box.rect.center;
-            let end_point = &self.trajectory[0].box.rect.center;
+        if self.EntityState.len() >= _smoothingFrames {
+            let start_point = &self.EntityState[_smoothingFrames - 1].box.rect.center;
+            let end_point = &self.EntityState[0].box.rect.center;
             let raw_velocity = Velocity2D::new(
                 (end_point.x - start_point.x) / _smoothingFrames as f32,
                 (end_point.y - start_point.y) / _smoothingFrames as f32,
@@ -105,20 +103,6 @@ impl Entity {
     pub fn outside_frame(&self, rows: u16, cols: u16) -> bool {
         // Implementation not provided in the original code
         false
-    }
-}
-
-impl std::fmt::Display for Entity {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "id: {}\ntype: {:?}\nbox: {}", self.get_id(), self.get_type(), self.get_bounding_box().rect)
-    }
-}
-
-fn apply_deadband(value: f32, deadband: f32) -> f32 {
-    if value.abs() < deadband {
-        0.0
-    } else {
-        value
     }
 }
 
