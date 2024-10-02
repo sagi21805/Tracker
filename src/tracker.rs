@@ -1,76 +1,95 @@
-use opencv::{core, highgui, imgproc, prelude::*};
-use serde_json::from_str;
-use std::sync::Arc;
+// use opencv::{core, highgui, imgproc, prelude::*};
+// use serde_json::from_str;
+// use std::sync::Arc;
+use crate::constants::{MIN_CONFIDENCE, RATIO};
+use crate::entity::Entity;
+use crate::rect::Rect;
+use crate::{bounding_box::BoundingBox, constants::ELEMENTS_IN_POINT};
+use numpy::*;
+use pyo3::prelude::*;
+use std::collections::LinkedList;
 
+#[pyclass]
 pub struct Tracker {
-    pub(crate) rows: u16,
-    pub(crate) cols: u16,
     pub(crate) current_recognition: Vec<BoundingBox>,
-    pub(crate) frame: Vec<u8>, //Will be changed to a python type
     pub(crate) entities: LinkedList<Entity>,
     pub(crate) last_seen: LinkedList<Entity>,
 }
 
 impl Tracker {
-    pub fn new(points: &[i32], types: &[u16], confidences: &[f32], size: u16, frame: &[u8], rows: u16, cols: u16) -> Self {
-        let mut tracker = Tracker {
-            rows,
-            cols,
+    pub fn new() -> Self {
+        Tracker {
             current_recognition: Vec::new(),
-            frame: Mat::default(),
             entities: LinkedList::new(),
             last_seen: LinkedList::new(),
-        };
+        }
+    }
+
+    fn generate_boxes(
+        points: PyReadonlyArray1<i32>,
+        classes: PyReadonlyArray1<u16>,
+        confidences: PyReadonlyArray1<f32>,
+    ) -> Vec<BoundingBox> {
+        let mut bounding_boxes = Vec::with_capacity(points.len());
+        let points_slice = points.as_slice().expect("array is not contigous");
+        let confidences_slice = confidences.as_slice().expect("array is not contigous");
+        let classes_slice = classes.as_slice().expect("array is not contigous");
+
+        for ((point, confidence), class) in points_slice
+            .chunks(ELEMENTS_IN_POINT)
+            .zip(confidences_slice.iter())
+            .zip(classes_slice.iter())
+        {
+            if *confidence > MIN_CONFIDENCE {
+                bounding_boxes.push(BoundingBox {
+                    rect: Rect {
+                        x: point[0],
+                        y: point[1],
+                        width: point[2],
+                        height: point[3],
+                    },
+                    class: *class,
+                    confidence: *confidence,
+                });
+            }
+        }
+        return bounding_boxes;
+    }
+
+    pub fn match_entity(&mut self, recognition: &mut Vec<BoundingBox>) {
         
-        tracker.config("config.json");
-        tracker.set_current_recognition(points, types, confidences, size, frame);
-        tracker.generate_entities();
-        tracker
-    }
+        self.entities.iter_mut().map(|existing_entity| {
 
-    pub fn set_current_recognition(&mut self, points: &[i32], types: &[u16], confidences: &[f32], size: u16, frame: &[u8]) {
-        self.current_recognition = generate_bounding_boxes(points, types, confidences, size);
-        self.set_frame(frame);
-    }
+            let (max_index, matching) = recognition
+            .iter()
+            .enumerate() // Pair each item with its index
+            .max_by(|(_, x), (_, y)| {
+                existing_entity
+                    .calc_score(x)
+                    .partial_cmp(&existing_entity.calc_score(y))
+                    .unwrap()
+            })
+            .expect("There are no entities to compare");
 
-    pub fn set_frame(&mut self, frame: &[u8]) {
-        self.frame = Mat::from_slice_rows_cols(frame, self.rows as i32, self.cols as i32, core::CV_8UC3).unwrap();
-    }
-
-    pub fn match_entity(&mut self, matched_list_of_entities: &mut LinkedList<Entity>, recognition: &mut Vec<BoundingBox>, min_score: f32) {
-        for i in (0..recognition.len()).rev() {
-            let mut max_score = 0.0;
-            let mut matched_entity_ptr = None;
-            
-            for entity in matched_list_of_entities.iter_mut() {
-                let current_score = entity.calc_score(&recognition[i]);
-                if current_score > max_score {
-                    max_score = current_score;
-                    matched_entity_ptr = Some(entity);
-                }
+            if existing_entity.found_recognition {
+                existing_entity.bounding_box.combine(matching);
+            } else {
+                existing_entity.bounding_box.merge(matching, RATIO);
+                existing_entity.found_recognition = true;
             }
-
-            if max_score > min_score {
-                if let Some(matched_entity) = matched_entity_ptr {
-                    if matched_entity.found_recognition {
-                        matched_entity.combine_bounding_box(&recognition[i]);
-                    } else {
-                        matched_entity.set_bounding_box(recognition[i].clone());
-                    }
-                    matched_entity.found_recognition = true;
-                    recognition.remove(i);
-                }
-            }
-        }
+            recognition.swap_remove(max_index);
+        });
     }
 
-    pub fn generate_entities(&mut self) {
-        for box_ in &self.current_recognition {
-            self.entities.prepend(Entity::new(box_.clone()));
-        }
-    }
 
-    pub fn start_cycle(&mut self, points: &[i32], types: &[u16], confidences: &[f32], size: u16, frame: &[u8]) {
+    pub fn start_cycle(
+        &mut self,
+        points: &[i32],
+        types: &[u16],
+        confidences: &[f32],
+        size: u16,
+        frame: &[u8],
+    ) {
         self.set_current_recognition(points, types, confidences, size, frame);
         for entity in self.entities.iter_mut() {
             entity.calc_and_set_velocity();
@@ -81,7 +100,11 @@ impl Tracker {
     pub fn manage_last_seen(&mut self) {
         println!("length: {}", self.last_seen.len());
         if !self.last_seen.is_empty() {
-            self.match_entity(&mut self.last_seen, &mut self.current_recognition, core::MIN_SCORE / 2.0);
+            self.match_entity(
+                &mut self.last_seen,
+                &mut self.current_recognition,
+                core::MIN_SCORE / 2.0,
+            );
             self.last_seen.retain(|entity| {
                 if entity.times_not_found > 60 {
                     false
@@ -100,9 +123,11 @@ impl Tracker {
         self.entities.retain(|entity| {
             if visualization::TO_VISUALIZE {
                 entity.draw(&mut self.frame);
-                entity.get_possible_location().draw(&mut self.frame, core::Scalar::new(255.0, 255.0, 255.0, 0.0));
+                entity
+                    .get_possible_location()
+                    .draw(&mut self.frame, core::Scalar::new(255.0, 255.0, 255.0, 0.0));
             }
-            entity.add_to_trajectory();
+            entity.add_to_EntityState();
             if entity.found_recognition {
                 entity.found_recognition = false;
                 entity.times_not_found = 0;
@@ -130,10 +155,25 @@ impl Tracker {
             highgui::wait_key(visualization::WAIT_KEY).unwrap();
         }
     }
+}
 
-    pub fn track(&mut self, points: &[i32], types: &[u16], confidences: &[f32], size: u16, frame: &[u8]) {
+#[pymethods]
+impl Tracker {
+    pub fn track(
+        &mut self,
+        points: PyReadonlyArray1<i32>,
+        classes: PyReadonlyArray1<u16>,
+        confidences: PyReadonlyArray1<f32>,
+        frame: Py<PyArray3<u8>>,
+    ) {
+        let current_recognition = Tracker::generate_boxes(points, classes, confidences);
+
         self.start_cycle(points, types, confidences, size, frame);
-        self.match_entity(&mut self.entities, &mut self.current_recognition, core::MIN_SCORE);
+        self.match_entity(
+            &mut self.entities,
+            &mut self.current_recognition,
+            core::MIN_SCORE,
+        );
         self.end_cycle();
     }
 }
@@ -143,4 +183,3 @@ impl Drop for Tracker {
         highgui::destroy_all_windows().unwrap();
     }
 }
-
