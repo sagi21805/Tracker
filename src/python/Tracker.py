@@ -6,7 +6,7 @@ from time import time
 
 class Tracker:
 
-    def __init__(self, video: str, model_weights: str) -> None:
+    def __init__(self, model_weights: str, video: str) -> None:
         self.tracker = _Tracker() 
         self.cap = cv2.VideoCapture(video)
         self.model = YOLO(model_weights)
