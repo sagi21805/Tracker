@@ -1,7 +1,9 @@
+use pyo3::{pyclass, pymethods};
+
 use crate::constants::*;
 use std::cmp::{max, min};
 
-#[repr(C)]
+#[pyclass]
 #[derive(Clone)]
 pub struct Rect {
     pub(crate) x: i32,
@@ -9,6 +11,22 @@ pub struct Rect {
     pub(crate) width: i32,
     pub(crate) height: i32,
 }
+
+#[pymethods]
+impl Rect {
+
+    #[new]
+    pub fn new(x: i32, y: i32, width: i32, height: i32) -> Self {
+        Rect {
+            x,
+            y,
+            width,
+            height,
+        }
+    }
+
+}
+
 
 impl Rect {
     pub fn from_points(a: Point, b: Point) -> Self {
@@ -19,15 +37,6 @@ impl Rect {
             y,
             width: max(a.x, b.x) - x,
             height: max(a.y, b.y) - y,
-        }
-    }
-
-    pub fn new(x: i32, y: i32, width: i32, height: i32) -> Self {
-        Rect {
-            x,
-            y,
-            width,
-            height,
         }
     }
 

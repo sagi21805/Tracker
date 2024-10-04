@@ -1,10 +1,15 @@
+use pyo3::pymethods;
+
 use crate::bounding_box::BoundingBox;
 use crate::constants::*;
 use crate::entity_state::EntityState;
 use crate::rect::Rect;
 use std::collections::LinkedList;
 use std::sync::atomic::{AtomicU16, Ordering};
+use pyo3::prelude::*;
 
+#[pyclass]
+#[derive(Clone)]
 pub struct Entity {
     pub(crate) id: u16,
     pub(crate) bounding_box: BoundingBox,
@@ -13,10 +18,12 @@ pub struct Entity {
     pub(crate) possible_location: Rect,
     pub(crate) times_not_found: u64,
     pub(crate) found_recognition: bool,
-    pub(crate) color: [u8; 3], // Assuming color is represented as RGB
 }
 
+#[pymethods]
 impl Entity {
+
+    #[new]
     pub fn new(bounding_box: BoundingBox) -> Self {
         static STARTING_ID: AtomicU16 = AtomicU16::new(0);
         let id = STARTING_ID.fetch_add(1, Ordering::SeqCst);
@@ -29,7 +36,6 @@ impl Entity {
             possible_location: Rect::default(),
             times_not_found: 0,
             found_recognition: false,
-            color: Self::choose_color(),
         };
 
         entity.trajectory.push_front(EntityState::new(
@@ -39,27 +45,28 @@ impl Entity {
         return entity;
     }
 
-    pub fn set_bounding_box(&mut self, bounding_box: &BoundingBox, ratio: f32) {
-        self.bounding_box = self.bounding_box.merge(bounding_box, ratio)
-    }
+}
+
+impl Entity {
+    
 
     fn choose_color() -> [u8; 3] {
         // Implement color choosing logic here
         [0, 0, 0]
     }
 
-    // pub fn calc_and_set_velocity(&mut self) {
-    //     if self.EntityState.len() >= _smoothingFrames {
-    //         let start_point = &self.EntityState[_smoothingFrames - 1].box.rect.center;
-    //         let end_point = &self.EntityState[0].box.rect.center;
-    //         let raw_velocity = Velocity2D::new(
-    //             (end_point.x - start_point.x) / _smoothingFrames as f32,
-    //             (end_point.y - start_point.y) / _smoothingFrames as f32,
-    //         );
-    //         self.velocity.x = apply_deadband(raw_velocity.x, _velocityDeadBand);
-    //         self.velocity.y = apply_deadband(raw_velocity.y, _velocityDeadBand);
-    //     }
-    // }
+    pub fn calc_and_set_velocity(&mut self) {
+
+        // TODO very ugly improve
+        if self.trajectory.len() >= 1 {
+            let end_point = self.trajectory.iter().nth(1).unwrap();
+            let vel = end_point.bounding_box.rect.get_center() - self.bounding_box.rect.get_center();
+            self.velocity = Velocity2D::new(
+                vel.x,
+                vel.y
+            );
+        }
+    }
 
     pub fn predict_next_bounding_box(&mut self) {
         self.bounding_box.rect.x += self.velocity.x;
@@ -115,7 +122,7 @@ impl Entity {
     //     ).unwrap();
     // }
 
-    // TODO very ugly improve
+    // TODO very ugly improve and avoid magic numbers
     pub fn calc_score(&self, matched_prediction: &BoundingBox) -> f32 {
         if self.bounding_box.rect.is_empty() {
             return 0.0;
