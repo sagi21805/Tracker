@@ -1,13 +1,20 @@
-// mod config;
+use pyo3::prelude::*;
 mod bounding_box;
 mod constants;
 mod entity;
 mod entity_state;
 mod rect;
-mod tracker;
+mod tracking;
 mod utils;
-// mod entity_utils;
 mod point;
+// mod config;
+// mod entity_utils;
+
+#[pymodule]
+fn tracker(py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<tracking::_Tracker>()?;
+    Ok(())
+}
 
 #[cfg(test)]
 mod tests {

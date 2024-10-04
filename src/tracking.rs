@@ -11,13 +11,13 @@ use pyo3::prelude::*;
 use std::collections::LinkedList;
 
 #[pyclass]
-pub struct Tracker {
+pub struct _Tracker {
     // pub(crate) current_recognition: Vec<BoundingBox>,
     pub(crate) entities: LinkedList<Entity>,
     pub(crate) last_seen: LinkedList<Entity>,
 }
 
-impl Tracker {
+impl _Tracker {
 
     fn generate_boxes(
         points: PyReadonlyArray1<i32>,
@@ -51,8 +51,11 @@ impl Tracker {
     }
 
     pub fn match_entity(&mut self, recognition: &mut Vec<BoundingBox>) {
-
-        recognition.iter_mut().map(|matched_entity| {
+        println!("length: {}", self.entities.len());
+        for rec in recognition.clone() {
+            println!("BoundingBoxes: {}", rec);
+        }
+        let _ = recognition.iter_mut().map(|matched_entity| {
 
             let (mut existing, max_score) = self.entities
             .iter_mut()
@@ -90,10 +93,9 @@ impl Tracker {
 
     // TODO waste of performance can do better in different context
     pub fn manage_last_seen(&mut self, remaining_recognition: &mut Vec<BoundingBox>) {
-        println!("length: {}", self.last_seen.len());
         if !self.last_seen.is_empty() {
             self.match_entity(remaining_recognition);
-            self.last_seen.iter_mut().map(|entity| {
+            let _ = self.last_seen.iter_mut().map(|entity| {
                 if entity.times_not_found > 60 {
                     false
                 } else if entity.found_recognition {
@@ -108,7 +110,7 @@ impl Tracker {
     }
 
     pub fn manage_entities(&mut self, remaining_recognition: &mut Vec<BoundingBox>) {
-        self.entities.iter_mut().map(|entity| {
+        let _ = self.entities.iter_mut().map(|entity| {
             if TO_VISUALIZE {
                 // entity.draw(&mut self.frame);
                 // entity
@@ -165,17 +167,16 @@ impl Simple {
 
 
 #[pymethods]
-impl Tracker {
+impl _Tracker {
 
     #[new]
     pub fn new() -> Self {
-        Tracker {
+        _Tracker {
             // current_recognition: Vec::new(),
             entities: LinkedList::new(),
             last_seen: LinkedList::new(),
         }
     }
-
 
     pub fn track(
         &mut self,
@@ -183,7 +184,7 @@ impl Tracker {
         classes: PyReadonlyArray1<u16>,
         confidences: PyReadonlyArray1<f32>,
     ) -> Vec<Simple> { 
-        let mut current_recognition = Tracker::generate_boxes(points, classes, confidences);
+        let mut current_recognition = _Tracker::generate_boxes(points, classes, confidences);
 
         self.start_cycle();
         self.match_entity(&mut current_recognition);

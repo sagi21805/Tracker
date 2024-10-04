@@ -1,5 +1,5 @@
 [package]
-name = "Tracker"
+name = "tracker"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,7 +9,6 @@ crate-type = ["cdylib"]
 [dependencies]
 extend = "1.2.0"
 num = "0.4.3"
-opencv = "0.93.1"
 serde_json = "1.0.128"
 ndarray = "0.16.1"
 numpy = "0.21.0"

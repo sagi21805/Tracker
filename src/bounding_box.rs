@@ -67,3 +67,9 @@ impl BoundingBox {
         self.rect.is_empty()
     }
 }
+
+impl std::fmt::Display for BoundingBox {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Rect: {}, class: {}, confidence: {}", self.rect, self.class, self.confidence)
+    }
+}

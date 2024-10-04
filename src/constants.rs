@@ -2,7 +2,7 @@ use crate::point::Point as P;
 
 pub const ELEMENTS_IN_POINT: usize = 4;
 pub const VEL_DEAD_BAND: u8 = 5;
-pub const MIN_SCORE: f32 = 0.7;
+pub const MIN_SCORE: f32 = 0.0;
 pub const MOVE_TO_LAST_SEEN: u64 = 10;
 pub const MIN_CONFIDENCE: f32 = 0.0;
 pub const SIZE_COEFFICIENT: f32 = 0.75;
