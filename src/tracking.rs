@@ -1,7 +1,4 @@
-// use opencv::{core, highgui, imgproc, prelude::*};
-// use serde_json::from_str;
-// use std::sync::Arc;
-use crate::constants::{MIN_CONFIDENCE, MIN_SCORE, MOVE_TO_LAST_SEEN, RATIO, TO_VISUALIZE};
+use crate::constants::{MIN_CONFIDENCE, MIN_SCORE, MOVE_TO_LAST_SEEN, RATIO};
 use crate::entity::Entity;
 use crate::entity_state::EntityState;
 use crate::point::Point;
@@ -13,13 +10,11 @@ use std::collections::LinkedList;
 
 #[pyclass]
 pub struct _Tracker {
-    // pub(crate) current_recognition: Vec<BoundingBox>,
     pub(crate) entities: LinkedList<Entity>,
     pub(crate) last_seen: LinkedList<Entity>,
 }
 
 impl _Tracker {
-
     fn generate_boxes(
         points: PyReadonlyArray1<i32>,
         typees: PyReadonlyArray1<u16>,
@@ -40,7 +35,7 @@ impl _Tracker {
                     rect: Rect::from_points(
                         Point::new(point[0], point[1]),
                         Point::new(point[2], point[3]),
-                        ),
+                    ),
                     group_id: *group_id,
                     confidence: *confidence,
                 });
@@ -52,11 +47,14 @@ impl _Tracker {
     pub fn match_entity(&mut self, recognition: &mut Vec<BoundingBox>) {
         println!("length: {}", self.entities.len());
         recognition.retain_mut(|matched_entity| {
-
-            if let Some((max_score, existing)) = self.entities
+            if let Some((max_score, existing)) = self
+                .entities
                 .iter_mut()
                 .map(|existing_entity| {
-                    (existing_entity.clone().calc_score(matched_entity), existing_entity)
+                    (
+                        existing_entity.clone().calc_score(matched_entity),
+                        existing_entity,
+                    )
                 })
                 .max_by(|(score_x, _), (score_y, _)| score_x.partial_cmp(score_y).unwrap())
             {
@@ -77,15 +75,10 @@ impl _Tracker {
                 self.entities.push_back(Entity::new(matched_entity.clone()));
             }
             return true;
-
         });
-
     }
 
-
-    pub fn start_cycle(
-        &mut self
-    ) {
+    pub fn start_cycle(&mut self) {
         for entity in self.entities.iter_mut() {
             entity.calc_and_set_velocity();
             entity.predict_possible_locations();
@@ -112,13 +105,6 @@ impl _Tracker {
 
     pub fn manage_entities(&mut self, remaining_recognition: &mut Vec<BoundingBox>) {
         self.entities.iter_mut().for_each(|entity| {
-            if TO_VISUALIZE {
-                // entity.draw(&mut self.frame);
-                // entity
-                //     .get_possible_location()
-                //     .draw(&mut self.frame, core::Scalar::new(255.0, 255.0, 255.0, 0.0));
-            }
-            
             let state = EntityState::new(entity.bounding_box.clone(), entity.velocity);
             entity.trajectory.push_front(state);
 
@@ -132,18 +118,9 @@ impl _Tracker {
 
             if entity.times_not_found >= MOVE_TO_LAST_SEEN {
                 self.last_seen.push_front(entity.clone());
-            } 
+            }
         });
         self.manage_last_seen(remaining_recognition);
-    }
-
-    pub fn end_cycle(&mut self, remaining_recognition: &mut Vec<BoundingBox>) {
-        self.manage_entities(remaining_recognition);
-
-        // if visualization::TO_VISUALIZE {
-        //     highgui::imshow("frame", &self.frame).unwrap();
-        //     highgui::wait_key(visualization::WAIT_KEY).unwrap();
-        // }
     }
 }
 
@@ -152,28 +129,22 @@ pub struct Simple {
     #[pyo3(get)]
     id: u16,
     #[pyo3(get)]
-    bounding_box: BoundingBox 
+    bounding_box: BoundingBox,
 }
 
 #[pymethods]
 impl Simple {
-
     #[new]
-    pub fn new(id: u16, bounding_box: BoundingBox) -> Self{
-        Simple {
-            id, bounding_box
-        }
+    pub fn new(id: u16, bounding_box: BoundingBox) -> Self {
+        Simple { id, bounding_box }
     }
 }
 
-
 #[pymethods]
 impl _Tracker {
-
     #[new]
     pub fn new() -> Self {
         _Tracker {
-            // current_recognition: Vec::new(),
             entities: LinkedList::new(),
             last_seen: LinkedList::new(),
         }
@@ -184,13 +155,17 @@ impl _Tracker {
         points: PyReadonlyArray1<i32>,
         typees: PyReadonlyArray1<u16>,
         confidences: PyReadonlyArray1<f32>,
-    ) -> Vec<Simple> { 
+    ) -> Vec<Simple> {
         let mut current_recognition = _Tracker::generate_boxes(points, typees, confidences);
 
         self.start_cycle();
-        self.match_entity(&mut current_recognition);
-        self.end_cycle(&mut current_recognition); //TODO should give remaining one
+        self.match_entity(&mut current_recognition); // This function removes the matched entities from the recognition
+        self.manage_entities(&mut current_recognition);
 
-        return self.entities.iter().map(|entity| Simple::new(entity.id, entity.bounding_box.clone())).collect()
+        return self
+            .entities
+            .iter()
+            .map(|entity| Simple::new(entity.id, entity.bounding_box.clone()))
+            .collect();
     }
 }

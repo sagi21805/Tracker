@@ -8,7 +8,7 @@ use std::cmp::{max, min};
 pub struct Rect {
     #[pyo3(get)]
     pub(crate) x: i32,
-    
+
     #[pyo3(get)]
     pub(crate) y: i32,
 
@@ -21,7 +21,6 @@ pub struct Rect {
 
 #[pymethods]
 impl Rect {
-
     #[new]
     pub fn new(x: i32, y: i32, width: i32, height: i32) -> Self {
         Rect {
@@ -31,9 +30,7 @@ impl Rect {
             height,
         }
     }
-
 }
-
 
 impl Rect {
     pub fn from_points(a: Point, b: Point) -> Self {

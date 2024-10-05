@@ -1,12 +1,11 @@
 use crate::rect::Rect;
 use crate::utils;
-use std::cmp::{max, min};
 use pyo3::prelude::*;
+use std::cmp::{max, min};
 
 #[pyclass]
 #[derive(Clone)]
 pub struct BoundingBox {
-
     #[pyo3(get)]
     pub(crate) group_id: u16,
 
@@ -19,14 +18,13 @@ pub struct BoundingBox {
 
 #[pymethods]
 impl BoundingBox {
-
     #[new]
-    pub fn new(group_id: u16, rect: Rect, confidence: f32) -> Self{
-
+    pub fn new(group_id: u16, rect: Rect, confidence: f32) -> Self {
         BoundingBox {
-            group_id, rect, confidence
+            group_id,
+            rect,
+            confidence,
         }
-
     }
 }
 
@@ -48,7 +46,6 @@ impl BoundingBox {
         };
 
         self.confidence = (self.confidence + other.confidence) / 2.0;
-
     }
 
     pub fn merge(&mut self, other: &BoundingBox, ratio: f32) {
@@ -66,7 +63,6 @@ impl BoundingBox {
             height: utils::interpolate(self.rect.height, other.rect.height, ratio),
         };
 
-
         self.confidence = utils::interpolate(self.confidence, other.confidence, ratio);
         // todo!()
     }
@@ -78,6 +74,10 @@ impl BoundingBox {
 
 impl std::fmt::Display for BoundingBox {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Rect: {}, type: {}, confidence: {}", self.rect, self.group_id, self.confidence)
+        write!(
+            f,
+            "Rect: {}, type: {}, confidence: {}",
+            self.rect, self.group_id, self.confidence
+        )
     }
 }

@@ -4,9 +4,9 @@ use crate::bounding_box::BoundingBox;
 use crate::constants::*;
 use crate::entity_state::EntityState;
 use crate::rect::Rect;
+use pyo3::prelude::*;
 use std::collections::LinkedList;
 use std::sync::atomic::{AtomicU16, Ordering};
-use pyo3::prelude::*;
 
 #[pyclass]
 #[derive(Clone)]
@@ -22,7 +22,6 @@ pub struct Entity {
 
 #[pymethods]
 impl Entity {
-
     #[new]
     pub fn new(bounding_box: BoundingBox) -> Self {
         static STARTING_ID: AtomicU16 = AtomicU16::new(0);
@@ -44,27 +43,16 @@ impl Entity {
         ));
         return entity;
     }
-
 }
 
 impl Entity {
-    
-
-    fn choose_color() -> [u8; 3] {
-        // Implement color choosing logic here
-        [0, 0, 0]
-    }
-
     pub fn calc_and_set_velocity(&mut self) {
-
         // TODO very ugly improve
         if self.trajectory.len() >= 1 {
             let end_point = self.trajectory.iter().nth(1).unwrap();
-            let vel = end_point.bounding_box.rect.get_center() - self.bounding_box.rect.get_center();
-            self.velocity = Velocity2D::new(
-                vel.x,
-                vel.y
-            );
+            let vel =
+                end_point.bounding_box.rect.get_center() - self.bounding_box.rect.get_center();
+            self.velocity = Velocity2D::new(vel.x, vel.y);
         }
     }
 
@@ -95,32 +83,6 @@ impl Entity {
             r.get_center() - Point::new(w as i32, h as i32),
         );
     }
-
-    // pub fn draw(&self, frame: &mut Mat) {
-    //     self.get_bounding_box().rect.draw(frame, self.color);
-    //     imgproc::put_text(
-    //         frame,
-    //         &self.id.to_string(),
-    //         self.bounding_box.rect.tl(),
-    //         imgproc::FONT_HERSHEY_DUPLEX,
-    //         1.0,
-    //         core::Scalar::new(255.0, 255.0, 0.0, 0.0),
-    //         2,
-    //         imgproc::LINE_8,
-    //         false,
-    //     ).unwrap();
-    //     imgproc::put_text(
-    //         frame,
-    //         &format!("{:.2}", self.bounding_box.confidence),
-    //         self.bounding_box.rect.center - Point::new(24, -12),
-    //         imgproc::FONT_HERSHEY_DUPLEX,
-    //         1.0,
-    //         core::Scalar::new(0.0, 255.0, 255.0, 0.0),
-    //         2,
-    //         imgproc::LINE_8,
-    //         false,
-    //     ).unwrap();
-    // }
 
     // TODO very ugly improve and avoid magic numbers
     pub fn calc_score(&self, matched_prediction: &BoundingBox) -> f32 {
@@ -180,13 +142,5 @@ impl std::fmt::Display for Entity {
             "id: {}\ntype: {:?}\nbox: {}",
             self.id, self.bounding_box.group_id, self.bounding_box.rect
         )
-    }
-}
-
-fn apply_deadband(value: f32, deadband: f32) -> f32 {
-    if value.abs() < deadband {
-        0.0
-    } else {
-        value
     }
 }

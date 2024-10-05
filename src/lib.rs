@@ -3,10 +3,10 @@ mod bounding_box;
 mod constants;
 mod entity;
 mod entity_state;
+mod point;
 mod rect;
 mod tracking;
 mod utils;
-mod point;
 // mod config;
 // mod entity_utils;
 
