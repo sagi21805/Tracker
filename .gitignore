@@ -8,4 +8,31 @@ test.*
 yolov8n.pt
 main.py
 **/target
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
 *.lock
+=======
+>>>>>>> Stashed changes
+*.lock
+
+# Added by cargo
+
+/target
+<<<<<<< Updated upstream
+
+=======
+/bin
+/lib*
+/include
+>>>>>>> Stashed changes
+
+# Added by cargo
+#
+# already existing elements were commented out
+
+#/target
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
