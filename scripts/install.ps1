@@ -27,8 +27,9 @@ $vsInstallerPath = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_
     --includeRecommended --passive
 
 Write-Host "Step 7: Installing the library with Maturin..."
+python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 python -m pip install maturin
+python -m pip install ultralytics
 python -m maturin build --release
 python -m pip install target/wheels/* --force-reinstall
-
 Write-Host "Installation and setup complete!"

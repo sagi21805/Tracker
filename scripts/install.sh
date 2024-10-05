@@ -17,5 +17,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 echo "Installing the library!"
 install_path=$(python3 -m site --user-site)
 pip3 install maturin
+pip3 install torch torchvision torchaudio
+pip3 install ultralytics
+pip3 install opencv-python
+pip3 install numpy
+
 python3 -m maturin build --release
 pip3 install target/wheels/* --force-reinstall
