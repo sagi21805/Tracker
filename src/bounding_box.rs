@@ -6,8 +6,14 @@ use pyo3::prelude::*;
 #[pyclass]
 #[derive(Clone)]
 pub struct BoundingBox {
-    pub(crate) class: u16,
+
+    #[pyo3(get)]
+    pub(crate) group_id: u16,
+
+    #[pyo3(get)]
     pub(crate) rect: Rect,
+
+    #[pyo3(get)]
     pub(crate) confidence: f32,
 }
 
@@ -15,10 +21,10 @@ pub struct BoundingBox {
 impl BoundingBox {
 
     #[new]
-    pub fn new(class: u16, rect: Rect, confidence: f32) -> Self{
+    pub fn new(group_id: u16, rect: Rect, confidence: f32) -> Self{
 
         BoundingBox {
-            class, rect, confidence
+            group_id, rect, confidence
         }
 
     }
@@ -52,12 +58,14 @@ impl BoundingBox {
         //     if b.is_empty() {
         //         return self.clone();
         //     }
+
         self.rect = Rect {
             x: utils::interpolate(self.rect.x, other.rect.x, ratio),
             y: utils::interpolate(self.rect.y, other.rect.y, ratio),
             width: utils::interpolate(self.rect.width, other.rect.width, ratio),
             height: utils::interpolate(self.rect.height, other.rect.height, ratio),
         };
+
 
         self.confidence = utils::interpolate(self.confidence, other.confidence, ratio);
         // todo!()
@@ -70,6 +78,6 @@ impl BoundingBox {
 
 impl std::fmt::Display for BoundingBox {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Rect: {}, class: {}, confidence: {}", self.rect, self.class, self.confidence)
+        write!(f, "Rect: {}, type: {}, confidence: {}", self.rect, self.group_id, self.confidence)
     }
 }

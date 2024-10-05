@@ -11,7 +11,7 @@ pub const TO_VISUALIZE: bool = true;
 pub const WAIT_KEY: u8 = 1;
 pub const BLUE: [u8; 3] = [0, 0, 255];
 pub const RED: [u8; 3] = [255, 0, 0];
-pub const RATIO: f32 = 0.8;
+pub const RATIO: f32 = 0.1;
 
 pub type Point = P<i32>;
 pub type Velocity2D = P<i32>;

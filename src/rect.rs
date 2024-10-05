@@ -6,9 +6,16 @@ use std::cmp::{max, min};
 #[pyclass]
 #[derive(Clone)]
 pub struct Rect {
+    #[pyo3(get)]
     pub(crate) x: i32,
+    
+    #[pyo3(get)]
     pub(crate) y: i32,
+
+    #[pyo3(get)]
     pub(crate) width: i32,
+
+    #[pyo3(get)]
     pub(crate) height: i32,
 }
 

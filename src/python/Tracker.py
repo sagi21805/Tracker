@@ -3,6 +3,7 @@ from ultralytics import YOLO
 import cv2
 from src.python.tracker_utils import *
 from time import time
+from src.python.visualization import visualizer
 
 class Tracker:
 
@@ -10,19 +11,29 @@ class Tracker:
         self.tracker = _Tracker() 
         self.cap = cv2.VideoCapture(video)
         self.model = YOLO(model_weights)
+        self.visualizer = visualizer()
     
     def track(self, show_time = False):
         model_time = time()
         result, frame = predict(self.model, self.cap)
-        model_time = time() - model_time
+        model_time = time() - model_time 
+        self.visualizer.frame = frame
         points, types, confidence, size = YoloToPointsAndTypes(result)
         track_time = time()
         result = self.tracker.track(points, types, confidence)
         track_time = time() - track_time
+        print(points)
+        for entity in result:
+            rect = entity.bounding_box.rect
+            self.visualizer.add_rectangle(
+                (rect.x, rect.y), (rect.x + rect.width, rect.y + rect.height), entity.bounding_box.group_id
+            )
+            self.visualizer.add_text(f"{entity.id}", (rect.x, rect.y))
+        self.visualizer.show()
         if show_time:
             print(f"Model Time: {model_time}, Tracking Time: {track_time}")        
 
-# class Tracker():        
+# type Tracker():        
     
 #     @staticmethod
 #     def setFuncs():

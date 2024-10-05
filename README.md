@@ -24,3 +24,10 @@ Then, build the project to see that everything is ok.
 Create a Tracker Object, give it the weights of a yolo model, and a video or camera to track on.
 
 SEE example.py for more information. 
+
+INSTALL FOR WINDOWS
+
+enable script running 
+install rust msvc 143+ windows SDK newest for your windows version on the visual studio installer
+install python and pip install all the packages 
+run the install package script

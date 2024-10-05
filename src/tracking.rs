@@ -4,6 +4,7 @@
 use crate::constants::{MIN_CONFIDENCE, MIN_SCORE, MOVE_TO_LAST_SEEN, RATIO, TO_VISUALIZE};
 use crate::entity::Entity;
 use crate::entity_state::EntityState;
+use crate::point::Point;
 use crate::rect::Rect;
 use crate::{bounding_box::BoundingBox, constants::ELEMENTS_IN_POINT};
 use numpy::*;
@@ -21,28 +22,26 @@ impl _Tracker {
 
     fn generate_boxes(
         points: PyReadonlyArray1<i32>,
-        classes: PyReadonlyArray1<u16>,
+        typees: PyReadonlyArray1<u16>,
         confidences: PyReadonlyArray1<f32>,
     ) -> Vec<BoundingBox> {
         let mut bounding_boxes = Vec::with_capacity(points.len());
         let points_slice = points.as_slice().expect("array is not contigous");
         let confidences_slice = confidences.as_slice().expect("array is not contigous");
-        let classes_slice = classes.as_slice().expect("array is not contigous");
+        let typees_slice = typees.as_slice().expect("array is not contigous");
 
-        for ((point, confidence), class) in points_slice
+        for ((point, confidence), group_id) in points_slice
             .chunks(ELEMENTS_IN_POINT)
             .zip(confidences_slice.iter())
-            .zip(classes_slice.iter())
+            .zip(typees_slice.iter())
         {
             if *confidence > MIN_CONFIDENCE {
                 bounding_boxes.push(BoundingBox {
-                    rect: Rect {
-                        x: point[0],
-                        y: point[1],
-                        width: point[2],
-                        height: point[3],
-                    },
-                    class: *class,
+                    rect: Rect::from_points(
+                        Point::new(point[0], point[1]),
+                        Point::new(point[2], point[3]),
+                        ),
+                    group_id: *group_id,
                     confidence: *confidence,
                 });
             }
@@ -52,30 +51,32 @@ impl _Tracker {
 
     pub fn match_entity(&mut self, recognition: &mut Vec<BoundingBox>) {
         println!("length: {}", self.entities.len());
-        for rec in recognition.clone() {
-            println!("BoundingBoxes: {}", rec);
-        }
-        let _ = recognition.iter_mut().map(|matched_entity| {
+        recognition.retain_mut(|matched_entity| {
 
-            let (mut existing, max_score) = self.entities
-            .iter_mut()
-            .map(|existing_entity| {
-                (existing_entity.clone(), existing_entity.calc_score(matched_entity))
-            })
-            .max_by(|(_, score_x), (_, score_y)| score_x.partial_cmp(score_y).unwrap())
-            .expect("There are no entities to compare");
-
-            if max_score > MIN_SCORE {
-
-                if existing.found_recognition {
-                    existing.bounding_box.merge(matched_entity, RATIO);
-                } else {
-                    existing.bounding_box.combine(matched_entity);
-                    existing.found_recognition = true;
+            if let Some((max_score, existing)) = self.entities
+                .iter_mut()
+                .map(|existing_entity| {
+                    (existing_entity.clone().calc_score(matched_entity), existing_entity)
+                })
+                .max_by(|(score_x, _), (score_y, _)| score_x.partial_cmp(score_y).unwrap())
+            {
+                // Your logic when there is a max score
+                println!("Max score: {}", max_score);
+                if max_score > MIN_SCORE {
+                    if existing.found_recognition {
+                        existing.bounding_box.combine(matched_entity);
+                    } else {
+                        existing.bounding_box.merge(matched_entity, RATIO);
+                        existing.found_recognition = true;
+                    }
+                    return false;
+                } else if matched_entity.confidence > MIN_CONFIDENCE {
+                    self.entities.push_back(Entity::new(matched_entity.clone()));
                 }
-            } else if matched_entity.confidence > MIN_CONFIDENCE {
+            } else {
                 self.entities.push_back(Entity::new(matched_entity.clone()));
             }
+            return true;
 
         });
 
@@ -110,7 +111,7 @@ impl _Tracker {
     }
 
     pub fn manage_entities(&mut self, remaining_recognition: &mut Vec<BoundingBox>) {
-        let _ = self.entities.iter_mut().map(|entity| {
+        self.entities.iter_mut().for_each(|entity| {
             if TO_VISUALIZE {
                 // entity.draw(&mut self.frame);
                 // entity
@@ -181,10 +182,10 @@ impl _Tracker {
     pub fn track(
         &mut self,
         points: PyReadonlyArray1<i32>,
-        classes: PyReadonlyArray1<u16>,
+        typees: PyReadonlyArray1<u16>,
         confidences: PyReadonlyArray1<f32>,
     ) -> Vec<Simple> { 
-        let mut current_recognition = _Tracker::generate_boxes(points, classes, confidences);
+        let mut current_recognition = _Tracker::generate_boxes(points, typees, confidences);
 
         self.start_cycle();
         self.match_entity(&mut current_recognition);

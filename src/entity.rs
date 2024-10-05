@@ -127,7 +127,7 @@ impl Entity {
         if self.bounding_box.rect.is_empty() {
             return 0.0;
         }
-        if self.bounding_box.class != matched_prediction.class {
+        if self.bounding_box.group_id != matched_prediction.group_id {
             return 0.0;
         }
         let mut score = 0.0;
@@ -178,7 +178,7 @@ impl std::fmt::Display for Entity {
         write!(
             f,
             "id: {}\ntype: {:?}\nbox: {}",
-            self.id, self.bounding_box.class, self.bounding_box.rect
+            self.id, self.bounding_box.group_id, self.bounding_box.rect
         )
     }
 }
