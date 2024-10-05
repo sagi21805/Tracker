@@ -1,19 +1,20 @@
 #!/bin/sh
 wd=$(pwd)
-
-cd ~    
+echo "Updating system..."
 sudo apt update -y && sudo apt upgrade -y
+
+echo "Adding necessery repositeries to apt..."
 sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test 
-sudo apt install -y gcc-13 g++-13 
-sudo apt install -y cmake make git libgtk2.0-dev
-sudo apt install -y pkg-config ffmpeg libavformat-dev libavcodec-dev libswscale-dev
-sudo apt install clang libclang-dev
 sudo add-apt-repository ppa:deadsnakes/ppa -y
-sudo apt install python3.11 -y
-sudo apt install python3.11-full -y
+
+echo "Installing necessery packages..."
+sudo apt install clang libclang-dev git python3.11 python3.11-full
 pip3.11 install -r $wd/requirements.txt
+
+echo "Installing Rust..."
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
+echo "Installing the library!"
 install_path=$(python3 -m site --user-site)
 pip3 install maturin
 python3 -m maturin build --release
