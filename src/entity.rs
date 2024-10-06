@@ -49,7 +49,7 @@ impl Entity {
     pub fn calc_and_set_velocity(&mut self) {
         // TODO very ugly improve
         if self.trajectory.len() >= 1 {
-            let end_point = self.trajectory.iter().nth(1).unwrap();
+            let end_point = self.trajectory.iter().nth(0).unwrap();
             let vel =
                 end_point.bounding_box.rect.get_center() - self.bounding_box.rect.get_center();
             self.velocity = Velocity2D::new(vel.x, vel.y);
