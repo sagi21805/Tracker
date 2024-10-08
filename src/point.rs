@@ -1,5 +1,6 @@
 use num::Zero;
 use std::ops::{Add, Mul, Sub};
+use pyo3::prelude::*;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Point<T> {

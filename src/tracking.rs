@@ -11,7 +11,6 @@ use std::collections::LinkedList;
 #[pyclass]
 pub struct _Tracker {
     pub(crate) entities: LinkedList<Entity>,
-    pub(crate) last_seen: LinkedList<Entity>,
 }
 
 impl _Tracker {
@@ -59,21 +58,14 @@ impl _Tracker {
                 .max_by(|(score_x, _), (score_y, _)| score_x.partial_cmp(score_y).unwrap())
             {
                 // Your logic when there is a max score
-                println!("Max score: {}", max_score);
                 if max_score > MIN_SCORE {
-                    if existing.found_recognition {
-                        existing.bounding_box.combine(matched_entity);
-                    } else {
-                        existing.bounding_box.merge(matched_entity, RATIO);
-                        existing.found_recognition = true;
-                    }
+                    existing.bounding_box.merge(matched_entity, RATIO);
+                    println!("id: {}, not found: {}", existing.id, existing.times_not_found);
+                    existing.times_not_found = 0;
                     return false;
-                } else if matched_entity.confidence > MIN_CONFIDENCE {
-                    self.entities.push_back(Entity::new(matched_entity.clone()));
                 }
-            } else {
-                self.entities.push_back(Entity::new(matched_entity.clone()));
             }
+            self.entities.push_back(Entity::new(matched_entity.clone()));
             return true;
         });
     }
@@ -85,60 +77,19 @@ impl _Tracker {
         }
     }
 
-    // TODO waste of performance can do better in different context
-    pub fn manage_last_seen(&mut self, remaining_recognition: &mut Vec<BoundingBox>) {
-        if !self.last_seen.is_empty() {
-            self.match_entity(remaining_recognition);
-            let _ = self.last_seen.iter_mut().map(|entity| {
-                if entity.times_not_found > 60 {
-                    false
-                } else if entity.found_recognition {
-                    self.entities.push_front(entity.clone());
-                    false
-                } else {
-                    entity.times_not_found += 1;
-                    true
-                }
-            });
-        }
-    }
+ 
 
-    pub fn manage_entities(&mut self, remaining_recognition: &mut Vec<BoundingBox>) {
+    pub fn manage_entities(&mut self) {
         self.entities.iter_mut().for_each(|entity| {
             let state = EntityState::new(entity.bounding_box.clone(), entity.velocity);
             entity.trajectory.push_front(state);
+            entity.predict_next_bounding_box();
+            entity.times_not_found += 1;
 
-            if entity.found_recognition {
-                entity.found_recognition = false;
-                entity.times_not_found = 0;
-            } else {
-                entity.predict_next_bounding_box();
-                entity.times_not_found += 1;
-            }
-
-            if entity.times_not_found >= MOVE_TO_LAST_SEEN {
-                self.last_seen.push_front(entity.clone());
-            }
         });
-        self.manage_last_seen(remaining_recognition);
     }
 }
 
-#[pyclass]
-pub struct Simple {
-    #[pyo3(get)]
-    id: u16,
-    #[pyo3(get)]
-    bounding_box: BoundingBox,
-}
-
-#[pymethods]
-impl Simple {
-    #[new]
-    pub fn new(id: u16, bounding_box: BoundingBox) -> Self {
-        Simple { id, bounding_box }
-    }
-}
 
 #[pymethods]
 impl _Tracker {
@@ -146,7 +97,6 @@ impl _Tracker {
     pub fn new() -> Self {
         _Tracker {
             entities: LinkedList::new(),
-            last_seen: LinkedList::new(),
         }
     }
 
@@ -155,17 +105,19 @@ impl _Tracker {
         points: PyReadonlyArray1<i32>,
         typees: PyReadonlyArray1<u16>,
         confidences: PyReadonlyArray1<f32>,
-    ) -> Vec<Simple> {
+    ) -> Vec<Entity> {
         let mut current_recognition = _Tracker::generate_boxes(points, typees, confidences);
 
         self.start_cycle();
         self.match_entity(&mut current_recognition); // This function removes the matched entities from the recognition
-        self.manage_entities(&mut current_recognition);
+        self.manage_entities();
 
         return self
             .entities
             .iter()
-            .map(|entity| Simple::new(entity.id, entity.bounding_box.clone()))
+            .map(|entity| {
+                entity.clone()
+            })
             .collect();
     }
 }

@@ -11,13 +11,17 @@ use std::sync::atomic::{AtomicU16, Ordering};
 #[pyclass]
 #[derive(Clone)]
 pub struct Entity {
+    #[pyo3(get)]
     pub(crate) id: u16,
+    #[pyo3(get)]
     pub(crate) bounding_box: BoundingBox,
+    #[pyo3(get)]
+    pub(crate) predicted_location: Rect,
+    #[pyo3(get)]
+    pub(crate) times_not_found: u32,
+    
     pub(crate) velocity: Velocity2D,
     pub(crate) trajectory: LinkedList<EntityState>,
-    pub(crate) possible_location: Rect,
-    pub(crate) times_not_found: u64,
-    pub(crate) found_recognition: bool,
 }
 
 #[pymethods]
@@ -32,9 +36,8 @@ impl Entity {
             bounding_box,
             velocity: Velocity2D::new(0, 0),
             trajectory: LinkedList::<EntityState>::new(),
-            possible_location: Rect::default(),
+            predicted_location: Rect::default(),
             times_not_found: 0,
-            found_recognition: false,
         };
 
         entity.trajectory.push_front(EntityState::new(
@@ -78,7 +81,7 @@ impl Entity {
         let h =
             r.height as f32 * SIZE_COEFFICIENT * vy.signum() * (self.times_not_found as f32 + 5.0)
                 / 5.0;
-        self.possible_location = Rect::from_points(
+        self.predicted_location = Rect::from_points(
             r.get_center() + Point::new(vx as i32 + w as i32, vy as i32 + h as i32),
             r.get_center() - Point::new(w as i32, h as i32),
         );
@@ -94,7 +97,7 @@ impl Entity {
         }
         let mut score = 0.0;
         score += if self
-            .possible_location
+            .predicted_location
             .contains(matched_prediction.rect.get_center())
         {
             0.15
@@ -102,7 +105,7 @@ impl Entity {
             0.0
         };
         score += if self
-            .possible_location
+            .predicted_location
             .contains(matched_prediction.rect.tl())
         {
             0.1
@@ -110,7 +113,7 @@ impl Entity {
             0.0
         };
         score += if self
-            .possible_location
+            .predicted_location
             .contains(matched_prediction.rect.br())
         {
             0.1
@@ -120,11 +123,11 @@ impl Entity {
 
         score += matched_prediction
             .rect
-            .iou_percentage(&self.possible_location)
+            .iou_percentage(&self.predicted_location)
             * 0.15;
 
         let distance =
-            (self.possible_location.width.pow(2) + self.possible_location.height.pow(2)) as f32;
+            (self.predicted_location.width.pow(2) + self.predicted_location.height.pow(2)) as f32;
         let slope = (0.75 - 1.0) / distance;
         let current_distance = self
             .bounding_box
@@ -139,8 +142,8 @@ impl std::fmt::Display for Entity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "id: {}\ntype: {:?}\nbox: {}",
-            self.id, self.bounding_box.group_id, self.bounding_box.rect
+            "id: {}\ntype: {:?}\nbox: {}\n, not_found: {}",
+            self.id, self.bounding_box.group_id, self.bounding_box.rect, self.times_not_found
         )
     }
 }
