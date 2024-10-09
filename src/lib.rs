@@ -10,7 +10,7 @@ mod utils;
 mod config;
 
 #[pymodule]
-fn tracker(py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn tracker(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<tracking::_Tracker>()?;
     Ok(())
 }

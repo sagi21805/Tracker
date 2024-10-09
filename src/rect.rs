@@ -76,16 +76,6 @@ impl Rect {
         self.width * self.height
     }
 
-    // pub fn vec_from_points(points: &[i32], size: u16) -> Vec<Rect> {
-    //     let mut rects = Vec::with_capacity(points.len());
-    //     for p in points.chunks(ELEMENTS_IN_POINT) {
-    //         let a = Point::new(p[0], p[1]);
-    //         let b = Point::new(p[2], p[3]);
-    //         rects.push(Rect::from_points(a, b));
-    //     }
-    //     rects
-    // }
-
     pub fn contains(&self, p: Point) -> bool {
         p.x >= self.x && p.x <= self.x + self.width && p.y >= self.y && p.y <= self.y + self.height
     }
