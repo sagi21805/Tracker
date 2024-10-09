@@ -1,114 +1,51 @@
 from tracker import _Tracker
 from ultralytics import YOLO
 import cv2
-from src.python.tracker_utils import *
-from time import time
+import supervision as sv
 from src.python.visualization import visualizer
+import numpy as np
+from time import time
+
 
 class Tracker:
 
-    def __init__(self, model_weights: str, video: str) -> None:
-        self.tracker = _Tracker() 
-        self.cap = cv2.VideoCapture(video)
+    def __init__(
+            self, 
+            model_weights: str, 
+            video: str, 
+            config_path: str = "config.json", 
+            skip_frame: int = 2
+        ) -> None:
+        self.tracker = _Tracker(config_path) 
+        self.frame_generator = sv.get_video_frames_generator(source_path=video, stride=skip_frame)  
         self.model = YOLO(model_weights)
-        self.visualizer = visualizer()
-    
-    def track(self, show_time = False):
-        model_time = time()
-        result, frame = predict(self.model, self.cap)
-        model_time = time() - model_time 
-        self.visualizer.frame = frame
-        points, types, confidence, size = YoloToPointsAndTypes(result)
-        track_time = time()
+        self.visualizer = visualizer(sv.ColorPalette([sv.Color.BLUE, sv.Color.RED]))
+    def track(self):
+        t = time()
+        result, frame = self.predict()
+        print(f"prediction time: {time() - t}")
+        self.visualizer.annotated_frame = frame
+        points, types, confidence = Tracker.prediction_to_points(result)
+        t = time()
         result = self.tracker.track(points, types, confidence)
-        track_time = time() - track_time
-        print(points)
-        for entity in result:
-            rect = entity.bounding_box.rect
-            self.visualizer.add_rectangle(
-                (rect.x, rect.y), (rect.x + rect.width, rect.y + rect.height), entity.bounding_box.group_id
-            )
-            self.visualizer.add_text(f"{entity.id}", (rect.x, rect.y))
-        self.visualizer.show()
-        if show_time:
-            print(f"Model Time: {model_time}, Tracking Time: {track_time}")        
+        print(f"track time: {time() - t}")
 
-# type Tracker():        
+        self.visualizer.annotate_detections(result)
+        self.visualizer.show_frame(1)
+
+    def process_frame(frame: np.ndarray):
+        return frame[0:460]
+
+    def predict(self):
+        frame = self.frame_generator.__next__()
+        frame = Tracker.process_frame(frame)
+        return self.model(frame, verbose = False)[0], frame
     
-#     @staticmethod
-#     def setFuncs():
-#         c.lib._Tracker.argtypes = [c.int32_array, c.uint16_array, c.float32_array,c.uint16, c.uint8_array, c.uint16, c.uint16]
-#         c.lib._Tracker.restype = c.object
-#         c.lib._track.argtypes = [c.object, c.int32_array, c.uint16_array, c.float32_array, c.uint16, c.uint8_array]
-    
-#     def __init__(self, model_path: str, video) -> None:
-#         """Creates A Tracker Object
-#         -
-#         `Args:`
-#             - `model_path (str):` The Path To The Model Weights (.pt file)
-#             - `video (int or str):` The Path To The Tracked video *OR* The Index of the Camera.
-#         """
-#         print("[INFO]: Loading Model")
-#         self.model = YOLO(model_path)
-#         print("[INFO]: Done Loading Model")
-#         print("[INFO]: Loading video")
-#         self.cap = cv2.VideoCapture(video)
-#         print("[INFO]: Done Loading Video")
+    @staticmethod
+    def prediction_to_points(result):
+        boxes = result.boxes.cpu().numpy()      
+        return (boxes.xyxy.flatten().astype(np.int32),
+                boxes.cls.flatten().astype(np.uint16),
+                boxes.conf.flatten().astype(np.float32))
+
         
-#         success, frame = self.cap.read()
-#         if success:
-#             pass
-#             # on_startup(frame)
-#         else: 
-#             raise ValueError("Frame can not be opened")
-        
-#         result, frame = predict(self.model, self.cap)
-#         Tracker.setFuncs()
-#         points, types, confidence, size = YoloToPointsAndTypes(result)
-#         self.Tracker = c.lib._Tracker(points, types, confidence, c.c_uint16(size), frameToArray(frame),\
-#                                       c.c_uint16(frame.shape[0]), c.c_uint16(frame.shape[1]))
-        
-    
-#     @staticmethod
-#     def setFuncs():
-#         c.lib._Tracker.argtypes = [c.int32_array, c.uint16_array, c.float32_array,c.uint16, c.uint8_array, c.uint16, c.uint16]
-#         c.lib._Tracker.restype = c.object
-#         c.lib._track.argtypes = [c.object, c.int32_array, c.uint16_array, c.float32_array, c.uint16, c.uint8_array]
-    
-#     def __init__(self, model_path: str, video) -> None:
-#         """Creates A Tracker Object
-#         -
-#         `Args:`
-#             - `model_path (str):` The Path To The Model Weights (.pt file)
-#             - `video (int or str):` The Path To The Tracked video *OR* The Index of the Camera.
-#         """
-#         print("[INFO]: Loading Model")
-#         self.model = YOLO(model_path)
-#         print("[INFO]: Done Loading Model")
-#         print("[INFO]: Loading video")
-#         self.cap = cv2.VideoCapture(video)
-#         print("[INFO]: Done Loading Video")
-        
-#         success, frame = self.cap.read()
-#         if success:
-#             pass
-#             # on_startup(frame)
-#         else: 
-#             raise ValueError("Frame can not be opened")
-        
-#         result, frame = predict(self.model, self.cap)
-#         Tracker.setFuncs()
-#         points, types, confidence, size = YoloToPointsAndTypes(result)
-#         self.Tracker = c.lib._Tracker(points, types, confidence, c.c_uint16(size), frameToArray(frame),\
-#                                       c.c_uint16(frame.shape[0]), c.c_uint16(frame.shape[1]))
-        
-#     def track(self, show_time = False):
-#         model_time = time()
-#         result, frame = predict(self.model, self.cap)
-#         model_time = time() - model_time
-#         points, types, confidence, size = YoloToPointsAndTypes(result)
-#         track_time = time()
-#         c.lib._track(self.Tracker, points, types, confidence, c.c_uint16(size), frameToArray(frame))
-#         track_time = time() - track_time
-#         if show_time:
-#             print(f"Model Time: {model_time}, Tracking Time: {track_time}")track_time}")
