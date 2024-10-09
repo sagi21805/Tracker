@@ -7,8 +7,7 @@ mod point;
 mod rect;
 mod tracking;
 mod utils;
-// mod config;
-// mod entity_utils;
+mod config;
 
 #[pymodule]
 fn tracker(py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {

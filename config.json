@@ -1,22 +1,9 @@
 {
-    "elementsInPoint" : 4,
-    "startingId" : 0,
-    "velocityDeadBand" : 5,
-    "minScore" : 0.7,
-    "moveToLastSeen" : 10,
-    "minConfidence" : 0.0,
-
-    "predictions" : {
-        "sizeCoefficient" : 0.75,
-        "velocityCoefficient" : 3.0
-    },
-
-    "visualization" : {
-        "toVisualize" : true,
-        "waitKey" : 1,
-        "colors" : {
-            "blueRobot" : [0, 0, 255],
-            "redRobot" : [255, 0, 0]
-        }
-    }
+    "elements_in_point": 4,
+    "min_score": 0.4,
+    "move_to_last_seen": 10,
+    "min_confidence": 0.4,
+    "size_coefficient": 0.75,
+    "vel_coefficient": 3.0,
+    "ratio": 0.25
 }

@@ -1,6 +1,7 @@
 use pyo3::pymethods;
 
 use crate::bounding_box::BoundingBox;
+use crate::config::Config;
 use crate::constants::*;
 use crate::entity_state::EntityState;
 use crate::rect::Rect;
@@ -19,7 +20,7 @@ pub struct Entity {
     pub(crate) predicted_location: Rect,
     #[pyo3(get)]
     pub(crate) times_not_found: u32,
-    
+
     pub(crate) velocity: Velocity2D,
     pub(crate) trajectory: LinkedList<EntityState>,
 }
@@ -71,15 +72,15 @@ impl Entity {
     }
 
     //TODO get rid of magic numbers
-    pub fn predict_possible_locations(&mut self) {
+    pub fn predict_possible_locations(&mut self, config: &Config) {
         let r = self.bounding_box.rect.clone();
-        let vx = self.velocity.x as f32 * VEL_COEFFICIENT;
-        let vy = self.velocity.y as f32 * VEL_COEFFICIENT;
+        let vx = self.velocity.x as f32 * config.vel_coefficient;
+        let vy = self.velocity.y as f32 * config.vel_coefficient;
         let w =
-            r.width as f32 * SIZE_COEFFICIENT * vx.signum() * (self.times_not_found as f32 + 5.0)
+            r.width as f32 * config.size_coefficient * vx.signum() * (self.times_not_found as f32 + 5.0)
                 / 5.0;
         let h =
-            r.height as f32 * SIZE_COEFFICIENT * vy.signum() * (self.times_not_found as f32 + 5.0)
+            r.height as f32 * config.size_coefficient * vy.signum() * (self.times_not_found as f32 + 5.0)
                 / 5.0;
         self.predicted_location = Rect::from_points(
             r.get_center() + Point::new(vx as i32 + w as i32, vy as i32 + h as i32),

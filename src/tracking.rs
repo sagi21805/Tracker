@@ -1,9 +1,9 @@
-use crate::constants::{MIN_CONFIDENCE, MIN_SCORE, MOVE_TO_LAST_SEEN, RATIO};
+use crate::config::Config;
 use crate::entity::Entity;
 use crate::entity_state::EntityState;
 use crate::point::Point;
 use crate::rect::Rect;
-use crate::{bounding_box::BoundingBox, constants::ELEMENTS_IN_POINT};
+use crate::bounding_box::BoundingBox;
 use numpy::*;
 use pyo3::prelude::*;
 use std::collections::LinkedList;
@@ -11,10 +11,12 @@ use std::collections::LinkedList;
 #[pyclass]
 pub struct _Tracker {
     pub(crate) entities: LinkedList<Entity>,
+    pub(crate) config: Config,
 }
 
 impl _Tracker {
     fn generate_boxes(
+        &self,
         points: PyReadonlyArray1<i32>,
         typees: PyReadonlyArray1<u16>,
         confidences: PyReadonlyArray1<f32>,
@@ -25,11 +27,11 @@ impl _Tracker {
         let typees_slice = typees.as_slice().expect("array is not contigous");
 
         for ((point, confidence), group_id) in points_slice
-            .chunks(ELEMENTS_IN_POINT)
+            .chunks(self.config.elements_in_point)
             .zip(confidences_slice.iter())
             .zip(typees_slice.iter())
         {
-            if *confidence > MIN_CONFIDENCE {
+            if *confidence > self.config.min_confidence {
                 bounding_boxes.push(BoundingBox {
                     rect: Rect::from_points(
                         Point::new(point[0], point[1]),
@@ -58,9 +60,8 @@ impl _Tracker {
                 .max_by(|(score_x, _), (score_y, _)| score_x.partial_cmp(score_y).unwrap())
             {
                 // Your logic when there is a max score
-                if max_score > MIN_SCORE {
-                    existing.bounding_box.merge(matched_entity, RATIO);
-                    println!("id: {}, not found: {}", existing.id, existing.times_not_found);
+                if max_score > self.config.min_score {
+                    existing.bounding_box.merge(matched_entity, self.config.ratio);
                     existing.times_not_found = 0;
                     return false;
                 }
@@ -73,7 +74,7 @@ impl _Tracker {
     pub fn start_cycle(&mut self) {
         for entity in self.entities.iter_mut() {
             entity.calc_and_set_velocity();
-            entity.predict_possible_locations();
+            entity.predict_possible_locations(&self.config);
         }
     }
 
@@ -94,9 +95,10 @@ impl _Tracker {
 #[pymethods]
 impl _Tracker {
     #[new]
-    pub fn new() -> Self {
+    pub fn new(config_path: &str) -> Self {
         _Tracker {
             entities: LinkedList::new(),
+            config: Config::from_json_file(config_path).expect("Can't load configuration")
         }
     }
 
@@ -106,12 +108,12 @@ impl _Tracker {
         typees: PyReadonlyArray1<u16>,
         confidences: PyReadonlyArray1<f32>,
     ) -> Vec<Entity> {
-        let mut current_recognition = _Tracker::generate_boxes(points, typees, confidences);
+        let mut current_recognition = self.generate_boxes(points, typees, confidences);
 
         self.start_cycle();
         self.match_entity(&mut current_recognition); // This function removes the matched entities from the recognition
         self.manage_entities();
-
+        println!("Configuration: {:?}", self.config);
         return self
             .entities
             .iter()
