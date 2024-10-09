@@ -8,7 +8,7 @@ is_running = True
 def main_code():
     while True:
         if is_running:
-            tracker.track(show_time=True) #Track on a loop and show performence.
+            tracker.track() #Track on a loop and show performence.
             
 
 def on_press(key): #on press commend to stop the video.
