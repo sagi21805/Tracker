@@ -5,13 +5,14 @@ mod entity;
 mod entity_state;
 mod point;
 mod rect;
-mod tracking;
+mod general_tracker;
 mod utils;
 mod config;
 
 #[pymodule]
 fn tracker(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<tracking::_Tracker>()?;
+    m.add_class::<general_tracker::GeneralTracker>()?;
+    m.add_class::<entity::Entity>()?;
     Ok(())
 }
 
