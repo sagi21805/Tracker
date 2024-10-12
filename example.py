@@ -1,29 +1,22 @@
-from src.python.Tracker import Tracker
-from pynput import keyboard
-import threading
+from numpy import ndarray
+from supervision.draw.color import ColorPalette, Color
+from tracker import GeneralPurposeTracker
 
-tracker = Tracker("assets/bumperWeights.pt", "assets/TestVideo.mp4") #load weights and a video.
-is_running = True
 
-def main_code():
-    while True:
-        if is_running:
-            tracker.track() #Track on a loop and show performence.
-            
+class RobotTracker(GeneralPurposeTracker):
 
-def on_press(key): #on press commend to stop the video.
-    global is_running
-    try:
-        if key.char == 'p':
-            is_running = not is_running 
-            print("Background code paused" if not is_running else "Background code resumed")
-    except AttributeError:
-        pass
+    def process_frame(self, frame: ndarray) -> ndarray:
+        # Custom processing logic for the frame
+        return frame[0:460]  # Assuming you want to return the first 460 rows
 
-listener = keyboard.Listener(on_press=on_press) #set the keyboard listener.
-
-listener_thread = threading.Thread(target=listener.start) # put the listener on a different thread.
+robot_tracker = RobotTracker(
+    "assets\\bumperWeights.pt", 
+    "assets\\TestVideo.mp4",
+    2,
+    ColorPalette([Color.BLUE, Color.RED, Color.BLACK]),
+    annotate_possible_location=True
+)
 
 if __name__ == "__main__": 
-    listener_thread.start() #start the listener thread. 
-    main_code() #start the main Tracking code.
+    while True:
+        robot_tracker.track() # Start the main Tracking code
