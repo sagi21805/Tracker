@@ -1,0 +1,13 @@
+[build-system]
+requires = ["maturin >= 1.7.4"]
+build-backend = "maturin"
+
+[project]
+name = "tracker"
+version = "0.1.0"
+description = "A Rust-based tracker library using PyO3"
+requires-python = ">=3.10"
+
+[tool.maturin]
+name = "tracker"
+python-source = "python"
