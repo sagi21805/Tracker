@@ -6,7 +6,7 @@ use std::io::Read;
 pub struct Config {
     pub elements_in_point: usize,
     pub min_score: f32,
-    pub move_to_last_seen: u64,
+    pub move_to_last_seen: u32,
     pub min_confidence: f32,
     pub size_coefficient: f32,
     pub vel_coefficient: f32,
