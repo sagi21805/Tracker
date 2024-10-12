@@ -4,6 +4,7 @@ use crate::bounding_box::BoundingBox;
 use crate::config::Config;
 use crate::constants::*;
 use crate::entity_state::EntityState;
+use crate::point::Point;
 use crate::rect::Rect;
 use pyo3::prelude::*;
 use std::collections::LinkedList;
@@ -52,10 +53,10 @@ impl Entity {
 impl Entity {
     pub fn calc_and_set_velocity(&mut self) {
         // TODO very ugly improve
-        if self.trajectory.len() >= 1 {
-            let end_point = self.trajectory.iter().nth(0).unwrap();
+        if self.trajectory.len() >= 2 {
+            let start_point = self.trajectory.iter().nth(1).unwrap();
             let vel =
-                end_point.bounding_box.rect.get_center() - self.bounding_box.rect.get_center();
+            self.bounding_box.rect.get_center() - start_point.bounding_box.rect.get_center() ;
             self.velocity = Velocity2D::new(vel.x, vel.y);
         }
     }
@@ -77,14 +78,20 @@ impl Entity {
         let vx = self.velocity.x as f32 * config.vel_coefficient;
         let vy = self.velocity.y as f32 * config.vel_coefficient;
         let w =
-            r.width as f32 * config.size_coefficient * vx.signum() * (self.times_not_found as f32 + 5.0)
-                / 5.0;
+            r.width as f32 * config.size_coefficient /* vx.signum()*/ * self.times_not_found as f32;
         let h =
-            r.height as f32 * config.size_coefficient * vy.signum() * (self.times_not_found as f32 + 5.0)
-                / 5.0;
+            r.height as f32 * config.size_coefficient /* vy.signum()*/ * self.times_not_found as f32;
+
+        let mut tl = r.get_center() - Point::new(w as i32, h as i32);
+        let mut br = r.get_center() + Point::new(w as i32, h as i32);
+
+
+        if vx > 0.0 { br.x += vx as i32 } else { tl.x += vx as i32 }
+        if vy > 0.0 { br.y += vy as i32 } else { tl.y += vy as i32 }
+
+
         self.predicted_location = Rect::from_points(
-            r.get_center() + Point::new(vx as i32 + w as i32, vy as i32 + h as i32),
-            r.get_center() - Point::new(w as i32, h as i32),
+            tl, br
         );
     }
 
