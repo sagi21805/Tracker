@@ -6,15 +6,14 @@ use crate::rect::Rect;
 use crate::bounding_box::BoundingBox;
 use numpy::*;
 use pyo3::prelude::*;
-use std::collections::LinkedList;
 
 #[pyclass]
-pub struct _Tracker {
-    pub(crate) entities: LinkedList<Entity>,
+pub struct GeneralTracker {
+    pub(crate) entities: Vec<Entity>,
     pub(crate) config: Config,
 }
 
-impl _Tracker {
+impl GeneralTracker {
     fn generate_boxes(
         &self,
         points: PyReadonlyArray1<i32>,
@@ -46,7 +45,6 @@ impl _Tracker {
     }
 
     pub fn match_entity(&mut self, recognition: &mut Vec<BoundingBox>) {
-        println!("length: {}", self.entities.len());
         recognition.retain_mut(|matched_entity| {
             if let Some((max_score, existing)) = self
                 .entities
@@ -66,7 +64,7 @@ impl _Tracker {
                     return false;
                 }
             }
-            self.entities.push_back(Entity::new(matched_entity.clone()));
+            self.entities.push(Entity::new(matched_entity.clone()));
             return true;
         });
     }
@@ -81,11 +79,19 @@ impl _Tracker {
  
 
     pub fn manage_entities(&mut self) {
-        self.entities.iter_mut().for_each(|entity| {
-            let state = EntityState::new(entity.bounding_box.clone(), entity.velocity);
+        self.entities.retain_mut(|entity| {
+            let state = EntityState::new(
+                entity.bounding_box.clone(), entity.velocity
+            );
             entity.trajectory.push_front(state);
-            entity.predict_next_bounding_box();
             entity.times_not_found += 1;
+            if entity.times_not_found >= 3 {
+                entity.predict_next_bounding_box();
+            }
+            if entity.times_not_found > self.config.move_to_last_seen {
+                return false;
+            }
+            return true;
 
         });
     }
@@ -93,11 +99,11 @@ impl _Tracker {
 
 
 #[pymethods]
-impl _Tracker {
+impl GeneralTracker {
     #[new]
     pub fn new(config_path: &str) -> Self {
-        _Tracker {
-            entities: LinkedList::new(),
+        GeneralTracker {
+            entities: Vec::new(),
             config: Config::from_json_file(config_path).expect("Can't load configuration")
         }
     }
@@ -113,7 +119,6 @@ impl _Tracker {
         self.start_cycle();
         self.match_entity(&mut current_recognition); // This function removes the matched entities from the recognition
         self.manage_entities();
-        println!("Configuration: {:?}", self.config);
         return self
             .entities
             .iter()

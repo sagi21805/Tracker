@@ -20,10 +20,15 @@ class visualizer():
         xyxy = np.array([np.array(entity.bounding_box.rect.into_xyxy()) for entity in tracker_result])
         labels = np.array([f"id: {entity.id}, conf: {round(entity.bounding_box.confidence, 2)}" for entity in tracker_result])
         class_id = np.array([np.array(entity.bounding_box.group_id) for entity in tracker_result])
-    
+        locations = np.array([np.array(entity.predicted_location.into_xyxy()) for entity in tracker_result])
+
         detections = sv.Detections(xyxy=xyxy, class_id=class_id, tracker_id=labels)
+        locations = sv.Detections(xyxy=locations, class_id=np.array([2 for _ in range(len(xyxy))]))
         self.annotated_frame = self.box_annotator.annotate(
             scene=self.annotated_frame, detections=detections
+        )
+        self.annotated_frame = self.box_annotator.annotate(
+            scene=self.annotated_frame, detections=locations
         )
         self.annotated_frame = self.label_annotator.annotate(
             scene=self.annotated_frame, detections=detections, labels=labels

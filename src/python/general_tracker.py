@@ -2,12 +2,12 @@ from tracker import _Tracker
 from ultralytics import YOLO
 import cv2
 import supervision as sv
-from src.python.visualization import visualizer
+from python.visualizer import visualizer
 import numpy as np
 from time import time
 
 
-class Tracker:
+class GeneralTracker:
 
     def __init__(
             self, 
@@ -17,15 +17,15 @@ class Tracker:
             skip_frame: int = 2
         ) -> None:
         self.tracker = _Tracker(config_path) 
-        self.frame_generator = sv.get_video_frames_generator(source_path=video, stride=skip_frame)  
+        self.frame_generator = sv.get_video_frames_generator(source_path=video, stride=skip_frame+1)  
         self.model = YOLO(model_weights)
-        self.visualizer = visualizer(sv.ColorPalette([sv.Color.BLUE, sv.Color.RED]))
+        self.visualizer = visualizer(sv.ColorPalette([sv.Color.BLUE, sv.Color.RED, sv.Color.WHITE]))
     def track(self):
         t = time()
         result, frame = self.predict()
         print(f"prediction time: {time() - t}")
         self.visualizer.annotated_frame = frame
-        points, types, confidence = Tracker.prediction_to_points(result)
+        points, types, confidence = GeneralTracker.prediction_to_points(result)
         t = time()
         result = self.tracker.track(points, types, confidence)
         print(f"track time: {time() - t}")
@@ -34,11 +34,12 @@ class Tracker:
         self.visualizer.show_frame(1)
 
     def process_frame(frame: np.ndarray):
-        return frame[0:460]
+        # Add logic here if needed
+        return frame
 
     def predict(self):
         frame = self.frame_generator.__next__()
-        frame = Tracker.process_frame(frame)
+        frame = GeneralTracker.process_frame(frame)
         return self.model(frame, verbose = False)[0], frame
     
     @staticmethod
