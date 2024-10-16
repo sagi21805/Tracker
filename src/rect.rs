@@ -56,16 +56,50 @@ impl Rect {
         self.get_center().square_distance(&r.get_center())
     }
 
-    pub fn iou_percentage(&self, other: &Rect) -> f32 {
-        let x_overlap = min(self.x, other.x) - max(self.x, other.x);
-        let y_overlap = min(self.y, other.y) - max(self.y, other.y);
+//   pub fn iou_percentage(&self, other: &Rect) -> f32 {
+        
+//         if self.contains(other.tl()) && self.contains(other.br()) {
+//             return 1.0
+//         }
+        
+//         let x1 = max(self.x, other.x);
+//         let y1 = max(self.y, other.y);
+//         let x2 = min(self.x + self.width, other.x + other.width);
+//         let y2 = min(self.y + self.height, other.y + other.height);
 
-        if x_overlap <= 0 || y_overlap <= 0 {
-            return 0.0;
+//         let x_overlap = x2 - x1;
+//         let y_overlap = y2 - y1;
+
+//         if x_overlap <= 0 || y_overlap <= 0 {
+//             return 0.0;
+//         }
+
+//         let intersection_area = x_overlap * y_overlap;
+//         let union_area = self.area() + other.area() - intersection_area;
+        
+//         intersection_area as f32 / union_area as f32
+//     }
+
+    pub fn percentage_inside(&self, small_rect: &Rect) -> f32 {
+        // Find the coordinates of the intersection
+        let x1_inter = self.x.max(small_rect.x);
+        let y1_inter = self.y.max(small_rect.y);
+        let x2_inter = (self.x + self.width).min(small_rect.x + small_rect.width);
+        let y2_inter = (self.y + self.height).min(small_rect.y + small_rect.height);
+
+        // Check if there is an intersection
+        if x1_inter < x2_inter && y1_inter < y2_inter {
+            // Calculate the area of the intersection
+            let intersection_area = (x2_inter - x1_inter) * (y2_inter - y1_inter);
+
+            // Calculate the percentage of the small rectangle inside the big rectangle
+            if small_rect.area() > 0 {
+                return intersection_area as f32 / small_rect.area() as f32;
+            }
         }
 
-        let intersection_area = x_overlap * y_overlap;
-        intersection_area as f32 / self.area() as f32
+        // If no intersection, return 0
+        0.0
     }
 
     pub fn is_empty(&self) -> bool {
