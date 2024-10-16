@@ -30,14 +30,6 @@ impl BoundingBox {
 
 impl BoundingBox {
     pub fn combine(&mut self, other: &BoundingBox) {
-        // TODO see if neceserry
-        // todo!()
-        // if self.is_empty() {
-        //     return b.clone();
-        // }
-        // if b.is_empty() {
-        //     return self.clone();
-        // }
         self.rect = Rect {
             x: min(self.rect.x, other.rect.x),
             y: min(self.rect.y, other.rect.y),
@@ -49,13 +41,6 @@ impl BoundingBox {
     }
 
     pub fn merge(&mut self, other: &BoundingBox, ratio: f32) {
-        //     if self.is_empty() {
-        //         return b.clone();
-        //     }
-        //     if b.is_empty() {
-        //         return self.clone();
-        //     }
-
         self.rect = Rect {
             x: utils::interpolate(self.rect.x, other.rect.x, ratio),
             y: utils::interpolate(self.rect.y, other.rect.y, ratio),

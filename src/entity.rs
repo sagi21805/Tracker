@@ -72,15 +72,14 @@ impl Entity {
             .square_distance_to(&e.bounding_box.rect)
     }
 
-    //TODO get rid of magic numbers
     pub fn predict_possible_locations(&mut self, config: &Config) {
         let r = self.bounding_box.rect.clone();
         let vx = self.velocity.x as f32 * config.vel_coefficient;
         let vy = self.velocity.y as f32 * config.vel_coefficient;
         let w =
-            r.width as f32 * config.size_coefficient /* vx.signum()*/ * self.times_not_found as f32;
+            r.width as f32 * config.size_coefficient /* vx.signum()*/ * (self.times_not_found as f32).min(2.0);
         let h =
-            r.height as f32 * config.size_coefficient /* vy.signum()*/ * self.times_not_found as f32;
+            r.height as f32 * config.size_coefficient /* vy.signum()*/ * (self.times_not_found as f32).min(2.0);
 
         let mut tl = r.get_center() - Point::new(w as i32, h as i32);
         let mut br = r.get_center() + Point::new(w as i32, h as i32);
@@ -97,52 +96,8 @@ impl Entity {
 
     // TODO very ugly improve and avoid magic numbers
     pub fn calc_score(&self, matched_prediction: &BoundingBox) -> f32 {
-        if self.bounding_box.rect.is_empty() {
-            return 0.0;
-        }
-        if self.bounding_box.group_id != matched_prediction.group_id {
-            return 0.0;
-        }
-        let mut score = 0.0;
-        score += if self
-            .predicted_location
-            .contains(matched_prediction.rect.get_center())
-        {
-            0.15
-        } else {
-            0.0
-        };
-        score += if self
-            .predicted_location
-            .contains(matched_prediction.rect.tl())
-        {
-            0.1
-        } else {
-            0.0
-        };
-        score += if self
-            .predicted_location
-            .contains(matched_prediction.rect.br())
-        {
-            0.1
-        } else {
-            0.0
-        };
-
-        score += matched_prediction
-            .rect
-            .iou_percentage(&self.predicted_location)
-            * 0.15;
-
-        let distance =
-            (self.predicted_location.width.pow(2) + self.predicted_location.height.pow(2)) as f32;
-        let slope = (0.75 - 1.0) / distance;
-        let current_distance = self
-            .bounding_box
-            .rect
-            .square_distance_to(&matched_prediction.rect) as f32;
-        score += f32::max(0.5 * (slope * current_distance + 1.0), 0.0);
-        score
+        //return self.predicted_location.iou_percentage(&matched_prediction.rect);
+        return self.predicted_location.percentage_inside(&matched_prediction.rect);
     }
 }
 
