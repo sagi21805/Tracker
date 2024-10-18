@@ -6,12 +6,15 @@ mod entity_state;
 mod point;
 mod rect;
 mod general_tracker;
+mod static_entity_tracker;
+mod dynamic_entity_tracker;
 mod utils;
 mod config;
 
 #[pymodule]
 fn tracker(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<general_tracker::GeneralTracker>()?;
+    m.add_class::<dynamic_entity_tracker::DynamicEntityTracker>()?;
+    m.add_class::<static_entity_tracker::StaticEntityTracker>()?;
     m.add_class::<entity::Entity>()?;
     Ok(())
 }

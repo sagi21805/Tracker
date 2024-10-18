@@ -1,9 +1,10 @@
+from typing import List, Optional
 from ultralytics import YOLO
 import supervision as sv
 from .visualizer import visualizer
 import numpy as np
 from time import time
-from tracker.tracker import GeneralTracker
+from tracker.tracker import DynamicEntityTracker, StaticEntityTracker
 
 class GeneralPurposeTracker:
 
@@ -13,12 +14,17 @@ class GeneralPurposeTracker:
             video: str, 
             num_of_classes: int,
             pallate: sv.ColorPalette,
+            entities_per_class: Optional[List[int]] = None,
             config_path: str = "config.json", 
             skip_frame: int = 0,
             annotate_possible_location = True
         ) -> None:
 
-        self.tracker = GeneralTracker(config_path)
+
+        self.tracker = (
+            DynamicEntityTracker(config_path) if entities_per_class is None 
+            else StaticEntityTracker(config_path)
+        )
         self.frame_generator = sv.get_video_frames_generator(source_path=video, stride=skip_frame+1)  
         self.model = YOLO(model_weights)
 
