@@ -74,12 +74,13 @@ impl Entity {
 
     pub fn predict_possible_locations(&mut self, config: &Config) {
         let r = self.bounding_box.rect.clone();
-        let vx = self.velocity.x as f32 * config.vel_coefficient;
-        let vy = self.velocity.y as f32 * config.vel_coefficient;
+        let not_found_factor = (self.times_not_found as f32).min(2.0);
+        let vx = self.velocity.x as f32 * config.vel_coefficient * not_found_factor;
+        let vy = self.velocity.y as f32 * config.vel_coefficient * not_found_factor;
         let w =
-            r.width as f32 * config.size_coefficient /* vx.signum()*/ * (self.times_not_found as f32).min(2.0);
+            r.width as f32 * config.size_coefficient /* vx.signum()*/ * not_found_factor;
         let h =
-            r.height as f32 * config.size_coefficient /* vy.signum()*/ * (self.times_not_found as f32).min(2.0);
+            r.height as f32 * config.size_coefficient /* vy.signum()*/ * not_found_factor;
 
         let mut tl = r.get_center() - Point::new(w as i32, h as i32);
         let mut br = r.get_center() + Point::new(w as i32, h as i32);
@@ -97,7 +98,12 @@ impl Entity {
     // TODO very ugly improve and avoid magic numbers
     pub fn calc_score(&self, matched_prediction: &BoundingBox) -> f32 {
         //return self.predicted_location.iou_percentage(&matched_prediction.rect);
-        return self.predicted_location.percentage_inside(&matched_prediction.rect);
+        if self.bounding_box.group_id == matched_prediction.group_id {
+            return self.predicted_location.percentage_inside(&matched_prediction.rect);
+        }
+        else {
+            return 0.0;
+        }
     }
 }
 
