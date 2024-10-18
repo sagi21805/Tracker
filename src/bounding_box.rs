@@ -4,7 +4,7 @@ use pyo3::prelude::*;
 use std::cmp::{max, min};
 
 #[pyclass]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BoundingBox {
     #[pyo3(get)]
     pub(crate) group_id: u16,

@@ -4,7 +4,7 @@ use crate::constants::*;
 use std::cmp::{max, min};
 
 #[pyclass]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Rect {
     #[pyo3(get)]
     pub(crate) x: i32,
@@ -32,7 +32,7 @@ impl Rect {
     }
 
     pub fn into_xyxy(&self) -> Vec<i32> {
-        return vec![self.x, self.y, self.x + self.width, self.y + self.height]
+        return vec![self.x, self.y, self.x + self.width, self.y + self.height];
     }
 }
 
@@ -56,12 +56,11 @@ impl Rect {
         self.get_center().square_distance(&r.get_center())
     }
 
-  pub fn iou_percentage(&self, other: &Rect) -> f32 {
-        
+    pub fn iou_percentage(&self, other: &Rect) -> f32 {
         if self.contains(other.tl()) && self.contains(other.br()) {
-            return 1.0
+            return 1.0;
         }
-        
+
         let x1 = max(self.x, other.x);
         let y1 = max(self.y, other.y);
         let x2 = min(self.x + self.width, other.x + other.width);
@@ -76,7 +75,7 @@ impl Rect {
 
         let intersection_area = x_overlap * y_overlap;
         let union_area = self.area() + other.area() - intersection_area;
-        
+
         intersection_area as f32 / union_area as f32
     }
 
@@ -121,7 +120,6 @@ impl Rect {
     pub fn br(&self) -> Point {
         Point::new(self.x + self.width, self.y + self.height)
     }
-
 }
 
 impl Default for Rect {

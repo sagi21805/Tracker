@@ -1,7 +1,7 @@
 use crate::bounding_box::BoundingBox;
 use crate::constants::*;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct EntityState {
     pub bounding_box: BoundingBox,
     pub vel: Velocity2D,
