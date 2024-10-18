@@ -12,9 +12,9 @@ class RobotTracker(GeneralPurposeTracker):
 robot_tracker = RobotTracker(
     "assets\\bumperWeights.pt", 
     "assets\\TestVideo.mp4",
-    2,
     ColorPalette([Color.BLUE, Color.RED, Color.BLACK]),
-    annotate_possible_location=True
+    skip_frame=1,
+    entities_per_class=[3, 3]
 )
 
 if __name__ == "__main__": 
