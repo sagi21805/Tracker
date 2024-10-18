@@ -1,19 +1,11 @@
-use crate::config::{self, Config};
+use crate::bounding_box::BoundingBox;
+use crate::config::Config;
 use crate::entity::Entity;
-use crate::entity_state::EntityState;
 use crate::point::Point;
 use crate::rect::Rect;
-use crate::bounding_box::BoundingBox;
 use numpy::*;
-use pyo3::pymethods;
-use pyo3::prelude::*;
-// pub struct GeneralTracker {
-//     pub(crate) entities: Vec<Entity>,
-//     pub(crate) config: Config,
-// }
 
 pub trait TrackerUtils {
-    
     fn get_config(&self) -> &Config;
 
     fn generate_boxes(
@@ -50,14 +42,11 @@ pub trait TrackerUtils {
     fn match_entity(&mut self, recognition: &mut Vec<BoundingBox>);
 
     fn start_cycle(&mut self);
- 
+
     fn manage_entities(&mut self);
 }
 
 pub trait GeneralTracker {
-
-    fn new(config_path: &str) -> Self;
-
     fn track_entities(
         &mut self,
         points: PyReadonlyArray1<i32>,
@@ -65,6 +54,3 @@ pub trait GeneralTracker {
         confidences: PyReadonlyArray1<f32>,
     ) -> Vec<Entity>;
 }
-
-
-

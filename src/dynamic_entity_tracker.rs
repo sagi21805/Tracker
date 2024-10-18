@@ -1,10 +1,10 @@
-use crate::{config::Config, general_tracker::TrackerUtils};
+use crate::bounding_box::BoundingBox;
 use crate::entity::Entity;
 use crate::entity_state::EntityState;
-use crate::bounding_box::BoundingBox;
+use crate::general_tracker::GeneralTracker;
+use crate::{config::Config, general_tracker::TrackerUtils};
 use numpy::*;
 use pyo3::{pyclass, pymethods};
-use crate::general_tracker::GeneralTracker;
 
 #[pyclass]
 pub struct DynamicEntityTracker {
@@ -13,7 +13,6 @@ pub struct DynamicEntityTracker {
 }
 
 impl TrackerUtils for DynamicEntityTracker {
-
     fn get_config(&self) -> &Config {
         return &self.config;
     }
@@ -34,7 +33,9 @@ impl TrackerUtils for DynamicEntityTracker {
                 // Your logic when there is a max score
                 println!("Max Score: {}, for: {}", max_score, existing.id);
                 if max_score > self.config.min_score {
-                    existing.bounding_box.merge(matched_entity, self.config.ratio);
+                    existing
+                        .bounding_box
+                        .merge(matched_entity, self.config.ratio);
                     existing.times_not_found = 0;
                     return false;
                 }
@@ -46,13 +47,12 @@ impl TrackerUtils for DynamicEntityTracker {
         });
     }
 
-
     fn manage_entities(&mut self) {
         self.entities.retain_mut(|entity| {
-            let state = EntityState::new(
-                entity.bounding_box.clone(), entity.velocity
-            );
-            entity.trajectory.push_front(state);
+            entity.trajectory.push_front(EntityState::new(
+                entity.bounding_box.clone(),
+                entity.velocity,
+            ));
             entity.times_not_found += 1;
             if entity.times_not_found >= 3 {
                 entity.predict_next_bounding_box();
@@ -61,30 +61,18 @@ impl TrackerUtils for DynamicEntityTracker {
                 return false;
             }
             return true;
-
         });
     }
 
     fn start_cycle(&mut self) {
         for entity in self.entities.iter_mut() {
             entity.calc_and_set_velocity();
-            entity.predict_possible_locations(&self.config);  
-            println!("Last: {}", entity.times_not_found);
+            entity.predict_possible_locations(&self.config);
         }
     }
-
-
 }
 
 impl GeneralTracker for DynamicEntityTracker {
-
-    fn new(config_path: &str) -> Self {
-        DynamicEntityTracker {
-            entities: Vec::new(),
-            config: Config::from_json_file(config_path).expect("Can't load configuration")
-        }
-    }
-
     fn track_entities(
         &mut self,
         points: PyReadonlyArray1<i32>,
@@ -96,22 +84,18 @@ impl GeneralTracker for DynamicEntityTracker {
         self.start_cycle();
         self.match_entity(&mut current_recognition); // This function removes the matched entities from the recognition
         self.manage_entities();
-        return self
-            .entities
-            .iter()
-            .map(|entity| {
-                entity.clone()
-            })
-            .collect();
+        return self.entities.iter().map(|entity| entity.clone()).collect();
     }
 }
 
 #[pymethods]
 impl DynamicEntityTracker {
-
     #[new]
-    pub fn init(config_path: &str) -> Self {
-        DynamicEntityTracker::new(config_path)
+    fn new(config_path: &str) -> Self {
+        DynamicEntityTracker {
+            entities: Vec::new(),
+            config: Config::from_json_file(config_path).expect("Can't load configuration"),
+        }
     }
 
     fn track(
@@ -122,5 +106,4 @@ impl DynamicEntityTracker {
     ) -> Vec<Entity> {
         self.track_entities(points, typees, confidences)
     }
-
 }

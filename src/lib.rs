@@ -1,15 +1,15 @@
 use pyo3::prelude::*;
 mod bounding_box;
+mod config;
 mod constants;
+mod dynamic_entity_tracker;
 mod entity;
 mod entity_state;
+mod general_tracker;
 mod point;
 mod rect;
-mod general_tracker;
 mod static_entity_tracker;
-mod dynamic_entity_tracker;
 mod utils;
-mod config;
 
 #[pymodule]
 fn tracker(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {

@@ -12,8 +12,8 @@ class GeneralPurposeTracker:
             self, 
             model_weights: str, 
             video: str, 
-            num_of_classes: int,
             pallate: sv.ColorPalette,
+            num_of_classes: Optional[int] = None,
             entities_per_class: Optional[List[int]] = None,
             config_path: str = "config.json", 
             skip_frame: int = 0,
@@ -23,25 +23,25 @@ class GeneralPurposeTracker:
 
         self.tracker = (
             DynamicEntityTracker(config_path) if entities_per_class is None 
-            else StaticEntityTracker(config_path)
+            else StaticEntityTracker(config_path, np.array(entities_per_class))
         )
         self.frame_generator = sv.get_video_frames_generator(source_path=video, stride=skip_frame+1)  
         self.model = YOLO(model_weights)
-
-        if annotate_possible_location and len(pallate.colors) != num_of_classes+1:
+        total_classes = len(self.model.names) if num_of_classes == None else num_of_classes
+        if annotate_possible_location and len(pallate.colors) != total_classes+1:
             raise ValueError(
                 f"Provided {len(pallate.colors)} Colors, and "
-                f"{num_of_classes + 1} are needed, please notice to give "
+                f"{total_classes + 1} are needed, please notice to give "
                 "an extra color for the predicted location box"
             )
 
-        if not annotate_possible_location and len(pallate.colors) != num_of_classes:
+        if not annotate_possible_location and len(pallate.colors) != total_classes:
             raise ValueError(
                 f"Provided {len(pallate.colors)} Colors, and "
-                f"{num_of_classes} are needed, please give a color for each class"
+                f"{total_classes} are needed, please give a color for each class"
             )
 
-        self.visualizer = visualizer(pallate, num_of_classes, annotate_possible_location)
+        self.visualizer = visualizer(pallate, total_classes, annotate_possible_location)
     
     def track(self):
         t = time()
