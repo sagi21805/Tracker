@@ -82,7 +82,9 @@ impl Entity {
 
     pub fn predict_possible_locations(&mut self, config: &Config) {
         let r = self.bounding_box.rect.clone();
-        let not_found_factor = (self.times_not_found as f32).min(2.0);
+        let s = f32::sqrt(config.move_to_last_seen as f32);
+        let not_found_factor = ((self.times_not_found as f32).min(s) + s) / s;
+
         let vx = self.velocity.x as f32 * config.vel_coefficient * not_found_factor;
         let vy = self.velocity.y as f32 * config.vel_coefficient * not_found_factor;
         let w = r.width as f32 * config.size_coefficient * not_found_factor;
