@@ -1,8 +1,8 @@
 {
     "elements_in_point": 4,
-    "min_score": 0.4,
+    "min_score": 0.2,
     "move_to_last_seen": 16,
-    "min_confidence": 0.2,
+    "min_confidence": 0.0,
     "size_coefficient": 0.6,
     "vel_coefficient": 2.5,
     "ratio": 0.3
