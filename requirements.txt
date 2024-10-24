@@ -6,3 +6,4 @@ maturin
 supervision
 pyyaml
 pathlib
+pillow
