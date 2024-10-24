@@ -14,3 +14,6 @@ main.py
 /lib*
 /include
 /Data
+yolo*
+settings.json
+*.avi
