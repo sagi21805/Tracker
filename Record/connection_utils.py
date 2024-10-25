@@ -28,5 +28,3 @@ class RemoteHost:
 
     def remove_file(self, file_path: Path):
         os.system(f"ssh {self.ssh_cred} rm {file_path.resolve()}")
-
-class 
